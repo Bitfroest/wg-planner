@@ -1,0 +1,13 @@
+﻿{
+	"name": "wg-planner",
+	"description": "Fully functioning household shopping list.",
+	"version": "0.0.1",
+	"private": true,
+	"dependencies": {
+		"express": "4.2.0",
+		"serve-static": "1.1.0",
+		"body-parser": "1.2.0",
+		"cookie-parser": "1.0.1",
+		"express-session": "1.1.0"
+	}
+}
