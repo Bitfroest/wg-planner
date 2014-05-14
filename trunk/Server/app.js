@@ -10,9 +10,20 @@ var serveStatic = require('serve-static');
 var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
 var session = require('express-session');
+var compress = require('compression');
+var routes = require('./routes');
 
 //Create a new app
 var app = express();
+
+//Configure app object
+
+//Disable the 'X-Powered-By: Express' header
+app.disable('x-powered-by');
+
+//Compress (gzip) replies if the browser supports that
+//TODO does not work as expected
+app.use(compress({threshold: 1}));
 
 //Serve static files (images/stylesheets/javascripts) from public/ folder
 app.use(serveStatic('public/'));
@@ -33,23 +44,8 @@ app.use(session({
 	secret: sessionSecret
 }));
 
-//TEST ROUTING
-app.get('/hello.txt', function(req, res) {
-	var sess = req.session;
-	if(sess.views) {
-		sess.views++;
-		res.send('Views: '+sess.views);
-		res.cookie('bla',sess.views, {signed: true});
-	} else {
-		sess.views = 1;
-		res.send('Welcome to the view counter. Refresh!');
-	}
-});
-
-app.get('/group/:groupId', function(req, res) {
-	res.send('Group: '+req.params.groupId);
-});
-//END TEST ROUTING
+//Router for all dynamic services
+routes(app);
 
 //Error handler
 app.use(function(err, req, res, next){
