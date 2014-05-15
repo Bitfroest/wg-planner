@@ -11,6 +11,7 @@ var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
 var session = require('express-session');
 var compress = require('compression');
+var morgan = require('morgan');
 var routes = require('./routes');
 
 //Create a new app
@@ -21,9 +22,12 @@ var app = express();
 //Disable the 'X-Powered-By: Express' header
 app.disable('x-powered-by');
 
+//Request logger (see console)
+app.use(morgan('dev'));
+
 //Compress (gzip) replies if the browser supports that
 //TODO does not work as expected
-app.use(compress({threshold: 1}));
+app.use(compress(/*{threshold: '1kb'}*/));
 
 //Serve static files (images/stylesheets/javascripts) from public/ folder
 app.use(serveStatic('public/'));
