@@ -25,9 +25,14 @@ app.disable('x-powered-by');
 //Use jade as view engine
 app.set('view engine', 'jade');
 app.set('views', __dirname + '/views');
+if(app.get('env') == 'development') {
+	app.locals.pretty = true;
+}
 
-//Request logger (see console)
-app.use(morgan('dev'));
+//Request logger (see console), only for development
+if(app.get('env') == 'development') {
+	app.use(morgan('dev'));
+}
 
 //Compress (gzip) replies if the browser supports that
 //TODO does not work as expected
