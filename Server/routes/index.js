@@ -11,6 +11,12 @@ module.exports = function(app) {
 
 	//index page
 	app.get('/', publicRouter.index);
+	
+	//login page
+	app.get('/login', publicRouter.login);
+	
+	//register page
+	app.get('/register', publicRouter.register);
 
 	//view counter
 	app.get('/hello.txt', publicRouter.hello);
