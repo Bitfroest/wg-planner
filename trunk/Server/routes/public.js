@@ -3,7 +3,15 @@
  */
 
 exports.index = function(req, res) {
+	res.render('home');
+};
+ 
+exports.login = function(req, res) {
 	res.render('login', {title : 'Anmelden'});
+};
+
+exports.register = function(req, res) {
+	res.render('register', {title : 'Registrieren'});
 };
 
 exports.hello = function(req, res) {
