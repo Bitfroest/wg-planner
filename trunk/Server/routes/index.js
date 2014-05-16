@@ -8,6 +8,10 @@
 var publicRouter = require('./public');
 
 module.exports = function(app) {
+
+	//index page
+	app.get('/', publicRouter.index);
+
 	//view counter
 	app.get('/hello.txt', publicRouter.hello);
 

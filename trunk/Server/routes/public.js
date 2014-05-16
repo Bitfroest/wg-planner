@@ -3,7 +3,7 @@
  */
 
 exports.index = function(req, res) {
-	
+	res.render('login', {title : 'Anmelden'});
 };
 
 exports.hello = function(req, res) {

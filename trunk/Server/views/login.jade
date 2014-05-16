@@ -1,0 +1,14 @@
+extends layout-home
+
+block head
+	h1 Header
+
+block content
+	form(name='login', action='/login', method='post')
+		label(for='email') E-Mail
+		input(type='text', id='email', name='email')
+		label(for='password') Passwort
+		input(type='password', id='password', name='password')
+		input(type='checkbox', name='persistent', id='persistent', value='true')
+		label(for='persistent') Angemeldet bleiben
+		input(type='submit', value='Anmelden')

@@ -22,6 +22,10 @@ var app = express();
 //Disable the 'X-Powered-By: Express' header
 app.disable('x-powered-by');
 
+//Use jade as view engine
+app.set('view engine', 'jade');
+app.set('views', __dirname + '/views');
+
 //Request logger (see console)
 app.use(morgan('dev'));
 
