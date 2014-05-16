@@ -1,9 +1,10 @@
 extends layout-home
 
 block head
-	h1 Header
+	
 
 block content
+	h1 Header
 	form(name='login', action='/login', method='post')
 		label(for='email') E-Mail
 		input(type='text', id='email', name='email')
