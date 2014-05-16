@@ -68,5 +68,5 @@ app.use(function(err, req, res, next){
 
 //Start listening on a specific port
 var server = app.listen(8080, function() {
-	console.log('Listening on port %d', server.address().port);
+	console.log('Listening on port %d in %s mode', server.address().port, app.get('env'));
 });
