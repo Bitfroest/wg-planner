@@ -18,6 +18,10 @@ module.exports = function(app) {
 	//register page
 	app.get('/register', publicRouter.register);
 
+	//main page
+	app.get('/main', publicRouter.main);
+	
+	
 	//imprint page
 	app.get('/imprint', publicRouter.imprint);
 	
