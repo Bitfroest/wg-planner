@@ -9,11 +9,11 @@ block content
 				div.group_main
 					span#group.id group.name
 					span group.date
-				each username in []	
+				each user in group.users
 					div.group_user
-						span#name.id group.username
+						span#user.id user.name
 						span
-							form(name='name.id', action='/main', method='post', onsubmit='')
+							form(name='user.id', action='/main', method='post', onsubmit='')
 								input(type='submit', value='-')
 				div.add_user
 					span Nutzer hinzufügen
@@ -29,7 +29,7 @@ block content
 					span list.date
 					span list.buyer
 					span list.price
-				each item in []
+				each item in list.items
 					div.list_items
 						span#item.id item.name
 						span item.owner
