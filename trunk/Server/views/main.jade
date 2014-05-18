@@ -12,6 +12,8 @@ block content
 				each username in []	
 					div.group_user
 						label(for='user' id='name.id') group.username
+				div.add_user
+					label(for='add') Nutzer hinzufügen
 			
 	#lists.lists
 		each list in []
@@ -27,3 +29,5 @@ block content
 						label(for='name') item.name
 						label(for='owner') item.owner
 						label(for='price') item.price
+				div.add_item
+					label(for='add') Item hinzufügen
