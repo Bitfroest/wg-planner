@@ -14,6 +14,11 @@ exports.register = function(req, res) {
 	res.render('register', {title : 'Registrieren'});
 };
 
+exports.imprint = function(req, res) {
+	res.render('imprint', {title : 'Impressum'});
+};
+ 
+
 exports.hello = function(req, res) {
 	var sess = req.session;
 	if(sess.views) {

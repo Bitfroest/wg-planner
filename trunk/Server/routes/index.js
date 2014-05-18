@@ -18,6 +18,9 @@ module.exports = function(app) {
 	//register page
 	app.get('/register', publicRouter.register);
 
+	//imprint page
+	app.get('/imprint', publicRouter.imprint);
+	
 	//view counter
 	app.get('/hello.txt', publicRouter.hello);
 
