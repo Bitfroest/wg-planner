@@ -3,20 +3,27 @@ block head
 
 block content
 	p Main
-	#group.group
-		div.group_main
-			label(for='group' id='group_id') Gruppe
-			label(for='date') Date
-		div.group_names
-			label(for='name' id='user_id') Name
+	#groups.groups
+		each group in []
+			#group.group_cs
+				div.group_main
+					label(for='name' id='group.id') group.name
+					label(for='date') group.date
+				each username in []	
+					div.group_user
+						label(for='user' id='name.id') group.username
 			
-			
-	#list.list
-		div.list_main
-			label(for='name') Einkaufsliste
-			label(for='location') Ort
-			label(for='date') Datum
-			label(for='buyer') Käufer
-			label(for='whole_price') Preis
-		div.list_items
-			label(for='')
+	#lists.lists
+		each list in []
+			#list.list
+				div.list_main
+					label(for='name' id='list.id') list.name
+					label(for='location') list.location
+					label(for='date') list.date
+					label(for='buyer') list.buyer
+					label(for='whole_price') list.price
+				each item in []
+					div.list_items
+						label(for='name') item.name
+						label(for='owner') item.owner
+						label(for='price') item.price
