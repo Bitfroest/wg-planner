@@ -12,8 +12,13 @@ block content
 				each username in []	
 					div.group_user
 						span#name.id group.username
+						span
+							form(name='name.id', action='/main', method='post', onsubmit='')
+								input(type='submit', value='-')
 				div.add_user
 					span Nutzer hinzufügen
+						form(name='group.id', action='/main', method='post', onsubmit='')
+								input(type='submit', value='+')
 			
 	#lists.lists
 		each list in []
@@ -29,5 +34,10 @@ block content
 						span#item.id item.name
 						span item.owner
 						span item.price
+						span 
+							form(name='item.id', action='/main', method='post', onsubmit='')
+								input(type='submit', value='-')
 				div.add_item
 					span Item hinzufügen
+						form(name='list.id', action='/main', method='post', onsubmit='')
+								input(type='submit', value='+')
