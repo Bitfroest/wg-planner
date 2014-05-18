@@ -4,10 +4,12 @@ block head
 	
 
 block content
-	h1 Header
+	p Richten Sie Ihr kostenloses Konto ein.
 	form(name='register', action='/register', method='post')
+		label(for='name') Benutzername
+		input(type='text', id='user', name='user', placeholder='User1234')
 		label(for='email') E-Mail
-		input(type='text', id='email', name='email')
+		input(type='text,required', id='email', name='email',value='', spellcheck='false', placeholder='jemand@example.com')
 		label(for='password') Passwort
-		input(type='password', id='password', name='password')
+		input(type='password,required', id='password', name='password', value='', placeholder='Kennwort')
 		input(type='submit', value='Registrieren')

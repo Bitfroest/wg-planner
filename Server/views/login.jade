@@ -4,12 +4,17 @@ block head
 	
 
 block content
-	h1 Header
-	form(name='login', action='/login', method='post')
-		label(for='email') E-Mail
-		input(type='text', id='email', name='email')
-		label(for='password') Passwort
-		input(type='password', id='password', name='password')
-		input(type='checkbox', name='persistent', id='persistent', value='true')
-		label(for='persistent') Angemeldet bleiben
-		input(type='submit', value='Anmelden')
+	p Mit Ihrem Konto anmelden.
+	#login.login
+		form(name='login', action='/login', method='post')
+			//label(for='email', id='label_email') E-Mail
+			input(type='text,required', id='email', name='email', value='',spellcheck='false', placeholder='jemand@example.com')
+			//label(for='password') Passwort
+			input(type='password,required', id='password', name='password', value='', placeholder='Kennwort')
+			input(type='checkbox', name='persistent', id='persistent', value='true', checked='true')
+			label(for='persistent') Angemeldet bleiben
+			input(type='submit', value='Anmelden')
+		p Noch nicht angemeldet? 
+			a(href='register') Jetzt Registrieren!
+		
+		
