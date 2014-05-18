@@ -7,27 +7,27 @@ block content
 		each group in []
 			#group.group_cs
 				div.group_main
-					label(for='name' id='group.id') group.name
-					label(for='date') group.date
+					span#group.id group.name
+					span group.date
 				each username in []	
 					div.group_user
-						label(for='user' id='name.id') group.username
+						span#name.id group.username
 				div.add_user
-					label(for='add') Nutzer hinzufügen
+					span Nutzer hinzufügen
 			
 	#lists.lists
 		each list in []
 			#list.list
 				div.list_main
-					label(for='name' id='list.id') list.name
-					label(for='location') list.location
-					label(for='date') list.date
-					label(for='buyer') list.buyer
-					label(for='whole_price') list.price
+					span#list.id list.name
+					span list.location
+					span list.date
+					span list.buyer
+					span list.price
 				each item in []
 					div.list_items
-						label(for='name') item.name
-						label(for='owner') item.owner
-						label(for='price') item.price
+						span#item.id item.name
+						span item.owner
+						span item.price
 				div.add_item
-					label(for='add') Item hinzufügen
+					span Item hinzufügen
