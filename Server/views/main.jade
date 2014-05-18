@@ -1,7 +1,22 @@
 extends layout-home
 block head
-	
 
 block content
 	p Main
-	
+	#group.group
+		div.group_main
+			label(for='group' id='group_id') Gruppe
+			label(for='date') Date
+		div.group_names
+			label(for='name' id='user_id') Name
+			
+			
+	#list.list
+		div.list_main
+			label(for='name') Einkaufsliste
+			label(for='location') Ort
+			label(for='date') Datum
+			label(for='buyer') Käufer
+			label(for='whole_price') Preis
+		div.list_items
+			label(for='')
