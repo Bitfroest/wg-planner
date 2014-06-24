@@ -14,10 +14,12 @@ module.exports = function(app) {
 	
 	//login page
 	app.get('/login', publicRouter.login);
+	app.post('/login', publicRouter.doLogin);
 	
 	//register page
 	app.get('/register', publicRouter.register);
-
+	app.post('/register', publicRouter.doRegister);
+	
 	//main page
 	app.get('/main', publicRouter.main);
 	
