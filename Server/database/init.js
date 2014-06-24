@@ -64,7 +64,8 @@ function createTables(pg, url, callback) {
 		
 		var TABLES = [
 			'CREATE TABLE dbinfo(version INTEGER)',
-			'CREATE TABLE person(id SERIAL PRIMARY KEY, name TEXT NOT NULL, email UNIQUE TEXT NOT NULL, password TEXT NOT NULL)'
+			'CREATE TABLE session(id TEXT PRIMARY KEY, data TEXT, created TIMESTAMP NOT NULL)',
+			'CREATE TABLE person(id SERIAL PRIMARY KEY, name TEXT NOT NULL, email TEXT UNIQUE NOT NULL, password TEXT NOT NULL)'
 		];
 		
 		// Create all the tables
