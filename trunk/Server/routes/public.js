@@ -60,7 +60,7 @@ exports.doLogin = function(req, res) {
 				if(login.persistent) {
 					req.session.cookie.maxAge = 1000 * 60 * 60 * 24 * 14; // set expire time 2 weeks in future
 				}
-				req.session.id = person.id;
+				req.session.personId = person.id;
 				res.redirect('/hello.txt');
 			});
 		});

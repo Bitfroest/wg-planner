@@ -15,6 +15,7 @@ var morgan = require('morgan');
 var routes = require('./routes');
 var config = require('./config.js');
 var pg = require('pg.js');
+var PostgresStore = require('./database/pg-session.js')(session);
 
 require('./database/init.js').init(pg, config.databaseURL, function(err) {
 
@@ -58,7 +59,8 @@ app.use(cookieParser(cookieSecret));
 //Session by session cookie and in-memory session management
 app.use(session({
 	name: 'sid',
-	secret: sessionSecret
+	secret: sessionSecret,
+	store: new PostgresStore(pg, config.databaseURL)
 	//cookie: {secure: false, maxAge: 300000}
 }));
 
