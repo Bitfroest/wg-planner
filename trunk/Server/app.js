@@ -58,8 +58,8 @@ app.use(cookieParser(cookieSecret));
 //Session by session cookie and in-memory session management
 app.use(session({
 	name: 'sid',
-	secret: sessionSecret,
-	cookie: {secure: false, maxAge: 300000}
+	secret: sessionSecret
+	//cookie: {secure: false, maxAge: 300000}
 }));
 
 app.use(function(req, res, next){

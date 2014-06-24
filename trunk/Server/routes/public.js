@@ -15,7 +15,8 @@ exports.login = function(req, res) {
 exports.doLogin = function(req, res) {
 	var login = {
 		email : ''+req.body.email,
-		password : ''+req.body.password
+		password : ''+req.body.password,
+		persistent : 'true' === ''+req.body.persistent
 	};
 	
 	req.getDb(function(err, client, done) {
@@ -56,8 +57,11 @@ exports.doLogin = function(req, res) {
 					return;
 				}
 				
+				if(login.persistent) {
+					req.session.cookie.maxAge = 1000 * 60 * 60 * 24 * 14; // set expire time 2 weeks in future
+				}
 				req.session.id = person.id;
-				res.redirect('/hello');
+				res.redirect('/hello.txt');
 			});
 		});
 	});
@@ -126,7 +130,6 @@ exports.main = function(req, res) {
 exports.imprint = function(req, res) {
 	res.render('imprint', {title : 'Impressum'});
 };
- 
 
 exports.hello = function(req, res) {
 	var sess = req.session;
