@@ -13,6 +13,10 @@ var session = require('express-session');
 var compress = require('compression');
 var morgan = require('morgan');
 var routes = require('./routes');
+var config = require('./config.js');
+var pg = require('pg.js');
+
+require('./database/init.js').init(pg, config.databaseURL, function(err) {
 
 //Create a new app
 var app = express();
@@ -54,8 +58,16 @@ app.use(cookieParser(cookieSecret));
 //Session by session cookie and in-memory session management
 app.use(session({
 	name: 'sid',
-	secret: sessionSecret
+	secret: sessionSecret,
+	cookie: {secure: false, maxAge: 300000}
 }));
+
+app.use(function(req, res, next){
+	req.getDb = function(callback) {
+		pg.connect(config.databaseURL, callback);
+	};
+	next();
+});
 
 //Router for all dynamic services
 routes(app);
@@ -69,4 +81,6 @@ app.use(function(err, req, res, next){
 //Start listening on a specific port
 var server = app.listen(8080, function() {
 	console.log('Listening on port %d in %s mode', server.address().port, app.get('env'));
+});
+
 });
