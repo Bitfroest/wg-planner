@@ -31,3 +31,35 @@ Now reload the .profile file
 {{{
 source ~/.profile
 }}}
+
+==Install PostgreSQL==
+
+{{{
+sudo apt-get install postgresql
+}}}
+
+Edit PostgreSQL config file
+{{{
+sudo nano /etc/postgresql/9.1/main/postgresql.conf
+}}}
+
+And change #password_encryption = on to
+{{{
+password_encryption = on
+}}}
+
+Now create a new user
+{{{
+sudo -u postgres createuser
+> Enter name of role to add: wg
+> Shall the new role be a superuser? (y/n) n
+> Shall the new role be allowed to create databases? (y/n) n
+> Shall the new role be allowed to create more new roles? (y/n) n
+> CREATE ROLE
+}}}
+
+Now create a new database
+{{{
+sudo -u postgres createdb wgplanner
+> CREATE DATABASE
+}}}
