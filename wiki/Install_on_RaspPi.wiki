@@ -106,3 +106,29 @@ nano config.js
 }}}
 
 Edit all necessary settings, especially 'databaseURL'
+
+==Install Forever==
+
+Forever is a nodeJS module that automatically restarts your server process if it crashes.
+
+{{{
+sudo npm install forever -g
+}}}
+
+Now you can start the server with
+
+{{{
+export NODE_ENV=production
+forever start app.js
+}}}
+
+If you want to stop the server later, type
+
+{{{
+forever stop app.js
+}}}
+
+==For further reading==
+ * http://jankarres.de/2013/07/raspberry-pi-node-js-installieren/
+ * http://linuxpoison.blogspot.de/2012/01/how-to-install-configure-postgresql.html
+ * https://github.com/nodejitsu/forever
