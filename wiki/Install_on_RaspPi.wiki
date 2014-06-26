@@ -63,3 +63,46 @@ Now create a new database
 sudo -u postgres createdb wgplanner
 > CREATE DATABASE
 }}}
+
+Grant access to the user
+{{{
+sudo -u postgres psql
+postgres=# alter user wg with encrypted password 'your password';
+> ALTER ROLE
+postgres=# grant all privileges on database wgplanner to wg;
+> GRANT
+}}}
+
+How to start, stop and restart the database service:
+{{{
+/etc/init.d/postgresql start
+/etc/init.d/postgresql stop
+/etc/init.d/postgresql restart
+}}}
+
+==Install WG-Planner==
+
+First you need subversion
+{{{
+sudo apt-get install subversion
+}}}
+
+Then we will checkout the current version
+{{{
+cd ~/
+svn checkout http://wg-planner.googlecode.com/svn/trunk/ wgplanner
+}}}
+
+After the checkout, it's time to install all needed nodejs packages
+{{{
+cd wgplanner/Server
+npm install
+}}}
+
+Now you have to configure your wg-planner installation.
+{{{
+cp template.config.js config.js
+nano config.js
+}}}
+
+Edit all necessary settings, especially 'databaseURL'
