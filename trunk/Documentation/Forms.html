@@ -1,0 +1,73 @@
+<!doctype html>
+<html>
+<head>
+	<title>Forms</title>
+	<style type="text/css">
+		.form {
+			margin: 20px 10px;
+			min-width: 400px;
+			width: 400px;
+			border-collapse: collapse;
+			border-left: 5px solid blue;
+			border-bottom: 1px solid black;
+			border-top: 1px solid black;
+			border-right: 1px solid black;
+		}
+		
+		.form tbody tr:nth-child(1) {
+			border-top: 2px solid black;
+		}
+
+		.form td, .form th {
+			padding: 5px 10px;
+			text-align: left;
+		}
+
+		.form tr td:nth-child(1) {
+			width: 150px;
+		}
+
+		.form tr td:nth-child(1) {
+			font-family: Monospace;
+		}
+
+		:target tr:nth-child(1) {
+			background-color: lightgreen;
+		}
+	</style>
+</head>
+<body>
+	<h1>Forms</h1>
+	
+	<table class="form">
+		<thead>
+			<tr><th colspan="2">login</th></tr>
+		</thead>
+		<tbody class="params">
+			<tr><td>email</td><td>text</td></tr>
+			<tr><td>password</td><td>password</td></tr>
+			<tr><td>persistent</td><td>checkbox, value='1'</td></tr>
+		</tbody>
+		<tbody class="errors">
+			<tr><td>not_found</td><td>If there is no person with that mail address.</td></tr>
+			<tr><td>wrong_password</td><td>If the password for the given person is wrong.</td></tr>
+		</tbody>
+	</table>
+	
+	<table class="form">
+		<thead>
+			<tr><th colspan="2">register</th></tr>
+		</thead>
+		<tbody class="params">
+			<tr><td>user</td><td>text</td></tr>
+			<tr><td>email</td><td>text</td></tr>
+			<tr><td>password</td><td>password</td></tr>
+		</tbody>
+		<tbody class="errors">
+			<tr><td></td><td></td></tr>
+			<tr><td></td><td></td></tr>
+			<tr><td></td><td></td></tr>
+		</tbody>
+	</table>
+</body>
+</html>
