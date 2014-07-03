@@ -6,36 +6,33 @@
 		.table {
 			margin: 20px 10px;
 			min-width: 400px;
+			width: 400px;
 			border-collapse: collapse;
-			border-bottom: 2px solid black;
-			border-top: 2px solid black;
-		}
-		
-		.table tr:nth-child(1) {
+			/*border-bottom: 2px solid black;
+			border-top: 2px solid black;*/
+			border-left: 5px solid blue;
 			border-bottom: 1px solid black;
+			border-top: 1px solid black;
+			border-right: 1px solid black;
 		}
-		
+
+		.table tr:nth-child(1) {
+			border-bottom: 2px solid black;
+		}
+
 		.table td, .table th {
 			padding: 5px 10px;
 			text-align: left;
 		}
-		
+
 		.table tr td:nth-child(1) {
 			width: 150px;
 		}
-		
+
 		.table tr td:nth-child(1) {
 			font-family: Monospace;
 		}
-		
-		.table tr {
-			background-color: lightblue;
-		}
-		
-		.table tr:nth-child(even) {
-			background-color: lightgray;
-		}
-		
+
 		:target tr:nth-child(1) {
 			background-color: lightgreen;
 		}
@@ -44,18 +41,26 @@
 <body>
 	<h1>Database model</h1>
 
-	<table id="admin" class="table">
-		<tr><th colspan="2">admin</th></tr>
-		<tr><td>id</td><td>identifier</td></tr>
-		<tr><td>person_id</td><td>foreign identifier to <a href="#person">person</a></td></tr>
+	<table id="dbinfo" class="table">
+		<tr><th colspan="2">dbinfo</th></tr>
+		<tr><td>version</td><td>integer</td></tr>
+	</table>
+
+	<table id="session" class="table">
+		<tr><th colspan="2">session</th></tr>
+		<tr><td>id</td><td>text identifier</td></tr>
+		<tr><td>data</td><td>text not null</td></tr>
+		<tr><td>created</td><td>timestamp not null</td></tr>
 	</table>
 	
 	<table id="person" class="table">
 		<tr><th colspan="2">person</th></tr>
 		<tr><td>id</td><td>identifier</td></tr>
-		<tr><td>name</td><td>string</td></tr>
-		<tr><td>email</td><td>string</td></tr>
-		<tr><td>password</td><td>string</td></tr>
+		<tr><td>name</td><td>string not null</td></tr>
+		<tr><td>email</td><td>string unique not null</td></tr>
+		<tr><td>password</td><td>string not null</td></tr>
+		<tr><td>role</td><td>enum{customer, admin} not null</td></tr>
+		<tr><td>created</td><td>timestamp not null</td></tr>
 	</table>
 	
 	<table id="shop" class="table">
@@ -96,7 +101,7 @@
 		<tr><th colspan="2">membership</th></tr>
 		<tr><td>group</td><td>foreign identifier to <a href="#group">group</a></td></tr>
 		<tr><td>person</td><td>foreign identifier to <a href="#person">person</a></td></tr>
-		<tr><td>role</td><td>enum{founder, member}</td></tr>
+		<tr><td>role</td><td>enum{member, founder}</td></tr>
 		<tr><td>created</td><td>datetime</td></tr>
 	</table>
 	
