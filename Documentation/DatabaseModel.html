@@ -43,7 +43,9 @@
 
 	<table id="dbinfo" class="table">
 		<tr><th colspan="2">dbinfo</th></tr>
-		<tr><td>version</td><td>integer</td></tr>
+		<tr><td>version</td><td>integer not null</td></tr>
+		<tr><td>cookiesecret</td><td>string not null</td></tr>
+		<tr><td>sessionsecret</td><td>string not null</td></tr>
 	</table>
 
 	<table id="session" class="table">

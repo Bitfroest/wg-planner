@@ -1,3 +1,4 @@
+var crypto = require('crypto');
 
 // Current schema version
 var CURRENT_VERSION = 1;
@@ -36,7 +37,7 @@ function checkVersion(pg, url, callback) {
 			return console.error('Failed to connect in checkVersion', err);
 		}
 		
-		client.query('SELECT version FROM dbinfo', function(err, result){
+		client.query('SELECT version, sessionsecret, cookiesecret FROM dbinfo', function(err, result){
 			done();
 			
 			if(err) {
@@ -51,7 +52,10 @@ function checkVersion(pg, url, callback) {
 				console.info('database schema must be upgraded');
 			}
 			
-			callback(null);
+			callback(null, {
+				cookieSecret : result.rows[0].cookiesecret,
+				sessionSecret : result.rows[0].sessionsecret
+			});
 		});
 	});
 }
@@ -63,9 +67,10 @@ function createTables(pg, url, callback) {
 		}
 		
 		var TABLES = [
-			'CREATE TABLE dbinfo(version INTEGER)',
-			'CREATE TABLE session(id TEXT PRIMARY KEY, data TEXT, created TIMESTAMP NOT NULL)',
-			'CREATE TABLE person(id SERIAL PRIMARY KEY, name TEXT NOT NULL, email TEXT UNIQUE NOT NULL, password TEXT NOT NULL)'
+			'CREATE TABLE dbinfo(version INTEGER NOT NULL, cookiesecret TEXT NOT NULL, sessionsecret TEXT NOT NULL)',
+			'CREATE TABLE session(id TEXT PRIMARY KEY, data TEXT NOT NULL, created TIMESTAMP NOT NULL)',
+			"CREATE TYPE person_role AS ENUM('customer', 'admin')",
+			'CREATE TABLE person(id SERIAL PRIMARY KEY, name TEXT NOT NULL, email TEXT UNIQUE NOT NULL, password TEXT NOT NULL, role person_role NOT NULL, created TIMESTAMP NOT NULL)'
 		];
 		
 		// Create all the tables
@@ -74,15 +79,26 @@ function createTables(pg, url, callback) {
 				return console.error('Failed to create tables', err);
 			}
 			
+			console.info('created database schema');
+			
+			//Generate some secret keys used by cookieParser and session
+			var cookieSecret = crypto.randomBytes(16).toString('hex');
+			var sessionSecret = crypto.randomBytes(16).toString('hex');
+			
 			// insert current schema version into table dbinfo
-			client.query('INSERT INTO dbinfo (version) VALUES ($1)', [CURRENT_VERSION], function(err, result) {
+			client.query('INSERT INTO dbinfo (version,cookiesecret,sessionsecret) VALUES ($1,$2,$3)',
+				[CURRENT_VERSION, cookieSecret, sessionSecret], function(err, result) {
+				
 				done();
 				
 				if(err) {
 					return console.error('Failed to insert current version', err);
 				}
 				
-				callback(null);
+				callback(null, {
+					cookieSecret: cookieSecret,
+					sessionSecret: sessionSecret
+				});
 			});
 		});
 	});

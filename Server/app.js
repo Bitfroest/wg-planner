@@ -4,7 +4,6 @@
  * Starts the server, installs the middleware and routes requests.
  */
 
-var crypto = require('crypto');
 var express = require('express');
 var serveStatic = require('serve-static');
 var bodyParser = require('body-parser');
@@ -17,7 +16,7 @@ var config = require('./config.js');
 var pg = require('pg.js');
 var PostgresStore = require('./database/pg-session.js')(session);
 
-require('./database/init.js').init(pg, config.databaseURL, function(err) {
+require('./database/init.js').init(pg, config.databaseURL, function(err, dbinfo) {
 
 //Create a new app
 var app = express();
@@ -49,17 +48,13 @@ app.use(serveStatic('public/'));
 //Parse body (urlencoded/json) from HTML forms and XHR requests
 app.use(bodyParser());
 
-//Generate some secret keys used by cookieParser and session
-var cookieSecret = crypto.randomBytes(16).toString('hex');
-var sessionSecret = crypto.randomBytes(16).toString('hex');
-
 //Parse cookies from request headers
-app.use(cookieParser(cookieSecret));
+app.use(cookieParser(dbinfo.cookieSecret));
 
 //Session by session cookie and in-memory session management
 app.use(session({
 	name: 'sid',
-	secret: sessionSecret,
+	secret: dbinfo.sessionSecret,
 	store: new PostgresStore(pg, config.databaseURL)
 	//cookie: {secure: false, maxAge: 300000}
 }));

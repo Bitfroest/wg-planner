@@ -16,7 +16,7 @@ exports.doLogin = function(req, res) {
 	var login = {
 		email : ''+req.body.email,
 		password : ''+req.body.password,
-		persistent : 'true' === ''+req.body.persistent
+		persistent : '1' === ''+req.body.persistent
 	};
 	
 	req.getDb(function(err, client, done) {
@@ -61,6 +61,7 @@ exports.doLogin = function(req, res) {
 					req.session.cookie.maxAge = 1000 * 60 * 60 * 24 * 14; // set expire time 2 weeks in future
 				}
 				req.session.personId = person.id;
+				req.session.loggedIn = true;
 				res.redirect('/hello.txt');
 			});
 		});
@@ -107,8 +108,8 @@ exports.doRegister = function(req, res) {
 			}
 		
 			// insert new person into database
-			client.query('INSERT INTO person(name,email,password) VALUES($1,$2,$3)',
-				[person.name, person.email, key], function(err, result){
+			client.query('INSERT INTO person(name,email,password,role,created) VALUES($1,$2,$3,$4,$5)',
+				[person.name, person.email, key, 'customer', new Date()], function(err, result){
 			
 				done();
 				
@@ -133,13 +134,18 @@ exports.imprint = function(req, res) {
 
 exports.hello = function(req, res) {
 	var sess = req.session;
-	if(sess.views) {
-		sess.views++;
-		res.send('Views: '+sess.views);
-		res.cookie('bla',sess.views, {signed: true});
+	
+	if(sess.loggedIn) {
+		if(sess.views) {
+			sess.views++;
+			res.send('Views: '+sess.views);
+			res.cookie('bla',sess.views, {signed: true});
+		} else {
+			sess.views = 1;
+			res.send('Welcome to the view counter. Refresh!');
+		}
 	} else {
-		sess.views = 1;
-		res.send('Welcome to the view counter. Refresh!');
+		res.send('Please login');
 	}
 };
 
