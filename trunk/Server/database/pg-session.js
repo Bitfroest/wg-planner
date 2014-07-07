@@ -27,7 +27,8 @@ module.exports = function(session) {
 				if(result.rows.length == 1) {
 					callback(null, JSON.parse(result.rows[0].data));
 				} else {
-					callback('session not found');
+					console.error('Session not found');
+					callback();
 				}
 			});
 		});

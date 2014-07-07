@@ -62,10 +62,19 @@ exports.doLogin = function(req, res) {
 				}
 				req.session.personId = person.id;
 				req.session.loggedIn = true;
-				res.redirect('/hello.txt');
+				res.redirect('/main');
 			});
 		});
 	});
+};
+
+exports.logout = function(req, res) {
+	req.session.loggedIn = false;
+	res.render('logout');
+};
+
+exports.sidWrong = function(req, res) {
+	res.render('sid-wrong');
 };
 
 exports.register = function(req, res) {
@@ -122,10 +131,6 @@ exports.doRegister = function(req, res) {
 			});
 		});
 	});
-};
-
-exports.main = function(req, res) {
-	res.render('main', {title : 'Übersicht'});
 };
 
 exports.imprint = function(req, res) {
