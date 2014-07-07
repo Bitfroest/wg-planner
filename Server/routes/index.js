@@ -6,6 +6,7 @@
  */
  
 var publicRouter = require('./public');
+var customerRouter = require('./customer');
 
 module.exports = function(app) {
 
@@ -16,13 +17,17 @@ module.exports = function(app) {
 	app.get('/login', publicRouter.login);
 	app.post('/login', publicRouter.doLogin);
 	
+	//logout
+	app.get('/logout', publicRouter.logout);
+	// wrong session ID
+	app.get('/sid_wrong', publicRouter.sidWrong);
+	
 	//register page
 	app.get('/register', publicRouter.register);
 	app.post('/register', publicRouter.doRegister);
 	
 	//main page
-	app.get('/main', publicRouter.main);
-	
+	app.get('/main', customerRouter.main);
 	
 	//imprint page
 	app.get('/imprint', publicRouter.imprint);

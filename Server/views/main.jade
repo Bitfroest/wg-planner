@@ -1,43 +1,6 @@
-extends layout-home
+extends layout-customer
+
 block head
 
 block content
 	p Main
-	#groups.groups
-		each group in []
-			#group.group_cs
-				div.group_main
-					span#group.id group.name
-					span group.date
-				each user in group.users
-					div.group_user
-						span#user.id user.name
-						span
-							form(name='user.id', action='/main', method='post', onsubmit='')
-								input(type='submit', value='-')
-				div.add_user
-					span Nutzer hinzufügen
-						form(name='group.id', action='/main', method='post', onsubmit='')
-								input(type='submit', value='+')
-			
-	#lists.lists
-		each list in []
-			#list.list
-				div.list_main
-					span#list.id list.name
-					span list.location
-					span list.date
-					span list.buyer
-					span list.price
-				each item in list.items
-					div.list_items
-						span#item.id item.name
-						span item.owner
-						span item.price
-						span 
-							form(name='item.id', action='/main', method='post', onsubmit='')
-								input(type='submit', value='-')
-				div.add_item
-					span Item hinzufügen
-						form(name='list.id', action='/main', method='post', onsubmit='')
-								input(type='submit', value='+')
