@@ -65,6 +65,21 @@
 		<tr><td>created</td><td>timestamp not null</td></tr>
 	</table>
 	
+	<table id="household_member" class="table">
+		<tr><th colspan="2">household_member</th></tr>
+		<tr><td>household_id</td><td>foreign identifier to <a href="#household">household</a></td></tr>
+		<tr><td>person_id</td><td>foreign identifier to <a href="#person">person</a></td></tr>
+		<tr><td>role</td><td>enum{member, founder} not null</td></tr>
+		<tr><td>created</td><td>timestamp not null</td></tr>
+	</table>
+	
+	<table id="household" class="table">
+		<tr><th colspan="2">household</th></tr>
+		<tr><td>id</td><td>identifier</td></tr>
+		<tr><td>name</td><td>text not null</td></tr>
+		<tr><td>created</td><td>timestamp not null</td></tr>
+	</table>
+	
 	<table id="shop" class="table">
 		<tr><th colspan="2">shop</th></tr>
 		<tr><td>id</td><td>identifier</td></tr>
@@ -96,21 +111,6 @@
 		<tr><th colspan="2">invitation</th></tr>
 		<tr><td>group</td><td>foreign identifier to <a href="#group">group</a></td></tr>
 		<tr><td>person</td><td>foreign identifier to <a href="#person">person</a></td></tr>
-		<tr><td>created</td><td>datetime</td></tr>
-	</table>
-	
-	<table id="membership" class="table">
-		<tr><th colspan="2">membership</th></tr>
-		<tr><td>group</td><td>foreign identifier to <a href="#group">group</a></td></tr>
-		<tr><td>person</td><td>foreign identifier to <a href="#person">person</a></td></tr>
-		<tr><td>role</td><td>enum{member, founder}</td></tr>
-		<tr><td>created</td><td>datetime</td></tr>
-	</table>
-	
-	<table id="group" class="table">
-		<tr><th colspan="2">group</th></tr>
-		<tr><td>id</td><td>identifier</td></tr>
-		<tr><td>name</td><td>string</td></tr>
 		<tr><td>created</td><td>datetime</td></tr>
 	</table>
 </body>

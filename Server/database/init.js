@@ -70,7 +70,11 @@ function createTables(pg, url, callback) {
 			'CREATE TABLE dbinfo(version INTEGER NOT NULL, cookiesecret TEXT NOT NULL, sessionsecret TEXT NOT NULL)',
 			'CREATE TABLE session(id TEXT PRIMARY KEY, data TEXT NOT NULL, created TIMESTAMP NOT NULL)',
 			"CREATE TYPE person_role AS ENUM('customer', 'admin')",
-			'CREATE TABLE person(id SERIAL PRIMARY KEY, name TEXT NOT NULL, email TEXT UNIQUE NOT NULL, password TEXT NOT NULL, role person_role NOT NULL, created TIMESTAMP NOT NULL)'
+			'CREATE TABLE person(id SERIAL PRIMARY KEY, name TEXT NOT NULL, email TEXT UNIQUE NOT NULL, password TEXT NOT NULL, role person_role NOT NULL, created TIMESTAMP NOT NULL)',
+			'CREATE TABLE household(id SERIAL PRIMARY KEY, name TEXT NOT NULL, created TIMESTAMP NOT NULL)',
+			"CREATE TYPE household_member_role AS ENUM('member', 'founder')",
+			'CREATE TABLE household_member(household_id INTEGER REFERENCES household(id) NOT NULL, person_id INTEGER REFERENCES person(id) NOT NULL, role household_member_role NOT NULL, created TIMESTAMP NOT NULL)'//,
+			//'CREATE TABLE '
 		];
 		
 		// Create all the tables
