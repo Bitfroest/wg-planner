@@ -29,6 +29,10 @@ module.exports = function(app) {
 	//main page
 	app.get('/main', customerRouter.main);
 	
+	app.get('/household', customerRouter.household);
+	app.post('/household/create', customerRouter.householdCreate);
+	//app.post('/household/leave', customerRouter.householdLeave);
+	
 	//imprint page
 	app.get('/imprint', publicRouter.imprint);
 	

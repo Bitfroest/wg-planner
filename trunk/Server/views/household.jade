@@ -1,0 +1,17 @@
+extends layout-customer
+
+block head
+
+block content
+	h1 Haushalte
+	
+	table
+		each household in households
+			tr
+				td= household.name
+				td
+					a(href='/household/leave?id=' + household.id) Verlassen
+
+	form(method='POST', action='/household/create')
+		input(type='text', placeholder='Name, z.B. Wohnung in München', name='name')
+		input(type='submit', value='Gründen')

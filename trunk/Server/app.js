@@ -34,9 +34,9 @@ if(app.get('env') == 'development') {
 }
 
 //Request logger (see console), only for development
-if(app.get('env') == 'development') {
+//if(app.get('env') == 'development') {
 	app.use(morgan('dev'));
-}
+//}
 
 //Compress (gzip) replies if the browser supports that
 //TODO does not work as expected
