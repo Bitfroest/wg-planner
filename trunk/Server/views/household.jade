@@ -13,5 +13,41 @@ block content
 					a(href='/household/leave?id=' + household.id) Verlassen
 
 	form(method='POST', action='/household/create')
-		input(type='text', placeholder='Name, z.B. Wohnung in München', name='name')
+		input(type='text', placeholder='Name, z.B. Wohnung in München', name='name', required='required')
 		input(type='submit', value='Gründen')
+	
+	h2 Einladungen an mich
+	
+	table
+		tr
+			th Von
+			th Haushalt
+			th(colspan='2')
+		each invitation in invitationsToMe
+			tr
+				td= invitation.person_name
+				td= invitation.household_name
+				td Annehmen
+				td Ablehnen
+	
+	h2 Einladungen von mir
+	
+	table
+		th An
+		th Haushalt
+		th
+		each invitation in invitationsFromMe
+			tr
+				td= invitation.person_name
+				td= invitation.household_name
+				td Zurückziehen
+				
+	h2 Einladen
+	
+	form(method='POST', action='/household/invitation/create')
+		select(name='household', size='1')
+			option(value='') -- Wähle Haushalt --
+			each household in households
+				option(value=household.id)= household.name
+		input(type='email', name='email', placeholder='freund@example.de', required='required')
+		input(type='submit', value='Einladen')
