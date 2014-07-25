@@ -11,6 +11,7 @@ var cookieParser = require('cookie-parser');
 var session = require('express-session');
 var compress = require('compression');
 var morgan = require('morgan');
+var expressValidator = require('express-validator');
 var routes = require('./routes');
 var config = require('./config.js');
 var pg = require('pg.js');
@@ -47,6 +48,9 @@ app.use(serveStatic('public/'));
 
 //Parse body (urlencoded/json) from HTML forms and XHR requests
 app.use(bodyParser());
+
+//Form validator
+app.use(expressValidator());
 
 //Parse cookies from request headers
 app.use(cookieParser(dbinfo.cookieSecret));
