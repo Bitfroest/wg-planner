@@ -8,6 +8,9 @@ block content
 	table
 		each household in households
 			tr
+				td
+					if household.role === 'founder'
+						span (Gründer)
 				td= household.name
 				td
 					a(href='/household/leave?id=' + household.id) Verlassen
@@ -44,10 +47,13 @@ block content
 				
 	h2 Einladen
 	
+	p Du musst Gründer sein, um Einladen zu können.
+	
 	form(method='POST', action='/household/invitation/create')
 		select(name='household', size='1')
 			option(value='') -- Wähle Haushalt --
 			each household in households
-				option(value=household.id)= household.name
+				if household.role === 'founder'
+					option(value=household.id)= household.name
 		input(type='email', name='email', placeholder='freund@example.de', required='required')
 		input(type='submit', value='Einladen')

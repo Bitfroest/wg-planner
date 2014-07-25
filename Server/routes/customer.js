@@ -17,7 +17,7 @@ exports.household = function(req, res) {
 			}
 			
 			async.series({
-				households : client.query.bind(client, 'SELECT h.id AS id, h.name AS name FROM household h ' +
+				households : client.query.bind(client, 'SELECT h.id AS id, h.name AS name, m.role AS role FROM household h ' +
 					'JOIN household_member m ON (h.id = m.household_id) WHERE m.person_id = $1', [req.session.personId]),
 				invitationsToMe : client.query.bind(client, 'SELECT p.name as person_name, h.name as household_name ' +
 					'FROM household_invitation i JOIN person p ' +
@@ -85,9 +85,22 @@ exports.householdCreate = function(req, res) {
 exports.householdInvitationCreate = function(req, res) {
 	if(req.session.loggedIn) {
 	
+		req.checkBody('household', 'Haushalt auswählen').isInt();
+		req.checkBody('email', 'Mail-Adresse hat ungültiges Format').isEmail();
+		
+		var errors = req.validationErrors();
+	
+		if(errors) {
+			res.redirect('/household?error=true');
+			return;
+		}
+	
+		req.sanitize('household').toInt();
+		req.sanitize('email').toString();
+	
 		var form = {
-			householdId: parseInt(req.body.household),
-			email: '' + req.body.email
+			householdId: req.body.household,
+			email: req.body.email
 		};
 	
 		req.getDb(function(err, client, done) {
@@ -104,18 +117,45 @@ exports.householdInvitationCreate = function(req, res) {
 				}
 			
 				// if there is an entry the current user is a member of this household
-				if(result.rows.length == 1) {
+				if(result.rows.length == 1 && result.rows[0].role === 'founder') {
 					
 					// now get the id of the person with the given email
 					client.query('SELECT id FROM person WHERE email = $1', [form.email], function(err, result) {
 						
 						if(err) {
-							return console.error('Failed to get person.id by email');
+							return console.error('Failed to get person.id by email', err);
 						}
 					
-						if(result.rows.length == 1) {
+						if(result.rows.length != 1) {
+							return console.error('Could not find person by email');
+						}
+						
+						form.toPersonId = parseInt(result.rows[0].id);
+						
+						if(form.toPersonId == req.session.personId) {
+							res.redirect('/household?error=send_inv_to_myself');
+							return;
+						}
+						
+						// check if there is already an invitation for the given household and target person
+						client.query('SELECT count(*) AS count FROM household_invitation WHERE to_person_id=$1 AND household_id=$2',
+							[form.toPersonId, form.householdId], function(err, result){
+						
+							if(err) {
+								return console.error('Failed to load existing invitations', err);
+							}
+							
+							console.info(result.rows);
+							
+							// if there is an invitation then error
+							if(parseInt(result.rows[0].count) > 0) {
+								console.info('Es gibt bereits eine Einladung für Person ' + form.toPersonId + ' und Haushalt ' + form.householdId);
+								res.redirect('/household?error=1');
+								return;
+							}
+						
 							client.query('INSERT INTO household_invitation(household_id,from_person_id,to_person_id,created) VALUES($1,$2,$3,$4)',
-								[form.householdId, req.session.personId, result.rows[0].id, new Date()], function(err, result) {
+								[form.householdId, req.session.personId, form.toPersonId, new Date()], function(err, result) {
 								
 								done();
 								
@@ -126,13 +166,11 @@ exports.householdInvitationCreate = function(req, res) {
 								res.redirect('/household?success=true');
 								
 							});
-						} else {
-							console.error('Could not find person by email');
-						}
+						});
 					});
 					
 				} else {
-					console.error('Cannot create an invitation: Not a member of the household!');
+					console.error('Cannot create an invitation: Not the founder of the household!');
 				}
 			});
 		});
