@@ -1,5 +1,13 @@
-CREATE TABLE dbinfo(version INTEGER NOT NULL, cookiesecret TEXT NOT NULL, sessionsecret TEXT NOT NULL);
-CREATE TABLE session(id TEXT PRIMARY KEY, data TEXT NOT NULL, created TIMESTAMPTZ NOT NULL);
+CREATE TABLE dbinfo (
+	version INTEGER NOT NULL,
+	cookiesecret TEXT NOT NULL,
+	sessionsecret TEXT NOT NULL
+);
+CREATE TABLE session (
+	id TEXT PRIMARY KEY,
+	data TEXT NOT NULL,
+	created TIMESTAMPTZ NOT NULL
+);
 
 CREATE TYPE person_role AS ENUM('customer', 'admin');
 CREATE TABLE person (
@@ -26,6 +34,7 @@ CREATE TABLE household_member (
 );
 CREATE INDEX ON household_member(household_id);
 CREATE INDEX ON household_member(person_id);
+CREATE UNIQUE INDEX ON household_member(household_id, person_id);
 
 CREATE TABLE household_invitation (
 	household_id INTEGER REFERENCES household(id) NOT NULL,
@@ -36,3 +45,4 @@ CREATE TABLE household_invitation (
 CREATE INDEX ON household_invitation(household_id);
 CREATE INDEX ON household_invitation(from_person_id);
 CREATE INDEX ON household_invitation(to_person_id);
+CREATE UNIQUE INDEX ON household_invitation(to_person_id, household_id);
