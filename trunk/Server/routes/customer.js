@@ -116,7 +116,7 @@ exports.householdInvitationCreate = function(req, res) {
 					return console.error('Failed to find household_member', err);
 				}
 			
-				// if there is an entry the current user is a member of this household
+				// if there is an entry the current user is the founder of this household
 				if(result.rows.length == 1 && result.rows[0].role === 'founder') {
 					
 					// now get the id of the person with the given email
@@ -132,28 +132,36 @@ exports.householdInvitationCreate = function(req, res) {
 						
 						form.toPersonId = parseInt(result.rows[0].id);
 						
+						// tried to invite myself
 						if(form.toPersonId == req.session.personId) {
 							res.redirect('/household?error=send_inv_to_myself');
 							return;
 						}
 						
 						// check if there is already an invitation for the given household and target person
-						client.query('SELECT count(*) AS count FROM household_invitation WHERE to_person_id=$1 AND household_id=$2',
+						client.query('SELECT '
+							+ 'EXISTS (SELECT 1 FROM household_invitation WHERE to_person_id=$1 AND household_id=$2 LIMIT 1) AS inv,'
+							+ 'EXISTS (SELECT 1 FROM household_member WHERE person_id=$1 AND household_id=$2 LIMIT 1) AS mem',
 							[form.toPersonId, form.householdId], function(err, result){
 						
 							if(err) {
-								return console.error('Failed to load existing invitations', err);
+								return console.error('Failed to load existing invitations and/or membership', err);
 							}
 							
 							console.info(result.rows);
 							
 							// if there is an invitation then error
-							if(parseInt(result.rows[0].count) > 0) {
-								console.info('Es gibt bereits eine Einladung für Person ' + form.toPersonId + ' und Haushalt ' + form.householdId);
-								res.redirect('/household?error=1');
+							if(result.rows[0].inv) {
+								res.redirect('/household?error=has_already_invitation');
 								return;
 							}
-						
+					
+							// if the person is already member
+							if(result.rows[0].mem) {
+								res.redirect('/household?error=is_already_member');
+								return;
+							}
+					
 							client.query('INSERT INTO household_invitation(household_id,from_person_id,to_person_id,created) VALUES($1,$2,$3,$4)',
 								[form.householdId, req.session.personId, form.toPersonId, new Date()], function(err, result) {
 								
