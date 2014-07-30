@@ -33,6 +33,7 @@ module.exports = function(app) {
 	app.post('/household/create', customerRouter.householdCreate);
 	app.post('/household/invitation/create', customerRouter.householdInvitationCreate);
 	app.post('/household/invitation/accept', customerRouter.householdInvitationAccept);
+	app.post('/household/invitation/decline', customerRouter.householdInvitationDecline);
 	//app.post('/household/leave', customerRouter.householdLeave);
 	
 	//imprint page

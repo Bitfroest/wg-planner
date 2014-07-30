@@ -34,7 +34,10 @@ block content
 					form(method='POST', action='/household/invitation/accept')
 						input(type='hidden', name='household', value=invitation.household_id)
 						input(type='submit', value='Annehmen')
-				td Ablehnen
+				td
+					form(method='POST', action='/household/invitation/decline')
+						input(type='hidden', name='household', value=invitation.household_id)
+						input(type='submit', value='Ablehnen')
 	
 	h2 Einladungen von mir
 	
