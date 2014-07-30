@@ -19,7 +19,7 @@ exports.household = function(req, res) {
 			async.series({
 				households : client.query.bind(client, 'SELECT h.id AS id, h.name AS name, m.role AS role FROM household h ' +
 					'JOIN household_member m ON (h.id = m.household_id) WHERE m.person_id = $1', [req.session.personId]),
-				invitationsToMe : client.query.bind(client, 'SELECT p.name as person_name, h.name as household_name ' +
+				invitationsToMe : client.query.bind(client, 'SELECT p.name as person_name, h.name as household_name, h.id as household_id ' +
 					'FROM household_invitation i JOIN person p ' +
 					'ON (i.from_person_id = p.id) JOIN household h ON (i.household_id = h.id) WHERE i.to_person_id = $1',
 					[req.session.personId]),
@@ -183,6 +183,66 @@ exports.householdInvitationCreate = function(req, res) {
 			});
 		});
 
+	} else {
+		res.redirect('/sid_wrong');
+	}
+};
+
+// refuse
+exports.householdInvitationAccept = function(req, res) {
+	if(req.session.loggedIn) {
+		
+		req.checkBody('household').isInt();
+		//req.checkQuery('type').matches(/accept|refuse/).isString();
+		
+		var errors = req.validationErrors();
+	
+		if(errors) {
+			res.redirect('/household?error=true');
+			return;
+		}
+		
+		req.sanitize('household').toInt();
+		//req.sanitize('type').toString();
+		
+		var form = {
+			household : req.body.household//,
+			//type : req.query.type
+		};
+		
+		req.getDb(function(err, client, done) {
+			if(err) {
+				return console.error('Failed to connect in householdInvitationAcceptRefuse', err);
+			}
+			
+			// check if there is an invitation for the given household
+			client.query('DELETE FROM household_invitation WHERE to_person_id=$1 AND household_id=$2',
+				[req.session.personId, form.household], function(err, result) {
+			
+				if(err) {
+					return console.error('Failed to delete existing invitation', err);
+				}
+				
+				// if there is no such invitation
+				if(result.rowCount == 0) {
+					res.redirect('/household?error=inv_not_found');
+					return;
+				}
+				
+				client.query('INSERT INTO household_member(household_id,person_id,role,created) VALUES($1,$2,$3,$4)',
+					[form.household, req.session.personId, 'member', new Date()], function(err, result) {
+				
+					done();
+				
+					if(err) {
+						return console.error('Failed to insert new member', err);
+					}
+				
+					res.redirect('/household?success=true');
+				});
+			});
+		});
+		
 	} else {
 		res.redirect('/sid_wrong');
 	}
