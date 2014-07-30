@@ -188,12 +188,10 @@ exports.householdInvitationCreate = function(req, res) {
 	}
 };
 
-// refuse
 exports.householdInvitationAccept = function(req, res) {
 	if(req.session.loggedIn) {
 		
 		req.checkBody('household').isInt();
-		//req.checkQuery('type').matches(/accept|refuse/).isString();
 		
 		var errors = req.validationErrors();
 	
@@ -203,16 +201,14 @@ exports.householdInvitationAccept = function(req, res) {
 		}
 		
 		req.sanitize('household').toInt();
-		//req.sanitize('type').toString();
 		
 		var form = {
-			household : req.body.household//,
-			//type : req.query.type
+			household : req.body.household
 		};
 		
 		req.getDb(function(err, client, done) {
 			if(err) {
-				return console.error('Failed to connect in householdInvitationAcceptRefuse', err);
+				return console.error('Failed to connect in householdInvitationAccept', err);
 			}
 			
 			// check if there is an invitation for the given household
@@ -243,6 +239,53 @@ exports.householdInvitationAccept = function(req, res) {
 			});
 		});
 		
+	} else {
+		res.redirect('/sid_wrong');
+	}
+};
+
+exports.householdInvitationDecline = function(req, res) {
+	if(req.session.loggedIn) {
+	
+		req.checkBody('household').isInt();
+		
+		var errors = req.validationErrors();
+	
+		if(errors) {
+			res.redirect('/household?error=true');
+			return;
+		}
+		
+		req.sanitize('household').toInt();
+		
+		var form = {
+			household : req.body.household
+		};
+		
+		req.getDb(function(err, client, done) {
+			if(err) {
+				return console.error('Failed to connect in householdInvitationDecline', err);
+			}
+			
+			client.query('DELETE FROM household_invitation WHERE to_person_id=$1 AND household_id=$2',
+				[req.session.personId, form.household], function(err, result) {
+			
+				done();
+			
+				if(err) {
+					return console.error('Failed to decline invitation', err);
+				}
+				
+				if(result.rowCount == 0) {
+					res.redirect('/household?error=inv_not_found');
+					return;
+				}
+			
+				res.redirect('/household?success=true');
+			
+			});
+		});
+	
 	} else {
 		res.redirect('/sid_wrong');
 	}
