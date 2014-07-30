@@ -34,6 +34,7 @@ module.exports = function(app) {
 	app.post('/household/invitation/create', customerRouter.householdInvitationCreate);
 	app.post('/household/invitation/accept', customerRouter.householdInvitationAccept);
 	app.post('/household/invitation/decline', customerRouter.householdInvitationDecline);
+	app.post('/household/invitation/cancel', customerRouter.householdInvitationCancel);
 	//app.post('/household/leave', customerRouter.householdLeave);
 	
 	//imprint page
