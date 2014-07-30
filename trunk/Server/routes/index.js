@@ -32,6 +32,7 @@ module.exports = function(app) {
 	app.get('/household', customerRouter.household);
 	app.post('/household/create', customerRouter.householdCreate);
 	app.post('/household/invitation/create', customerRouter.householdInvitationCreate);
+	app.post('/household/invitation/accept', customerRouter.householdInvitationAccept);
 	//app.post('/household/leave', customerRouter.householdLeave);
 	
 	//imprint page
