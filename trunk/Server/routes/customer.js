@@ -23,7 +23,8 @@ exports.household = function(req, res) {
 					'FROM household_invitation i JOIN person p ' +
 					'ON (i.from_person_id = p.id) JOIN household h ON (i.household_id = h.id) WHERE i.to_person_id = $1',
 					[req.session.personId]),
-				invitationsFromMe : client.query.bind(client, 'SELECT p.name as person_name, h.name as household_name ' +
+				invitationsFromMe : client.query.bind(client, 'SELECT p.name as person_name, h.name as household_name, '+
+					'h.id as household_id, p.id as to_person_id ' +
 					'FROM household_invitation i JOIN person p ' +
 					'ON (i.to_person_id = p.id) JOIN household h ON (i.household_id = h.id) WHERE i.from_person_id = $1',
 					[req.session.personId])
@@ -283,6 +284,55 @@ exports.householdInvitationDecline = function(req, res) {
 			
 				res.redirect('/household?success=true');
 			
+			});
+		});
+	
+	} else {
+		res.redirect('/sid_wrong');
+	}
+};
+
+exports.householdInvitationCancel = function(req, res) {
+	if(req.session.loggedIn) {
+	
+		req.checkBody('household').isInt();
+		req.checkBody('to_person').isInt();
+		
+		var errors = req.validationErrors();
+	
+		if(errors) {
+			res.redirect('/household?error=true');
+			return;
+		}
+		
+		req.sanitize('household').toInt();
+		req.sanitize('to_person').toInt();
+		
+		var form = {
+			household : req.body.household,
+			toPerson : req.body.to_person
+		};
+		
+		req.getDb(function(err, client, done) {
+			if(err) {
+				return console.error('Failed to connect in householdInvitationCancel', err);
+			}
+			
+			client.query('DELETE FROM household_invitation WHERE from_person_id=$1 AND to_person_id=$2 AND household_id=$3',
+				[req.session.personId, form.toPerson, form.household], function(err, result) {
+				
+				done();
+				
+				if(err) {
+					return console.error('Failed to accept invitation', err);
+				}
+				
+				if(result.rowCount == 0) {
+					res.redirect('/household?error=inv_not_found');
+					return;
+				}
+				
+				res.redirect('/household?success=true');
 			});
 		});
 	
