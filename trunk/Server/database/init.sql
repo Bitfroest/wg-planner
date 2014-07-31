@@ -46,3 +46,24 @@ CREATE INDEX ON household_invitation(household_id);
 CREATE INDEX ON household_invitation(from_person_id);
 CREATE INDEX ON household_invitation(to_person_id);
 CREATE UNIQUE INDEX ON household_invitation(to_person_id, household_id);
+
+CREATE TABLE shopping_list (
+	id SERIAL PRIMARY KEY,
+	shop_name TEXT NOT NULL,
+	household_id INTEGER REFERENCES household(id) NOT NULL,
+	buyer_person_id INTEGER REFERENCES person(id) NOT NULL,
+	created TIMESTAMPTZ NOT NULL
+);
+CREATE INDEX ON shopping_list(household_id);
+CREATE INDEX ON shopping_list(buyer_person_id);
+
+CREATE TABLE shopping_item (
+	id SERIAL PRIMARY KEY,
+	name TEXT NOT NULL,
+	shopping_list_id INTEGER REFERENCES shopping_list(id) NOT NULL,
+	owner_person_id INTEGER REFERENCES person(id) NOT NULL,
+	price INTEGER NOT NULL,
+	barcode TEXT
+);
+CREATE INDEX ON shopping_item(shopping_list_id);
+CREATE INDEX ON shopping_item(owner_person_id);
