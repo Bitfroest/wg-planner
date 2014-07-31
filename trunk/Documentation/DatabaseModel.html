@@ -5,8 +5,8 @@
 	<style type="text/css">
 		.table {
 			margin: 20px 10px;
-			min-width: 400px;
-			width: 400px;
+			min-width: 500px;
+			width: 500px;
 			border-collapse: collapse;
 			/*border-bottom: 2px solid black;
 			border-top: 2px solid black;*/
@@ -65,18 +65,26 @@
 		<tr><td>created</td><td>timestamp not null</td></tr>
 	</table>
 	
-	<table id="household_member" class="table">
-		<tr><th colspan="2">household_member</th></tr>
-		<tr><td>household_id</td><td>foreign identifier to <a href="#household">household</a></td></tr>
-		<tr><td>person_id</td><td>foreign identifier to <a href="#person">person</a></td></tr>
-		<tr><td>role</td><td>enum{member, founder} not null</td></tr>
-		<tr><td>created</td><td>timestamp not null</td></tr>
-	</table>
-	
 	<table id="household" class="table">
 		<tr><th colspan="2">household</th></tr>
 		<tr><td>id</td><td>identifier</td></tr>
 		<tr><td>name</td><td>text not null</td></tr>
+		<tr><td>created</td><td>timestamp not null</td></tr>
+	</table>
+	
+	<table id="household_member" class="table">
+		<tr><th colspan="2">household_member</th></tr>
+		<tr><td>household_id</td><td>foreign identifier to <a href="#household">household</a> not null</td></tr>
+		<tr><td>person_id</td><td>foreign identifier to <a href="#person">person</a> not null</td></tr>
+		<tr><td>role</td><td>enum{member, founder} not null</td></tr>
+		<tr><td>created</td><td>timestamp not null</td></tr>
+	</table>
+	
+	<table id="household_invitation" class="table">
+		<tr><th colspan="2">household_invitation</th></tr>
+		<tr><td>household_id</td><td>foreign identifier to <a href="#household">household</a> not null</td></tr>
+		<tr><td>from_person_id</td><td>foreign identifier to <a href="#person">person</a> not null</td></tr>
+		<tr><td>to_person_id</td><td>foreign identifier to <a href="#person">person</a> not null</td></tr>
 		<tr><td>created</td><td>timestamp not null</td></tr>
 	</table>
 	
@@ -105,13 +113,6 @@
 		<tr><td>owner</td><td>foreign identifier to <a href="#person">person</a></td></tr>
 		<tr><td>costs</td><td>currency</td></tr>
 		<tr><td>barcode</td><td>string</td></tr>
-	</table>
-	
-	<table id="invitation" class="table">
-		<tr><th colspan="2">invitation</th></tr>
-		<tr><td>group</td><td>foreign identifier to <a href="#group">group</a></td></tr>
-		<tr><td>person</td><td>foreign identifier to <a href="#person">person</a></td></tr>
-		<tr><td>created</td><td>datetime</td></tr>
 	</table>
 </body>
 </html>
