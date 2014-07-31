@@ -88,31 +88,31 @@
 		<tr><td>created</td><td>timestamp not null</td></tr>
 	</table>
 	
+	<table id="shopping_list" class="table">
+		<tr><th colspan="2">shopping_list</th></tr>
+		<tr><td>id</td><td>identifier</td></tr>
+		<tr><td>shop_name</td><td>string not null</td></tr>
+		<tr><td>household_id</td><td>foreign identifier to <a href="#household">household</a></td></tr>
+		<tr><td>buyer_person_id</td><td>foreign identifier to <a href="#person">person</a></td></tr>
+		<tr><td>created</td><td>timestamp not null</td></tr>
+		<tr><td>(shop_id)</td><td>foreign identifier to <a href="#shop">shop</a></td></tr>
+	</table>
+	
+	<table id="shopping_item" class="table">
+		<tr><th colspan="2">shopping_item</th></tr>
+		<tr><td>id</td><td>identifier</td></tr>
+		<tr><td>name</td><td>string not null</td></tr>
+		<tr><td>shopping_list_id</td><td>foreign identifier to <a href="#shopping_list">shopping_list</a></td></tr>
+		<tr><td>owner_person_id</td><td>foreign identifier to <a href="#person">person</a></td></tr>
+		<tr><td>price</td><td>money not null</td></tr>
+		<tr><td>barcode</td><td>string</td></tr>
+	</table>
+	
 	<table id="shop" class="table">
 		<tr><th colspan="2">shop</th></tr>
 		<tr><td>id</td><td>identifier</td></tr>
-		<tr><td>name</td><td>string</td></tr>
+		<tr><td>name</td><td>string not null</td></tr>
 		<tr><td>location</td><td>geo coordinates</td></tr>
-	</table>
-	
-	<table id="shoppinglist" class="table">
-		<tr><th colspan="2">shoppinglist</th></tr>
-		<tr><td>id</td><td>identifier</td></tr>
-		<tr><td>when</td><td>datetime</td></tr>
-		<tr><td>where</td><td>foreign identifier to <a href="#shop">shop</a></td></tr>
-		<tr><td>group</td><td>foreign identifier to <a href="#group">group</a></td></tr>
-		<tr><td>buyer</td><td>foreign identifier to <a href="#person">person</a></td></tr>
-		<tr><td>costs</td><td>currency</td></tr>
-	</table>
-	
-	<table id="item" class="table">
-		<tr><th colspan="2">item</th></tr>
-		<tr><td>id</td><td>identifier</td></tr>
-		<tr><td>name</td><td>string</td></tr>
-		<tr><td>shoppinglist</td><td>foreign identifier to <a href="#shoppinglist">shoppinglist</a></td></tr>
-		<tr><td>owner</td><td>foreign identifier to <a href="#person">person</a></td></tr>
-		<tr><td>costs</td><td>currency</td></tr>
-		<tr><td>barcode</td><td>string</td></tr>
 	</table>
 </body>
 </html>
