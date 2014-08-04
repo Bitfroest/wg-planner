@@ -29,12 +29,13 @@ module.exports = function(app) {
 	//main page
 	app.get('/main', customerRouter.main);
 	
-	app.get('/household', customerRouter.household);
+	app.get('/household', customerRouter.householdOverview);
 	app.post('/household/create', customerRouter.householdCreate);
 	app.post('/household/invitation/create', customerRouter.householdInvitationCreate);
 	app.post('/household/invitation/accept', customerRouter.householdInvitationAccept);
 	app.post('/household/invitation/decline', customerRouter.householdInvitationDecline);
 	app.post('/household/invitation/cancel', customerRouter.householdInvitationCancel);
+	app.get('/household/:id', customerRouter.household);
 	//app.post('/household/leave', customerRouter.householdLeave);
 	
 	//imprint page

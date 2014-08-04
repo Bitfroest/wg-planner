@@ -1,0 +1,22 @@
+extends layout-customer
+
+block head
+
+block content
+	h1= title
+	
+	h2 Mitglieder
+	
+	table
+		each member in members
+			tr
+				td= member.name
+				td= member.email
+				
+	h2 Einkaufslisten
+	
+	table
+		each shoppingList in shoppingLists
+			tr
+				td= shoppingList.id
+				td= shoppingList.shop_name
