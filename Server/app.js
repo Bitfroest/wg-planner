@@ -12,6 +12,7 @@ var session = require('express-session');
 var compress = require('compression');
 var morgan = require('morgan');
 var expressValidator = require('express-validator');
+var csrf = require('csurf');
 var routes = require('./routes');
 var config = require('./config.js');
 var pg = require('pg.js');
@@ -63,6 +64,9 @@ app.use(session({
 	//cookie: {secure: false, maxAge: 300000}
 }));
 
+//CSRF protection
+app.use(csrf());
+
 app.use(function(req, res, next){
 	req.getDb = function(callback) {
 		pg.connect(config.databaseURL, callback);
@@ -75,8 +79,12 @@ routes(app);
 
 //Error handler
 app.use(function(err, req, res, next){
-	console.error(err.stack);
-	res.send(500, 'Something broke!');
+	if(err.message === 'invalid csrf token') {
+		res.send(403, 'Invalid CSRF Token');
+	} else {
+		console.error(err.stack);
+		res.send(500, 'Something broke!');
+	}
 });
 
 //Start listening on a specific port

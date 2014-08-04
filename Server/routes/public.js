@@ -9,7 +9,7 @@ exports.index = function(req, res) {
 };
  
 exports.login = function(req, res) {
-	res.render('login', {title : 'Anmelden'});
+	res.render('login', {title : 'Anmelden', _csrf: req.csrfToken()});
 };
 
 exports.doLogin = function(req, res) {
@@ -78,29 +78,40 @@ exports.sidWrong = function(req, res) {
 };
 
 exports.register = function(req, res) {
-	res.render('register', {title : 'Registrieren'});
+	console.info(req.session.errors);
+	
+	var errors = req.session.errors;
+	req.session.errors = null;
+	
+	res.render('register', {title : 'Registrieren', errors : errors, _csrf: req.csrfToken()});
 };
 
 exports.doRegister = function(req, res) {
 	// creates a new user/person or fails if any data is not given
-	var person = {
-		name : ''+req.body.user,
-		email : ''+req.body.email,
-		password : ''+req.body.password
-	};
 	
-	if(person.name.length < 2) {
-		res.redirect('/register?error=name');
+	req.checkBody('user', 'Name muss zwischen 3 und 20 Zeichen lang sein.').len(3, 20);
+	req.checkBody('user', 'Name darf nur Buchstaben, Zahlen, Punkte, Binde- und Unterstriche enthalten.').matches(/^[a-zA-Z][a-zA-Z0-9 \.\-_]*$/);
+	req.checkBody('email', 'E-Mail-Adresse muss ein gültiges Format haben.').len(3, 40).isEmail();
+	req.checkBody('password', 'Passwort muss zwischen 6 und 40 Zeichen lang sein.').len(6, 40);
+	
+	var errors = req.validationErrors();
+	
+	if(errors) {
+		req.session.errors = errors;
+		res.redirect('/register');
+		
 		return;
 	}
-	if(!(/^[^@]+@[^@]+\.[^@]+$/.test(person.email))) {
-		res.redirect('/register?error=email');
-		return;
-	}
-	if(person.password.length < 6) {
-		res.redirect('/register?error=password');
-		return;
-	}
+	
+	req.sanitize('user').toString();
+	req.sanitize('email').toString();
+	req.sanitize('password').toString();
+	
+	var person = {
+		name : req.body.user,
+		email : req.body.email,
+		password : req.body.password
+	};
 
 	passwordHelper.hashPassword(person.password, function(err, key) {
 		if(err) {

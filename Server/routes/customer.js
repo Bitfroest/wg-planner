@@ -91,6 +91,7 @@ exports.household = function(req, res) {
 					});
 					
 					res.render('show-household', {
+						_csrf: req.csrfToken(),
 						members: result.members.rows,
 						shoppingLists: shoppingLists,
 						title: 'Haushalt ' + form.householdName
@@ -132,6 +133,7 @@ exports.householdOverview = function(req, res) {
 				}
 				
 				res.render('household', {
+					_csrf: req.csrfToken(),
 					households: result.households.rows,
 					invitationsToMe: result.invitationsToMe.rows,
 					invitationsFromMe: result.invitationsFromMe.rows,

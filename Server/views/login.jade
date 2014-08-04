@@ -6,6 +6,7 @@ block content
 	p Mit Ihrem Konto anmelden.
 	#login.login
 		form(name='login', action='/login', method='post')
+			input(type='hidden', name='_csrf', value=_csrf)
 			//label(for='email', id='label_email') E-Mail
 			input(type='text', required='required', id='email', name='email',spellcheck='false', placeholder='jemand@example.com')
 			//label(for='password') Passwort
