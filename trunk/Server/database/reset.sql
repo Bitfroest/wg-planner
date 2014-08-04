@@ -10,3 +10,7 @@ DROP TYPE IF EXISTS household_member_role CASCADE;
 DROP TABLE IF EXISTS household_member CASCADE;
 
 DROP TABLE IF EXISTS household_invitation CASCADE;
+
+DROP TABLE IF EXISTS shopping_list CASCADE;
+
+DROP TABLE IF EXISTS shopping_item CASCADE;
