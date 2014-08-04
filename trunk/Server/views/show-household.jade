@@ -12,11 +12,16 @@ block content
 			tr
 				td= member.name
 				td= member.email
+				td
+					if member.role === 'founder'
+						span &#9733;
+	p &#9733; = Gründer
 				
 	h2 Einkaufslisten
 	
 	table
 		each shoppingList in shoppingLists
 			tr
-				td= shoppingList.id
+				td= shoppingList.person_name
 				td= shoppingList.shop_name
+				td= shoppingList.created
