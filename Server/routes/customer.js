@@ -1,5 +1,22 @@
 var async = require('async');
 
+function formatDate(date) {
+	return zeroPadding(date.getDate(), 2) + '.' + zeroPadding(date.getMonth() + 1, 2) + '.' + date.getFullYear() 
+		+ ' ' + zeroPadding(date.getHours(), 2) + ':' + zeroPadding(date.getMinutes(), 2);
+}
+
+function zeroPadding(number, len) {
+	// convert number to string
+	number = '' +  number;
+	
+	// prepend zeroes until the length is reached
+	while(number.length < len) {
+		number = '0' + number;
+	}
+	
+	return number;
+}
+
 exports.main = function(req, res) {
 	if(req.session.loggedIn) {
 		res.render('main', {title : 'Übersicht'});
@@ -60,7 +77,7 @@ exports.household = function(req, res) {
 						[form.householdId]),
 					shoppingLists: client.query.bind(client, 'SELECT l.id AS id, p.name AS person_name, l.created AS created, l.shop_name AS shop_name ' +
 						'FROM shopping_list l JOIN person p ON (p.id=l.buyer_person_id) ' +
-						'WHERE l.household_id=$1', [form.householdId])
+						'WHERE l.household_id=$1 ORDER BY created DESC', [form.householdId])
 				}, function(err, result) {
 					done();
 					
@@ -68,9 +85,14 @@ exports.household = function(req, res) {
 						return console.error('Could not load members of household', err);
 					}
 					
+					var shoppingLists = result.shoppingLists.rows.map(function(list) {
+						list.created = formatDate(list.created);
+						return list;
+					});
+					
 					res.render('show-household', {
 						members: result.members.rows,
-						shoppingLists: result.shoppingLists.rows,
+						shoppingLists: shoppingLists,
 						title: 'Haushalt ' + form.householdName
 					});
 				});
