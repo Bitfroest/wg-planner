@@ -10,10 +10,84 @@ exports.main = function(req, res) {
 
 exports.household = function(req, res) {
 	if(req.session.loggedIn) {
+	
+		req.checkParams('id').isInt();
+	
+		var errors = req.validationErrors();
+	
+		if(errors) {
+			res.redirect('/internal_error');
+			return;
+		}
+		
+		req.sanitize('id').toInt();
+	
+		var form = {
+			householdId : req.params.id
+		};
+	
+		req.getDb(function(err, client, done) {
+			if(err) {
+				return console.error('Failed to connect in customer.household');
+			}
+			
+			client.query('SELECT h.name AS name, m.person_id IS NOT NULL AS is_member ' +
+				'FROM household h LEFT JOIN household_member m ON(h.id=m.household_id AND m.person_id=$1) ' +
+				'WHERE h.id = $2', [req.session.personId, form.householdId], function(err, result) {
+			
+				if(err) {
+					return console.error('Could not load name of household', err);
+				}
+			
+				if(result.rows.length == 0) {
+					done();
+					res.redirect('/internal_error=household_not_found');
+					return;
+				}
+			
+				// you are not member of this household --> do not give him any information
+				if(!result.rows[0].is_member) {
+					done();
+					res.redirect('/internal_error?error=not_a_member');
+					return;
+				}
+				
+				form.householdName = result.rows[0].name;
+			
+				async.series({
+					members: client.query.bind(client, 'SELECT p.id AS id, p.name AS name, p.email AS email ' +
+						'FROM person p JOIN household_member m ON (p.id=m.person_id) WHERE m.household_id=$1',
+						[form.householdId]),
+					shoppingLists: client.query.bind(client, 'SELECT l.id AS id, p.name AS person_name, l.created AS created ' +
+						'FROM shopping_list l JOIN person p ON (p.id=l.buyer_person_id) ' +
+						'WHERE l.household_id=$1', [form.householdId])
+				}, function(err, result) {
+					done();
+					
+					if(err) {
+						return console.error('Could not load members of household', err);
+					}
+					
+					res.render('show-household', {
+						members: result.members.rows,
+						shoppingLists: result.shoppingLists.rows,
+						title: 'Haushalt ' + form.householdName
+					});
+				});
+			});
+		});
+		
+	} else {
+		res.redirect('/sid_wrong');
+	}
+};
+
+exports.householdOverview = function(req, res) {
+	if(req.session.loggedIn) {
 		
 		req.getDb(function(err, client, done) {
 			if(err) {
-				return console.error('Failed to connect in customer.household', err);
+				return console.error('Failed to connect in customer.householdOverview', err);
 			}
 			
 			async.series({
