@@ -6,6 +6,7 @@ block head
 block content
 	p Richten Sie Ihr kostenloses Konto ein.
 	form(name='register', action='/register', method='post')
+		input(type='hidden', name='_csrf', value=_csrf)
 		label(for='name') Benutzername
 		input(type='text', required='required', id='user', name='user', placeholder='User1234')
 		label(for='email') E-Mail
@@ -13,3 +14,6 @@ block content
 		label(for='password') Passwort
 		input(type='password', required='required', id='password', name='password', value='', placeholder='Kennwort')
 		input(type='submit', value='Registrieren')
+	if errors
+		each error in errors
+			p= error.msg
