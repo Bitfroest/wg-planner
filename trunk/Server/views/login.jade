@@ -8,7 +8,7 @@ block content
 		form(name='login', action='/login', method='post')
 			input(type='hidden', name='_csrf', value=_csrf)
 			//label(for='email', id='label_email') E-Mail
-			input(type='text', required='required', id='email', name='email',spellcheck='false', placeholder='jemand@example.com')
+			input(type='email', required='required', id='email', name='email',spellcheck='false', placeholder='jemand@example.com')
 			//label(for='password') Passwort
 			input(type='password', required='required', id='password', name='password', placeholder='Kennwort')
 			input(type='checkbox', name='persistent', id='persistent', value='1')

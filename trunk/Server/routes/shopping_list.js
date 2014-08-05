@@ -42,6 +42,8 @@ exports.shoppingListCreate = function(req, res) {
 				client.query('INSERT INTO shopping_list(shop_name,household_id,buyer_person_id,created) VALUES($1,$2,$3,$4)',
 					[form.shop, form.household, form.buyer, new Date()], function(err, result) {
 				
+					done();
+				
 					if(err) {
 						return console.error('Failed to insert new shopping_list', err);
 					}
