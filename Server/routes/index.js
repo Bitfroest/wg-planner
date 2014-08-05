@@ -7,6 +7,7 @@
  
 var publicRouter = require('./public');
 var customerRouter = require('./customer');
+var shoppingListRouter = require('./shopping_list');
 
 module.exports = function(app) {
 
@@ -37,6 +38,8 @@ module.exports = function(app) {
 	app.post('/household/invitation/cancel', customerRouter.householdInvitationCancel);
 	app.get('/household/:id', customerRouter.household);
 	//app.post('/household/leave', customerRouter.householdLeave);
+	
+	app.post('/shopping_list/create', shoppingListRouter.shoppingListCreate);
 	
 	//imprint page
 	app.get('/imprint', publicRouter.imprint);

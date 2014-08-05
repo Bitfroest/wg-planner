@@ -94,6 +94,7 @@ exports.household = function(req, res) {
 						_csrf: req.csrfToken(),
 						members: result.members.rows,
 						shoppingLists: shoppingLists,
+						household: form.householdId,
 						title: 'Haushalt ' + form.householdName
 					});
 				});

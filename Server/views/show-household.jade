@@ -25,3 +25,13 @@ block content
 				td= shoppingList.person_name
 				td= shoppingList.shop_name
 				td= shoppingList.created
+	
+	form(method='POST', action='/shopping_list/create')
+		input(type='hidden', name='_csrf', value=_csrf)
+		input(type='hidden', name='household', value=household)
+		select(name='buyer')
+			option(value='') -- Wähle Einkäufer --
+			each member in members
+				option(value=member.id)= member.name
+		input(type='text', name='shop', value='', placeholder='Laden, z.B. Supermarkt an der Ecke')
+		input(type='submit', value='Erstellen')
