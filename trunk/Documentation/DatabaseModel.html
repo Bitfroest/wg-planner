@@ -92,8 +92,10 @@
 		<tr><th colspan="2">shopping_list</th></tr>
 		<tr><td>id</td><td>identifier</td></tr>
 		<tr><td>shop_name</td><td>string not null</td></tr>
-		<tr><td>household_id</td><td>foreign identifier to <a href="#household">household</a></td></tr>
-		<tr><td>buyer_person_id</td><td>foreign identifier to <a href="#person">person</a></td></tr>
+		<tr><td>household_id</td><td>foreign identifier to <a href="#household">household</a> not null</td></tr>
+		<tr><td>buyer_person_id</td><td>foreign identifier to <a href="#person">person</a> not null</td></tr>
+		<tr><td>creator_person_id</td><td>foreign identifier to <a href="#person">person</a> not null</td></tr>
+		<tr><td>shopped</td><td>timestamp not null</td></tr>
 		<tr><td>created</td><td>timestamp not null</td></tr>
 		<tr><td>(shop_id)</td><td>foreign identifier to <a href="#shop">shop</a></td></tr>
 	</table>
@@ -102,8 +104,8 @@
 		<tr><th colspan="2">shopping_item</th></tr>
 		<tr><td>id</td><td>identifier</td></tr>
 		<tr><td>name</td><td>string not null</td></tr>
-		<tr><td>shopping_list_id</td><td>foreign identifier to <a href="#shopping_list">shopping_list</a></td></tr>
-		<tr><td>owner_person_id</td><td>foreign identifier to <a href="#person">person</a></td></tr>
+		<tr><td>shopping_list_id</td><td>foreign identifier to <a href="#shopping_list">shopping_list</a> not null</td></tr>
+		<tr><td>owner_person_id</td><td>foreign identifier to <a href="#person">person</a> not null</td></tr>
 		<tr><td>price</td><td>money not null</td></tr>
 		<tr><td>barcode</td><td>string</td></tr>
 	</table>
