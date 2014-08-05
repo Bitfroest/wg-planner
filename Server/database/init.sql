@@ -52,6 +52,8 @@ CREATE TABLE shopping_list (
 	shop_name TEXT NOT NULL,
 	household_id INTEGER REFERENCES household(id) NOT NULL,
 	buyer_person_id INTEGER REFERENCES person(id) NOT NULL,
+	creator_person_id INTEGER REFERENCES person(id) NOT NULL,
+	shopped TIMESTAMPTZ NOT NULL,
 	created TIMESTAMPTZ NOT NULL
 );
 CREATE INDEX ON shopping_list(household_id);

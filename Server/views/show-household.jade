@@ -24,7 +24,7 @@ block content
 			tr
 				td= shoppingList.person_name
 				td= shoppingList.shop_name
-				td= shoppingList.created
+				td= shoppingList.shopped
 	
 	form(method='POST', action='/shopping_list/create')
 		input(type='hidden', name='_csrf', value=_csrf)
@@ -34,4 +34,6 @@ block content
 			each member in members
 				option(value=member.id)= member.name
 		input(type='text', name='shop', value='', placeholder='Laden, z.B. Supermarkt an der Ecke')
+		input(type='text', name='shopped_date', placeholder='TT.MM.JJJJ')
+		input(type='text', name='shopped_time', placeholder='HH:MM')
 		input(type='submit', value='Erstellen')
