@@ -22,9 +22,12 @@ block content
 	table
 		each shoppingList in shoppingLists
 			tr
+				td
+					a(href='/shopping_list/' + shoppingList.id) Ansehen
 				td= shoppingList.person_name
 				td= shoppingList.shop_name
 				td= shoppingList.shopped
+				td= formatCurrency(shoppingList.total)
 	
 	form(method='POST', action='/shopping_list/create')
 		input(type='hidden', name='_csrf', value=_csrf)

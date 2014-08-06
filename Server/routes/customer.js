@@ -1,4 +1,5 @@
 var async = require('async');
+var formatEuro = require('../utils/currency_formatter.js').formatEuro;
 
 function formatDate(date) {
 	return zeroPadding(date.getDate(), 2) + '.' + zeroPadding(date.getMonth() + 1, 2) + '.' + date.getFullYear() 
@@ -72,10 +73,13 @@ exports.household = function(req, res) {
 				form.householdName = result.rows[0].name;
 			
 				async.series({
-					members: client.query.bind(client, 'SELECT p.id AS id, p.name AS name, p.email AS email, m.role as role ' +
+					members: client.query.bind(client,
+						'SELECT p.id AS id, p.name AS name, p.email AS email, m.role as role ' +
 						'FROM person p JOIN household_member m ON (p.id=m.person_id) WHERE m.household_id=$1',
 						[form.householdId]),
-					shoppingLists: client.query.bind(client, 'SELECT l.id AS id, p.name AS person_name, l.shopped AS shopped, l.shop_name AS shop_name ' +
+					shoppingLists: client.query.bind(client,
+						'SELECT l.id AS id, p.name AS person_name, l.shopped AS shopped, l.shop_name AS shop_name, ' +
+						'(SELECT coalesce(sum(i.price),0) FROM shopping_item i WHERE i.shopping_list_id = l.id) AS total ' +
 						'FROM shopping_list l JOIN person p ON (p.id=l.buyer_person_id) ' +
 						'WHERE l.household_id=$1 ORDER BY l.shopped DESC', [form.householdId])
 				}, function(err, result) {
@@ -95,7 +99,8 @@ exports.household = function(req, res) {
 						members: result.members.rows,
 						shoppingLists: shoppingLists,
 						household: form.householdId,
-						title: 'Haushalt ' + form.householdName
+						title: 'Haushalt ' + form.householdName,
+						formatCurrency : formatEuro
 					});
 				});
 			});
