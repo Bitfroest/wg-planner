@@ -1,0 +1,44 @@
+extends layout-customer
+
+block head
+
+block content
+	h1= title
+	
+	a(href='/household/' + shoppingList.household_id)= 'Zurück zum Haushalt (' + shoppingList.household_name + ')'
+	
+	h2 Infos
+	
+	table
+		tr
+			td Laden
+			td= shoppingList.shop_name
+		tr
+			td Einkäufer
+			td= shoppingList.buyer_name
+		tr
+			td Wann?
+			td= shoppingList.shopped
+		tr
+			td Erstellt
+			td= 'von ' + shoppingList.creator_name + ' am ' + shoppingList.created
+	
+	h2 Anteile
+	
+	table
+		each person in stats
+			tr
+				td= person.name
+				td= formatCurrency(person.total)
+		tr
+			th Gesamt
+			th= formatCurrency(shoppingList.total_price)
+	
+	h2 Items
+	
+	table
+		each item in shoppingItems
+			tr
+				td= item.name
+				td= item.owner_name
+				td= formatCurrency(item.price)

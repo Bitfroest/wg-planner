@@ -1,3 +1,7 @@
+var async = require('async');
+
+var formatEuro = require('../utils/currency_formatter.js').formatEuro;
+
 exports.shoppingListCreate = function(req, res) {
 	if(req.session.loggedIn) {
 	
@@ -62,6 +66,93 @@ exports.shoppingListCreate = function(req, res) {
 				});
 			});
 		});
+	} else {
+		res.redirect('/sid_wrong');
+	}
+};
+
+exports.shoppingList = function(req, res) {
+	if(req.session.loggedIn) {
+		
+		req.checkParams('id').isInt();
+		
+		var errors = req.validationErrors();
+	
+		if(errors) {
+			res.redirect('/internal_error');
+			return;
+		}
+		
+		req.sanitize('id').toInt();
+		
+		var form = {
+			shoppingListId : parseInt(req.params.id)
+		};
+		
+		req.getDb(function(err, client, done) {
+			if(err) {
+				return console.error('Failed to connect in shoppingList');
+			}
+			
+			client.query(
+				'SELECT l.shop_name AS shop_name, bp.name AS buyer_name, cp.name AS creator_name, l.created AS created, ' +
+				'h.name AS household_name, l.household_id AS household_id, l.shopped AS shopped, m.role IS NOT NULL AS is_member, ' +
+				'(SELECT coalesce(sum(i.price), 0) FROM shopping_item i WHERE i.shopping_list_id= $2) AS total_price ' +
+				'FROM shopping_list l ' +
+				'LEFT JOIN person bp ON (l.buyer_person_id=bp.id) ' +
+				'LEFT JOIN person cp ON (l.creator_person_id=cp.id) ' +
+				'LEFT JOIN household h ON (l.household_id=h.id) ' +
+				'LEFT JOIN household_member m ON (m.household_id=l.household_id AND m.person_id= $1) ' +
+				'WHERE l.id = $2',
+				[req.session.personId, form.shoppingListId],
+				function(err, result) {
+			
+				if(err) {
+					return console.error('Could not load shopping list information', err);
+				}
+				
+				if(result.rows.length == 0) {
+					res.redirect('/internal_error?error=shopping_list_not_found');
+					return;
+				}
+				
+				if(result.rows[0].is_member == false) {
+					res.redirect('/internal_error?error=not_a_member');
+				}
+				
+				form.shoppingListInfo = result.rows[0];
+				
+				async.series({
+					items : client.query.bind(client,
+						'SELECT i.name AS name, p.name as owner_name, i.price AS price ' +
+						'FROM shopping_item i ' +
+						'LEFT JOIN person p ON (i.owner_person_id=p.id) ' +
+						'WHERE i.shopping_list_id = $1 ',
+						[form.shoppingListId]),
+					stats : client.query.bind(client,
+						'SELECT (SELECT name FROM person WHERE id = owner_person_id) AS name, ' +
+						'sum(price) AS total FROM shopping_item ' +
+						'WHERE shopping_list_id=$1 GROUP BY owner_person_id',
+						[form.shoppingListId])
+				},
+				function(err, result) {
+					done();
+					
+					if(err) {
+						return console.error('Failed to load shopping items or stats', err);
+					}
+					
+					res.render('shopping_list', {
+						shoppingList : form.shoppingListInfo,
+						shoppingItems : result.items.rows,
+						stats : result.stats.rows,
+						title : 'Einkaufsliste',
+						formatCurrency : formatEuro
+					});
+				});
+			});
+		});
+		
 	} else {
 		res.redirect('/sid_wrong');
 	}
