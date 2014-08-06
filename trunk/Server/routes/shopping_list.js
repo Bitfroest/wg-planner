@@ -1,6 +1,7 @@
 var async = require('async');
 
 var formatEuro = require('../utils/currency_formatter.js').formatEuro;
+var formatDate = require('../utils/date_formatter.js').formatDate;
 
 exports.shoppingListCreate = function(req, res) {
 	if(req.session.loggedIn) {
@@ -147,6 +148,7 @@ exports.shoppingList = function(req, res) {
 						shoppingItems : result.items.rows,
 						stats : result.stats.rows,
 						title : 'Einkaufsliste',
+						formatDate : formatDate,
 						formatCurrency : formatEuro
 					});
 				});

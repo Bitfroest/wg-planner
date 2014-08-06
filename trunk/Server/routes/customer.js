@@ -1,22 +1,6 @@
 var async = require('async');
 var formatEuro = require('../utils/currency_formatter.js').formatEuro;
-
-function formatDate(date) {
-	return zeroPadding(date.getDate(), 2) + '.' + zeroPadding(date.getMonth() + 1, 2) + '.' + date.getFullYear() 
-		+ ' ' + zeroPadding(date.getHours(), 2) + ':' + zeroPadding(date.getMinutes(), 2);
-}
-
-function zeroPadding(number, len) {
-	// convert number to string
-	number = '' +  number;
-	
-	// prepend zeroes until the length is reached
-	while(number.length < len) {
-		number = '0' + number;
-	}
-	
-	return number;
-}
+var formatDate = require('../utils/date_formatter.js').formatDate;
 
 exports.main = function(req, res) {
 	if(req.session.loggedIn) {
@@ -89,18 +73,14 @@ exports.household = function(req, res) {
 						return console.error('Could not load members of household', err);
 					}
 					
-					var shoppingLists = result.shoppingLists.rows.map(function(list) {
-						list.shopped = formatDate(list.shopped);
-						return list;
-					});
-					
 					res.render('show-household', {
 						_csrf: req.csrfToken(),
 						members: result.members.rows,
-						shoppingLists: shoppingLists,
+						shoppingLists: result.shoppingLists.rows,
 						household: form.householdId,
 						title: 'Haushalt ' + form.householdName,
-						formatCurrency : formatEuro
+						formatCurrency : formatEuro,
+						formatDate : formatDate
 					});
 				});
 			});

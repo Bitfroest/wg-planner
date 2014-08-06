@@ -26,7 +26,7 @@ block content
 					a(href='/shopping_list/' + shoppingList.id) Ansehen
 				td= shoppingList.person_name
 				td= shoppingList.shop_name
-				td= shoppingList.shopped
+				td= formatDate(shoppingList.shopped)
 				td= formatCurrency(shoppingList.total)
 	
 	form(method='POST', action='/shopping_list/create')
