@@ -18,10 +18,10 @@ block content
 			td= shoppingList.buyer_name
 		tr
 			td Wann?
-			td= shoppingList.shopped
+			td= formatDate(shoppingList.shopped)
 		tr
 			td Erstellt
-			td= 'von ' + shoppingList.creator_name + ' am ' + shoppingList.created
+			td= 'von ' + shoppingList.creator_name + ' am ' + formatDate(shoppingList.created)
 	
 	h2 Anteile
 	
