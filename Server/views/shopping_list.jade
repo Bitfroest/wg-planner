@@ -42,3 +42,14 @@ block content
 				td= item.name
 				td= item.owner_name
 				td= formatCurrency(item.price)
+				
+	form(method='post', action='/shopping_item/create')
+		input(type='hidden', name='_csrf', value=_csrf)
+		input(type='hidden', name='shopping_list', value=shoppingList.id)
+		input(type='text', name='name', placeholder='Produktname')
+		select(name='owner')
+			option(value='') --Wähle Besitzer--
+			each member in members
+				option(value=member.id)= member.name
+		input(type='text', name='price', placeholder='Preis in €, z.B. 12.30')
+		input(type='submit', value='Erstellen')

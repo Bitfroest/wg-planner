@@ -8,6 +8,7 @@
 var publicRouter = require('./public');
 var customerRouter = require('./customer');
 var shoppingListRouter = require('./shopping_list');
+var shoppingItemRouter = require('./shopping_item');
 
 module.exports = function(app) {
 
@@ -41,6 +42,8 @@ module.exports = function(app) {
 	
 	app.post('/shopping_list/create', shoppingListRouter.shoppingListCreate);
 	app.get('/shopping_list/:id', shoppingListRouter.shoppingList);
+	
+	app.post('/shopping_item/create', shoppingItemRouter.shoppingItemCreate);
 	
 	//imprint page
 	app.get('/imprint', publicRouter.imprint);
