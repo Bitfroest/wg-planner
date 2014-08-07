@@ -98,6 +98,7 @@ exports.shoppingList = function(req, res) {
 			client.query(
 				'SELECT l.shop_name AS shop_name, bp.name AS buyer_name, cp.name AS creator_name, l.created AS created, ' +
 				'h.name AS household_name, l.household_id AS household_id, l.shopped AS shopped, m.role IS NOT NULL AS is_member, ' +
+				'l.id AS id, ' +
 				'(SELECT coalesce(sum(i.price), 0) FROM shopping_item i WHERE i.shopping_list_id= $2) AS total_price ' +
 				'FROM shopping_list l ' +
 				'LEFT JOIN person bp ON (l.buyer_person_id=bp.id) ' +
@@ -134,6 +135,13 @@ exports.shoppingList = function(req, res) {
 						'SELECT (SELECT name FROM person WHERE id = owner_person_id) AS name, ' +
 						'sum(price) AS total FROM shopping_item ' +
 						'WHERE shopping_list_id=$1 GROUP BY owner_person_id',
+						[form.shoppingListId]),
+					members : client.query.bind(client,
+						'SELECT p.id AS id, p.name AS name ' +
+						'FROM shopping_list l ' +
+						'JOIN household_member m ON (l.household_id=m.household_id) ' +
+						'JOIN person p ON (m.person_id=p.id) ' +
+						'WHERE l.id=$1',
 						[form.shoppingListId])
 				},
 				function(err, result) {
@@ -147,9 +155,11 @@ exports.shoppingList = function(req, res) {
 						shoppingList : form.shoppingListInfo,
 						shoppingItems : result.items.rows,
 						stats : result.stats.rows,
+						members : result.members.rows,
 						title : 'Einkaufsliste',
 						formatDate : formatDate,
-						formatCurrency : formatEuro
+						formatCurrency : formatEuro,
+						_csrf: req.csrfToken()
 					});
 				});
 			});
