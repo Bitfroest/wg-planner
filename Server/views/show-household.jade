@@ -22,19 +22,27 @@ block content
 	table
 		tr
 			td
-			td(colspan=members.length) ... hat Schulden bei ...
+			th(colspan=members.length) ... hat Schulden bei ...
 		tr
 			td
 			each buyer in members
-				td= buyer.name
+				th= buyer.name
+			th Schulden-Summe
+			th Differenz
 		each owner, ownerIndex in members
 			tr
-				td= owner.name
+				th= owner.name
 				each buyer, buyerIndex in members
 					if ownerIndex == buyerIndex
 						td -
 					else
-						td= formatCurrency(matrix[ownerIndex * members.length + buyerIndex].total)
+						td= formatCurrency2(debtsMatrix[ownerIndex * members.length + buyerIndex].total)
+				th= formatCurrency2(debtsSummary[ownerIndex].incoming)
+				th= formatCurrency2(debtsSummary[ownerIndex].diff)
+		tr
+			th Bezahlt-Summe
+			each sum in debtsSummary
+				th= formatCurrency2(sum.outgoing)
 					
 	p Von links nach rechts lesen!
 

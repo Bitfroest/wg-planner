@@ -67,8 +67,11 @@ exports.household = function(req, res) {
 						'(SELECT coalesce(sum(i.price),0) FROM shopping_item i WHERE i.shopping_list_id = l.id) AS total ' +
 						'FROM shopping_list l JOIN person p ON (p.id=l.buyer_person_id) ' +
 						'WHERE l.household_id=$1 ORDER BY l.shopped DESC', [form.householdId]),
-					matrix : client.query.bind(client,
+					debtsMatrix : client.query.bind(client,
 						'SELECT * FROM household_debts_matrix($1)',
+						[form.householdId]),
+					debtsSummary : client.query.bind(client,
+						'SELECT * FROM household_debts_summary($1)',
 						[form.householdId])
 				}, function(err, result) {
 					done();
@@ -82,9 +85,11 @@ exports.household = function(req, res) {
 						members: result.members.rows,
 						shoppingLists: result.shoppingLists.rows,
 						household: form.householdId,
-						matrix : result.matrix.rows,
+						debtsMatrix : result.debtsMatrix.rows,
+						debtsSummary : result.debtsSummary.rows,
 						title: 'Haushalt ' + form.householdName,
 						formatCurrency : formatEuro,
+						formatCurrency2 : function(x) { if(x === "0" || x === 0) return '-'; else return formatEuro(x); },
 						formatDate : formatDate
 					});
 				});
