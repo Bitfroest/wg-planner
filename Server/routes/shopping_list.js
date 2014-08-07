@@ -41,8 +41,9 @@ exports.shoppingListCreate = function(req, res) {
 				return console.error('Failed to connect in customer.household');
 			}
 			
-			client.query('SELECT EXISTS (SELECT 1 FROM household_member WHERE household_id=$1 AND person_id=$2 LIMIT 1) AS is_member',
-				[form.household, req.session.personId], function(err, result) {
+			client.query('SELECT EXISTS (SELECT 1 FROM household_member WHERE household_id=$1 AND person_id=$2 LIMIT 1) AS is_member, ' +
+				'EXISTS (SELECT 1 FROM household_member WHERE household_id=$1 AND person_id=$3 LIMIT 1) AS buyer_is_member',
+				[form.household, req.session.personId, form.buyer], function(err, result) {
 			
 				if(err) {
 					return console.error('Failed to check if household member', err);
@@ -50,6 +51,11 @@ exports.shoppingListCreate = function(req, res) {
 				
 				if(result.rows.length == 0 || result.rows[0].is_member == false) {
 					res.redirect('/internal_error?not_member');
+					return;
+				}
+				
+				if(result.rows[0].buyer_is_member == false) {
+					res.redirect('/internal_error?buyer_not_member');
 					return;
 				}
 				
