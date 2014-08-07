@@ -16,7 +16,28 @@ block content
 					if member.role === 'founder'
 						span &#9733;
 	p &#9733; = Gründer
-				
+		
+	h2 Schuldenmatrix
+	
+	table
+		tr
+			td
+			td(colspan=members.length) ... hat Schulden bei ...
+		tr
+			td
+			each buyer in members
+				td= buyer.name
+		each owner, ownerIndex in members
+			tr
+				td= owner.name
+				each buyer, buyerIndex in members
+					if ownerIndex == buyerIndex
+						td -
+					else
+						td= formatCurrency(matrix[ownerIndex * members.length + buyerIndex].total)
+					
+	p Von links nach rechts lesen!
+
 	h2 Einkaufslisten
 	
 	table

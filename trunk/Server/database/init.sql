@@ -69,3 +69,23 @@ CREATE TABLE shopping_item (
 );
 CREATE INDEX ON shopping_item(shopping_list_id);
 CREATE INDEX ON shopping_item(owner_person_id);
+
+CREATE FUNCTION household_debts_matrix (param_household_id INTEGER)
+RETURNS TABLE(owner INTEGER, buyer INTEGER, total BIGINT) AS $$
+    WITH members AS (
+		SELECT person_id AS id FROM household_member WHERE household_id = param_household_id
+	),
+	nullmatrix AS (
+		SELECT a.id AS owner, b.id AS buyer, 0 AS total FROM members a, members b
+	),
+	actualmatrix AS (
+		SELECT owner_person_id AS owner, buyer_person_id AS buyer, sum(price) AS total
+		FROM shopping_list l
+		JOIN shopping_item i ON (i.shopping_list_id = l.id) 
+		WHERE l.household_id = param_household_id
+		GROUP BY i.owner_person_id, l.buyer_person_id
+	)
+	SELECT n.owner AS owner, n.buyer AS buyer, coalesce(a.total, 0) AS total
+	FROM nullmatrix n LEFT JOIN actualmatrix a ON (n.buyer=a.buyer AND n.owner=a.owner)
+	ORDER BY owner ASC, buyer ASC
+$$ LANGUAGE SQL;

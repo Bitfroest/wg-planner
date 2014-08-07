@@ -59,13 +59,17 @@ exports.household = function(req, res) {
 				async.series({
 					members: client.query.bind(client,
 						'SELECT p.id AS id, p.name AS name, p.email AS email, m.role as role ' +
-						'FROM person p JOIN household_member m ON (p.id=m.person_id) WHERE m.household_id=$1',
+						'FROM person p JOIN household_member m ON (p.id=m.person_id) WHERE m.household_id=$1 ' +
+						'ORDER BY p.id ASC',
 						[form.householdId]),
 					shoppingLists: client.query.bind(client,
 						'SELECT l.id AS id, p.name AS person_name, l.shopped AS shopped, l.shop_name AS shop_name, ' +
 						'(SELECT coalesce(sum(i.price),0) FROM shopping_item i WHERE i.shopping_list_id = l.id) AS total ' +
 						'FROM shopping_list l JOIN person p ON (p.id=l.buyer_person_id) ' +
-						'WHERE l.household_id=$1 ORDER BY l.shopped DESC', [form.householdId])
+						'WHERE l.household_id=$1 ORDER BY l.shopped DESC', [form.householdId]),
+					matrix : client.query.bind(client,
+						'SELECT * FROM household_debts_matrix($1)',
+						[form.householdId])
 				}, function(err, result) {
 					done();
 					
@@ -78,6 +82,7 @@ exports.household = function(req, res) {
 						members: result.members.rows,
 						shoppingLists: result.shoppingLists.rows,
 						household: form.householdId,
+						matrix : result.matrix.rows,
 						title: 'Haushalt ' + form.householdName,
 						formatCurrency : formatEuro,
 						formatDate : formatDate
