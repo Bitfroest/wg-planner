@@ -22,7 +22,7 @@ exports.shoppingItemCreate = function(req, res) {
 			shoppingList : req.body.shopping_list,
 			name : req.body.name,
 			owner : req.body.owner,
-			price : req.body.price * 100
+			price : Math.round(req.body.price * 100)
 		};
 	
 		req.getDb(function(err, client, done) {
