@@ -4,7 +4,11 @@ html
 	body
 		header
 			p= personName
-			a(href='/dashboard') Dein Account
+			div(class='breadcrumbs')
+				a(href='/dashboard') Dashboard
+				each crumb in breadcrumbs
+					span(class='breadcrumbs-arrow')  &#8614; 
+					a(href=crumb.url)= crumb.text
 			form(method='post', action='/logout')
 				input(type='hidden', name='_csrf', value=_csrf)
 				input(type='submit', value='Logout')

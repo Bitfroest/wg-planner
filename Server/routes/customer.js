@@ -82,7 +82,8 @@ exports.household = function(req, res) {
 						title: 'Haushalt ' + form.householdName,
 						formatCurrency : formatEuro,
 						formatCurrency2 : function(x) { if(x === "0" || x === 0) return '-'; else return formatEuro(x); },
-						formatDate : formatDate
+						formatDate : formatDate,
+						breadcrumbs : [{url: '/household/' + form.householdId, text: 'Haushalt'}]
 					});
 				});
 			});
@@ -127,7 +128,8 @@ exports.dashboard = function(req, res) {
 					households: result.households.rows,
 					invitationsToMe: result.invitationsToMe.rows,
 					invitationsFromMe: result.invitationsFromMe.rows,
-					title: 'Haushalte'
+					title: 'Haushalte',
+					breadcrumbs : []
 				});
 			});
 		});
