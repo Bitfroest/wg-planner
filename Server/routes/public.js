@@ -62,7 +62,7 @@ exports.doLogin = function(req, res) {
 				}
 				req.session.personId = person.id;
 				req.session.loggedIn = true;
-				res.redirect('/main');
+				res.redirect('/dashboard');
 			});
 		});
 	});
@@ -146,25 +146,4 @@ exports.doRegister = function(req, res) {
 
 exports.imprint = function(req, res) {
 	res.render('imprint', {title : 'Impressum'});
-};
-
-exports.hello = function(req, res) {
-	var sess = req.session;
-	
-	if(sess.loggedIn) {
-		if(sess.views) {
-			sess.views++;
-			res.send('Views: '+sess.views);
-			res.cookie('bla',sess.views, {signed: true});
-		} else {
-			sess.views = 1;
-			res.send('Welcome to the view counter. Refresh!');
-		}
-	} else {
-		res.send('Please login');
-	}
-};
-
-exports.group = function(req, res) {
-	res.send('Group: '+req.params.groupId);
 };

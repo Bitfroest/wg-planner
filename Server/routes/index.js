@@ -28,10 +28,9 @@ module.exports = function(app) {
 	app.get('/register', publicRouter.register);
 	app.post('/register', publicRouter.doRegister);
 	
-	//main page
-	app.get('/main', customerRouter.main);
+	//main page if logged in
+	app.get('/dashboard', customerRouter.dashboard);
 	
-	app.get('/household', customerRouter.householdOverview);
 	app.post('/household/create', customerRouter.householdCreate);
 	app.post('/household/invitation/create', customerRouter.householdInvitationCreate);
 	app.post('/household/invitation/accept', customerRouter.householdInvitationAccept);
@@ -47,10 +46,4 @@ module.exports = function(app) {
 	
 	//imprint page
 	app.get('/imprint', publicRouter.imprint);
-	
-	//view counter
-	app.get('/hello.txt', publicRouter.hello);
-
-	//URL with parameter
-	app.get('/group/:groupId', publicRouter.group);
 };
