@@ -144,6 +144,49 @@ exports.doRegister = function(req, res) {
 	});
 };
 
+exports.personUpdate = function(req, res) {
+	// creates a new user/person or fails if any data is not given
+	
+	req.checkBody('name', 'Name muss zwischen 3 und 20 Zeichen lang sein.').len(3, 20);
+	req.checkBody('name', 'Name darf nur Buchstaben, Zahlen, Punkte, Binde- und Unterstriche enthalten.').matches(/^[a-zA-Z][a-zA-Z0-9 \.\-_]*$/);
+	
+	var errors = req.validationErrors();
+	
+	if(errors) {
+		res.redirect('/internal_error?validation_error');
+		return;
+	}
+	
+	req.sanitize('name').toString();
+	
+	var form = {
+		name : req.body.name
+	};
+	
+	req.getDb(function(err, client, done) {
+		if(err) {
+			console.error('Failed to connect in personUpdate', err);
+			res.redirect('/register?error=internal');
+			return;
+		}
+		
+		client.query('UPDATE person SET name=$1 WHERE id=$2', [form.name, req.session.personId], function(err, result) {
+			done();
+			
+			if(err) {
+				console.error('Failed to update person', err);
+				return;
+			}
+		
+			if(result.rowCount !== 1) {
+				console.error('Did not update any row in personUpdate');
+			}
+			
+			res.redirect('/dashboard');
+		});
+	});		
+};
+
 exports.imprint = function(req, res) {
 	res.render('imprint', {title : 'Impressum'});
 };

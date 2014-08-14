@@ -3,6 +3,23 @@ extends layout-customer
 block head
 
 block content
+	h1 Mein Account
+	
+	form(method='post', action='/person/update')
+		input(type='hidden', name='_csrf', value=_csrf)
+		table
+			tr
+				td Anzeige-Name
+				td
+					input(type='text', name='name', value=person.name)
+			tr
+				td Mail-Adresse
+				td= person.email
+			tr
+				td Status
+				td= ({customer:'Standard-Account', admin:'Admin'})[person.role]
+		input(type='submit', value='Aktualisieren')
+
 	h1 Haushalte
 	
 	table
@@ -14,7 +31,7 @@ block content
 					if household.role === 'founder'
 						span &#9733;
 				td
-					a(href='/household/leave?id=' + household.id) Verlassen
+					//- a(href='/household/leave?id=' + household.id) Verlassen
 
 	p &#9733; = Gründer
 					

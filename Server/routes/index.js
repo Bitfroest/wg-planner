@@ -28,6 +28,8 @@ module.exports = function(app) {
 	app.get('/register', publicRouter.register);
 	app.post('/register', publicRouter.doRegister);
 	
+	app.post('/person/update', publicRouter.personUpdate);
+	
 	//main page if logged in
 	app.get('/dashboard', customerRouter.dashboard);
 	
