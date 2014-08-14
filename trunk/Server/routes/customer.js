@@ -2,14 +2,6 @@ var async = require('async');
 var formatEuro = require('../utils/currency_formatter.js').formatEuro;
 var formatDate = require('../utils/date_formatter.js').formatDate;
 
-exports.main = function(req, res) {
-	if(req.session.loggedIn) {
-		res.render('main', {title : 'Übersicht'});
-	} else {
-		res.redirect('/sid_wrong');
-	}
-};
-
 exports.household = function(req, res) {
 	if(req.session.loggedIn) {
 	
@@ -101,7 +93,7 @@ exports.household = function(req, res) {
 	}
 };
 
-exports.householdOverview = function(req, res) {
+exports.dashboard = function(req, res) {
 	if(req.session.loggedIn) {
 		
 		req.getDb(function(err, client, done) {
