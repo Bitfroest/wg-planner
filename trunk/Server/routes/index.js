@@ -21,7 +21,7 @@ module.exports = function(app) {
 	app.post('/login', publicRouter.doLogin);
 	
 	//logout
-	app.get('/logout', publicRouter.logout);
+	app.post('/logout', publicRouter.logout);
 	// wrong session ID
 	app.get('/sid_wrong', publicRouter.sidWrong);
 	
