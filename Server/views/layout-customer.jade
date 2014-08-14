@@ -5,5 +5,7 @@ html
 		header
 			p= personName
 			a(href='/dashboard') Dein Account
-			a(href='/logout') Logout
+			form(method='post', action='/logout')
+				input(type='hidden', name='_csrf', value=_csrf)
+				input(type='submit', value='Logout')
 		block content
