@@ -165,7 +165,11 @@ exports.shoppingList = function(req, res) {
 						title : 'Einkaufsliste',
 						formatDate : formatDate,
 						formatCurrency : formatEuro,
-						_csrf: req.csrfToken()
+						_csrf: req.csrfToken(),
+						breadcrumbs: [
+							{url: '/household/' + form.shoppingListInfo.household_id, text: 'Haushalt'},
+							{url: '/shopping_list/' + form.shoppingListInfo.id, text: 'Einkaufsliste'}
+						]
 					});
 				});
 			});
