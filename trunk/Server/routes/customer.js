@@ -102,6 +102,7 @@ exports.dashboard = function(req, res) {
 			}
 			
 			async.series({
+				person : client.query.bind(client, 'SELECT name, email, role FROM person WHERE id=$1', [req.session.personId]),
 				households : client.query.bind(client, 'SELECT h.id AS id, h.name AS name, m.role AS role FROM household h ' +
 					'JOIN household_member m ON (h.id = m.household_id) WHERE m.person_id = $1', [req.session.personId]),
 				invitationsToMe : client.query.bind(client, 'SELECT p.name as person_name, h.name as household_name, h.id as household_id ' +
@@ -122,6 +123,7 @@ exports.dashboard = function(req, res) {
 				
 				res.render('household', {
 					_csrf: req.csrfToken(),
+					person : result.person.rows[0],
 					households: result.households.rows,
 					invitationsToMe: result.invitationsToMe.rows,
 					invitationsFromMe: result.invitationsFromMe.rows,
@@ -159,7 +161,7 @@ exports.householdCreate = function(req, res) {
 						return console.error('Failed to insert household_member', err);
 					}
 					
-					res.redirect('/household');
+					res.redirect('/dashboard');
 				});
 			});
 		});
@@ -178,7 +180,7 @@ exports.householdInvitationCreate = function(req, res) {
 		var errors = req.validationErrors();
 	
 		if(errors) {
-			res.redirect('/household?error=true');
+			res.redirect('/dashboard?error=true');
 			return;
 		}
 	
@@ -221,7 +223,7 @@ exports.householdInvitationCreate = function(req, res) {
 						
 						// tried to invite myself
 						if(form.toPersonId == req.session.personId) {
-							res.redirect('/household?error=send_inv_to_myself');
+							res.redirect('/dashboard?error=send_inv_to_myself');
 							return;
 						}
 						
@@ -239,13 +241,13 @@ exports.householdInvitationCreate = function(req, res) {
 							
 							// if there is an invitation then error
 							if(result.rows[0].inv) {
-								res.redirect('/household?error=has_already_invitation');
+								res.redirect('/dashboard?error=has_already_invitation');
 								return;
 							}
 					
 							// if the person is already member
 							if(result.rows[0].mem) {
-								res.redirect('/household?error=is_already_member');
+								res.redirect('/dashboard?error=is_already_member');
 								return;
 							}
 					
@@ -258,7 +260,7 @@ exports.householdInvitationCreate = function(req, res) {
 									return console.error('Could not insert new invitation', err);
 								}
 								
-								res.redirect('/household?success=true');
+								res.redirect('/dashboard?success=true');
 								
 							});
 						});
@@ -283,7 +285,7 @@ exports.householdInvitationAccept = function(req, res) {
 		var errors = req.validationErrors();
 	
 		if(errors) {
-			res.redirect('/household?error=true');
+			res.redirect('/dashboard?error=true');
 			return;
 		}
 		
@@ -308,7 +310,7 @@ exports.householdInvitationAccept = function(req, res) {
 				
 				// if there is no such invitation
 				if(result.rowCount == 0) {
-					res.redirect('/household?error=inv_not_found');
+					res.redirect('/dashboard?error=inv_not_found');
 					return;
 				}
 				
@@ -321,7 +323,7 @@ exports.householdInvitationAccept = function(req, res) {
 						return console.error('Failed to insert new member', err);
 					}
 				
-					res.redirect('/household?success=true');
+					res.redirect('/dashboard?success=true');
 				});
 			});
 		});
@@ -339,7 +341,7 @@ exports.householdInvitationDecline = function(req, res) {
 		var errors = req.validationErrors();
 	
 		if(errors) {
-			res.redirect('/household?error=true');
+			res.redirect('/dashboard?error=true');
 			return;
 		}
 		
@@ -364,11 +366,11 @@ exports.householdInvitationDecline = function(req, res) {
 				}
 				
 				if(result.rowCount == 0) {
-					res.redirect('/household?error=inv_not_found');
+					res.redirect('/dashboard?error=inv_not_found');
 					return;
 				}
 			
-				res.redirect('/household?success=true');
+				res.redirect('/dashboard?success=true');
 			
 			});
 		});
@@ -387,7 +389,7 @@ exports.householdInvitationCancel = function(req, res) {
 		var errors = req.validationErrors();
 	
 		if(errors) {
-			res.redirect('/household?error=true');
+			res.redirect('/dashboard?error=true');
 			return;
 		}
 		
@@ -414,11 +416,11 @@ exports.householdInvitationCancel = function(req, res) {
 				}
 				
 				if(result.rowCount == 0) {
-					res.redirect('/household?error=inv_not_found');
+					res.redirect('/dashboard?error=inv_not_found');
 					return;
 				}
 				
-				res.redirect('/household?success=true');
+				res.redirect('/dashboard?success=true');
 			});
 		});
 	
