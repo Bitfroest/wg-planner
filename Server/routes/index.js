@@ -35,6 +35,7 @@ module.exports = function(app) {
 	app.get('/dashboard', customerRouter.dashboard);
 	
 	app.post('/household/create', customerRouter.householdCreate);
+	app.post('/household/update', customerRouter.householdUpdate);
 	app.post('/household/invitation/create', householdInvitationRouter.householdInvitationCreate);
 	app.post('/household/invitation/accept', householdInvitationRouter.householdInvitationAccept);
 	app.post('/household/invitation/decline', householdInvitationRouter.householdInvitationDecline);

@@ -5,6 +5,14 @@ block head
 block content
 	h1= title
 	
+	if householdRole === 'founder'
+		form(method='post', action='/household/update')
+			input(type='hidden', name='_csrf', value=_csrf)
+			input(type='hidden', name='id', value=household)
+			label Name
+			input(type='text', name='name', value=householdName)
+			input(type='submit', value='Ändern')
+	
 	h2 Mitglieder
 	
 	table

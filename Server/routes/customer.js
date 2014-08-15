@@ -25,7 +25,7 @@ exports.household = function(req, res) {
 				return console.error('Failed to connect in customer.household');
 			}
 			
-			client.query('SELECT h.name AS name, m.person_id IS NOT NULL AS is_member ' +
+			client.query('SELECT h.name AS name, m.person_id IS NOT NULL AS is_member, m.role AS role ' +
 				'FROM household h LEFT JOIN household_member m ON(h.id=m.household_id AND m.person_id=$1) ' +
 				'WHERE h.id = $2', [req.session.personId, form.householdId], function(err, result) {
 			
@@ -47,6 +47,7 @@ exports.household = function(req, res) {
 				}
 				
 				form.householdName = result.rows[0].name;
+				form.householdRole = result.rows[0].role;
 			
 				async.series({
 					members: client.query.bind(client,
@@ -77,6 +78,8 @@ exports.household = function(req, res) {
 						members: result.members.rows,
 						shoppingLists: result.shoppingLists.rows,
 						household: form.householdId,
+						householdName : form.householdName,
+						householdRole : form.householdRole,
 						debtsMatrix : result.debtsMatrix.rows,
 						debtsSummary : result.debtsSummary.rows,
 						title: 'Haushalt ' + form.householdName,
@@ -164,6 +167,66 @@ exports.householdCreate = function(req, res) {
 					}
 					
 					res.redirect('/dashboard');
+				});
+			});
+		});
+		
+	} else {
+		res.redirect('/sid_wrong');
+	}
+};
+
+exports.householdUpdate = function(req, res) {
+	if(req.session.loggedIn) {
+		
+		req.checkBody('id').isInt();
+		req.checkBody('name').isLength(3, 30);
+		
+		var errors = req.validationErrors();
+	
+		if(errors) {
+			res.redirect('/internal_error');
+			return;
+		}
+		
+		var form = {
+			id : req.sanitize('id').toInt(),
+			name : req.sanitize('name').toString()
+		};
+		
+		req.getDb(function(err, client, done) {
+			if(err) {
+				console.error('Failed to connect in householdUpdate', err);
+				return;
+			}
+			
+			client.query('SELECT role FROM household_member WHERE person_id=$1 AND household_id=$2 LIMIT 1',
+				[req.session.personId, form.id], function(err, result) {
+				
+				if(err) {
+					console.error('Failed to load household_member', err);
+					return;
+				}
+				
+				if(result.rows.length == 0) {
+					res.redirect('/internal_error?not_member');
+					return;
+				}
+				
+				if(result.rows[0].role !== 'founder') {
+					res.redirect('/internal_error?not_founder');
+					return;
+				}
+				
+				client.query('UPDATE household SET name=$1 WHERE id=$2', [form.name, form.id], function(err, result) {
+					done();
+					
+					if(err) {
+						console.error('Failed to update household', err);
+						return;
+					}
+					
+					res.redirect('/household/' + form.id);
 				});
 			});
 		});
