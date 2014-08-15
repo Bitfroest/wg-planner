@@ -7,6 +7,7 @@
  
 var publicRouter = require('./public');
 var customerRouter = require('./customer');
+var householdRouter = require('./household');
 var householdInvitationRouter = require('./household_invitation');
 var shoppingListRouter = require('./shopping_list');
 var shoppingItemRouter = require('./shopping_item');
@@ -34,13 +35,13 @@ module.exports = function(app) {
 	//main page if logged in
 	app.get('/dashboard', customerRouter.dashboard);
 	
-	app.post('/household/create', customerRouter.householdCreate);
-	app.post('/household/update', customerRouter.householdUpdate);
+	app.post('/household/create', householdRouter.householdCreate);
+	app.post('/household/update', householdRouter.householdUpdate);
 	app.post('/household/invitation/create', householdInvitationRouter.householdInvitationCreate);
 	app.post('/household/invitation/accept', householdInvitationRouter.householdInvitationAccept);
 	app.post('/household/invitation/decline', householdInvitationRouter.householdInvitationDecline);
 	app.post('/household/invitation/cancel', householdInvitationRouter.householdInvitationCancel);
-	app.get('/household/:id', customerRouter.household);
+	app.get('/household/:id', householdRouter.household);
 	//app.post('/household/leave', customerRouter.householdLeave);
 	
 	app.post('/shopping_list/create', shoppingListRouter.shoppingListCreate);
