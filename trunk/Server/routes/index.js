@@ -45,6 +45,7 @@ module.exports = function(app) {
 	//app.post('/household/leave', customerRouter.householdLeave);
 	
 	app.post('/shopping_list/create', shoppingListRouter.shoppingListCreate);
+	app.post('/shopping_list/update', shoppingListRouter.shoppingListUpdate);
 	app.get('/shopping_list/:id', shoppingListRouter.shoppingList);
 	
 	app.post('/shopping_item/create', shoppingItemRouter.shoppingItemCreate);

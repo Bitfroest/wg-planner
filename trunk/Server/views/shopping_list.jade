@@ -7,19 +7,32 @@ block content
 	
 	h2 Infos
 	
-	table
-		tr
-			td Laden
-			td= shoppingList.shop_name
-		tr
-			td Einkäufer
-			td= shoppingList.buyer_name
-		tr
-			td Wann?
-			td= formatDate(shoppingList.shopped)
-		tr
-			td Erstellt
-			td= 'von ' + shoppingList.creator_name + ' am ' + formatDate(shoppingList.created)
+	form(method='post', action='/shopping_list/update')
+		input(type='hidden', name='_csrf', value=_csrf)
+		input(type='hidden', name='id', value=shoppingList.id)
+		table
+			tr
+				td Laden
+				td
+					input(type='text', name='shop', value=shoppingList.shop_name)
+				td= shoppingList.shop_name
+			tr
+				td Einkäufer
+				td
+					select(name='buyer')
+						each member in members
+								option(value=member.id, selected=(shoppingList.buyer_id == member.id))= member.name
+				td= shoppingList.buyer_name
+			tr
+				td Wann?
+				td
+					input(type='text', name='shopped_date', value=formatDate(shoppingList.shopped, 'date'))
+					input(type='text', name='shopped_time', value=formatDate(shoppingList.shopped, 'time'))
+				td= formatDate(shoppingList.shopped)
+			tr
+				td Erstellt
+				td= 'von ' + shoppingList.creator_name + ' am ' + formatDate(shoppingList.created)
+		input(type='submit', value='Ändern')
 	
 	h2 Anteile
 	

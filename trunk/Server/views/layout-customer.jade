@@ -7,7 +7,7 @@ html
 			div(class='breadcrumbs')
 				a(href='/dashboard') Dashboard
 				each crumb in breadcrumbs
-					span(class='breadcrumbs-arrow')  &#8614; 
+					span(class='breadcrumbs-arrow')  &#8594; 
 					a(href=crumb.url)= crumb.text
 			form(method='post', action='/logout')
 				input(type='hidden', name='_csrf', value=_csrf)
