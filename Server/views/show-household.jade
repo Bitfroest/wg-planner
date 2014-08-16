@@ -27,14 +27,17 @@ block content
 						span &#9733;
 	p &#9733; = Gründer
 	
-	p Du musst Gründer sein, um Einladen zu können.
+	div.alert.alert-info(role='alert')
+		p Du musst Gründer sein, um Einladen zu können.
 	
 	if householdRole === 'founder'
 		form(method='POST', action='/household/invitation/create')
 			input(type='hidden', name='_csrf', value=_csrf)
 			input(type='hidden', name='household', value=household)
-			input(type='email', name='email', placeholder='freund@example.de', required='required')
-			input(type='submit', value='Einladen')
+			div.input-group
+				input.form-control(type='email', name='email', placeholder='freund@example.de', required='required')
+				span.input-group-btn
+					input.btn.btn-primary(type='submit', value='Einladen')
 		
 	h2.sub-header Schuldenmatrix
 	
