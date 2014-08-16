@@ -55,9 +55,14 @@ html
 				div#noscript-warning
 					|Diese Seite funktioniert am Besten mit JavaScript
 			block content
+		include inc/foot
 		script(type="application/javascript")
 			|function fpDisplay(visibility) {
 			|	document.getElementById('fail-popups').style.display= visibility;
 			|};
 			|fpDisplay("none");
-		include inc/foot
+		//jQuery (necessary for Bootstrap's JavaScript plugins)
+		script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js')
+		//Include all compiled plugins (below), or include individual files as needed
+		script(src='/js/bootstrap.min.js')
+		
