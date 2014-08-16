@@ -78,17 +78,3 @@ block content
 						input(type='hidden', name='household', value=invitation.household_id)
 						input(type='hidden', name='to_person', value=invitation.to_person_id)
 						input(type='submit', value='Zurücknehmen')
-				
-	h2 Einladen
-	
-	p Du musst Gründer sein, um Einladen zu können.
-	
-	form(method='POST', action='/household/invitation/create')
-		input(type='hidden', name='_csrf', value=_csrf)
-		select(name='household', size='1')
-			option(value='') -- Wähle Haushalt --
-			each household in households
-				if household.role === 'founder'
-					option(value=household.id)= household.name
-		input(type='email', name='email', placeholder='freund@example.de', required='required')
-		input(type='submit', value='Einladen')
