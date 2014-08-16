@@ -50,7 +50,7 @@ exports.householdInvitationCreate = function(req, res) {
 						
 						// tried to invite myself
 						if(form.toPersonId == req.session.personId) {
-							res.redirect('/dashboard?error=send_inv_to_myself');
+							res.redirect('/household/' + form.householdId + '?error=send_inv_to_myself');
 							return;
 						}
 						
@@ -68,13 +68,13 @@ exports.householdInvitationCreate = function(req, res) {
 							
 							// if there is an invitation then error
 							if(result.rows[0].inv) {
-								res.redirect('/dashboard?error=has_already_invitation');
+								res.redirect('/household/' + form.householdId + '?error=has_already_invitation');
 								return;
 							}
 					
 							// if the person is already member
 							if(result.rows[0].mem) {
-								res.redirect('/dashboard?error=is_already_member');
+								res.redirect('/household/' + form.householdId + '?error=is_already_member');
 								return;
 							}
 					
@@ -87,7 +87,7 @@ exports.householdInvitationCreate = function(req, res) {
 									return console.error('Could not insert new invitation', err);
 								}
 								
-								res.redirect('/dashboard?success=true');
+								res.redirect('/household/' + form.householdId + '?success=true');
 								
 							});
 						});
