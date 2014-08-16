@@ -4,16 +4,19 @@ block head
 	
 
 block content
-	p Richten Sie Ihr kostenloses Konto ein.
-	form(name='register', action='/register', method='post')
-		input(type='hidden', name='_csrf', value=_csrf)
-		label(for='name') Benutzername
-		input(type='text', required='required', id='user', name='user', placeholder='User1234', autofocus)
-		label(for='email') E-Mail
-		input(type='email', required='required', id='email', name='email', value='', spellcheck='false', placeholder='jemand@example.com')
-		label(for='password') Passwort
-		input(type='password', required='required', id='password', name='password', value='', placeholder='Kennwort')
-		input(type='submit', value='Registrieren')
+	div.container
+		h2.register-heading Richten Sie Ihr kostenloses Konto ein.
+		form(class='form-register' name='register', action='/register', method='post')
+			input(type='hidden', name='_csrf', value=_csrf)
+			label(for='name') Benutzername
+			input(class='form-control' type='text', required='required', id='user', name='user', placeholder='User1234', autofocus)
+			label(for='email') E-Mail
+			input(class='form-control' type='email', required='required', id='email', name='email', value='', spellcheck='false', placeholder='jemand@example.com')
+			label(for='password') Passwort
+			input(class='form-control' type='password', required='required', id='password', name='password', value='', placeholder='Kennwort')
+			input(class='btn btn-lg btn-primary btn-block' type='submit', value='Registrieren')
+			p.underline Sie haben bereits ein Konto? 
+				a(href='login') Jetzt Anmelden!
 	if errors
 		each error in errors
 			p= error.msg
