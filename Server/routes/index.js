@@ -41,6 +41,7 @@ module.exports = function(app) {
 	app.post('/household/invitation/accept', householdInvitationRouter.householdInvitationAccept);
 	app.post('/household/invitation/decline', householdInvitationRouter.householdInvitationDecline);
 	app.post('/household/invitation/cancel', householdInvitationRouter.householdInvitationCancel);
+	app.post('/household/invitation/cancel2', householdInvitationRouter.householdInvitationCancel2);
 	app.get('/household/:id', householdRouter.household);
 	//app.post('/household/leave', customerRouter.householdLeave);
 	

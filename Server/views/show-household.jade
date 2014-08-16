@@ -26,10 +26,19 @@ block content
 					if member.role === 'founder'
 						span &#9733;
 	p &#9733; = Gründer
-	
+	table
+		each invitation in invitations
+			tr
+				td= invitation.to_person_name
+				if householdRole === 'founder'
+					td
+						form(method='post', action='/household/invitation/cancel2')
+							input(type='hidden', name='_csrf', value=_csrf)
+							input(type='hidden', name='household', value=household)
+							input(type='hidden', name='to_person', value=invitation.to_person_id)
+							input(type='submit', value='Zurückziehen')
 	div.alert.alert-info(role='alert')
-		p Du musst Gründer sein, um Einladen zu können.
-	
+		p Du musst Gründer sein, um Einladen zu können.	
 	if householdRole === 'founder'
 		form(method='POST', action='/household/invitation/create')
 			input(type='hidden', name='_csrf', value=_csrf)
