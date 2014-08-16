@@ -3,16 +3,18 @@ extends layout-home
 block head
 
 block content
-	p Mit Ihrem Konto anmelden.
-	#login.login
-		form(name='login', action='/login', method='post')
-			input(type='hidden', name='_csrf', value=_csrf)
+	div.container
+		form(class='form-signin' name='login', action='/login', method='post')
+			h2.form-signin-heading Jetzt Anmelden.
+			input(class='form-control' type='hidden', name='_csrf', value=_csrf)
 			//label(for='email', id='label_email') E-Mail
-			input(type='email', required='required', id='email', name='email',spellcheck='false', placeholder='jemand@example.com', autofocus)
+			input(class='form-control' type='email', required='required', id='email', name='email',spellcheck='false', placeholder='jemand@example.com', autofocus)
 			//label(for='password') Passwort
-			input(type='password', required='required', id='password', name='password', placeholder='Kennwort')
-			input(type='checkbox', name='persistent', id='persistent', value='1')
-			label(for='persistent') Angemeldet bleiben
-			input(type='submit', value='Anmelden')
-		p Noch nicht angemeldet? 
-			a(href='register') Jetzt Registrieren!
+			input(class='form-control' type='password', required='required', id='password', name='password', placeholder='Kennwort')
+			div.checkbox
+				label(for='persistent')
+					input(type='checkbox', name='persistent', id='persistent', value='1') 
+					span Angemeldet bleiben
+			input(class='btn btn-lg btn-primary btn-block' type='submit', value='Anmelden')
+			p.underline Noch nicht angemeldet? 
+				a(href='register') Jetzt Registrieren!
