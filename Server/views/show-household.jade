@@ -3,19 +3,21 @@ extends layout-customer
 block head
 
 block content
-	h1= title
+	h1.page-header= title
 	
 	if householdRole === 'founder'
 		form(method='post', action='/household/update')
 			input(type='hidden', name='_csrf', value=_csrf)
 			input(type='hidden', name='id', value=household)
-			label Name
-			input(type='text', name='name', value=householdName)
-			input(type='submit', value='Ändern')
+			div.input-group
+				span.input-group-addon Name
+				input.form-control(type='text', name='name', value=householdName)
+				span.input-group-btn
+					input.btn.btn-primary(type='submit', value='Ändern')
 	
-	h2 Mitglieder
+	h2.sub-header Mitglieder
 	
-	table
+	table.table.table-striped
 		each member in members
 			tr
 				td= member.name
@@ -34,9 +36,9 @@ block content
 			input(type='email', name='email', placeholder='freund@example.de', required='required')
 			input(type='submit', value='Einladen')
 		
-	h2 Schuldenmatrix
+	h2.sub-header Schuldenmatrix
 	
-	table
+	table.table.table-striped
 		tr
 			td
 			th(colspan=members.length) ... hat Schulden bei ...
@@ -61,28 +63,45 @@ block content
 			each sum in debtsSummary
 				th= formatCurrency2(sum.outgoing)
 					
-	p Von links nach rechts lesen!
+	div.alert.alert-info(role='alert')
+		p Von links nach rechts lesen!
 
-	h2 Einkaufslisten
+	h2.sub-header Einkaufslisten
 	
-	table
+	table.table.table-striped
 		each shoppingList in shoppingLists
 			tr
 				td
-					a(href='/shopping_list/' + shoppingList.id) Ansehen
+					a.btn.btn-default(href='/shopping_list/' + shoppingList.id) Ansehen »
 				td= shoppingList.person_name
 				td= shoppingList.shop_name
 				td= formatDate(shoppingList.shopped)
 				td= formatCurrency(shoppingList.total)
 	
-	form(method='POST', action='/shopping_list/create')
-		input(type='hidden', name='_csrf', value=_csrf)
-		input(type='hidden', name='household', value=household)
-		select(name='buyer')
-			option(value='') -- Wähle Einkäufer --
-			each member in members
-				option(value=member.id)= member.name
-		input(type='text', name='shop', value='', placeholder='Laden, z.B. Supermarkt an der Ecke')
-		input(type='text', name='shopped_date', placeholder='TT.MM.JJJJ')
-		input(type='text', name='shopped_time', placeholder='HH:MM')
-		input(type='submit', value='Erstellen')
+	div.form
+		form(method='POST', action='/shopping_list/create')
+			input(type='hidden', name='_csrf', value=_csrf)
+			input(type='hidden', name='household', value=household)
+			div.input-group
+				div.input-group-btn
+					button.btn.btn-default.dropdown-toggle#shopping-list-add-button(style='', type='button', data-toggle='dropdown', size='1', name='buyer', value='')
+						span#shopping-add-button-text -- Wähle Einkäufer --
+						span.caret
+					ul.dropdown-menu(role='menu')
+						each member in members
+							li
+								a(onclick='changeShoppingAddButton('+member.id+',"'+member.name+'")')= member.name
+							//option(value=member.id)= member.name
+				
+				script(type="application/javascript")
+					|function changeShoppingAddButton(value,name){
+					|	console.log("v:"+value+" n:"+name);
+					|	document.getElementById('shopping-list-add-button').value = value;
+					|	document.getElementById('shopping-add-button-text').textContent = name+" ";
+					|};
+				div.input-three
+					input.form-control.noborder(type='text', name='shop', value='', placeholder='Laden, z.B. Supermarkt an der Ecke')
+					input.form-control.noborder(type='text', name='shopped_date', placeholder='TT.MM.JJJJ')
+					input.form-control.noborder(type='text', name='shopped_time', placeholder='HH:MM')
+				div.input-group-btn
+					input.btn.btn-primary(type='submit', value='Erstellen')

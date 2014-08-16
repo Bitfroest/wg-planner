@@ -3,5 +3,49 @@ extends layout-home
 block head
 
 block content
-	p WG-Planner
+	div.container
+		div.warnings
+			div.alert.alert-warning.alert-dismissible.centered(role='alert')
+				button.close(type='button' data-dismiss='alert')
+					span(aria-hidden='true') &times;
+					span.sr-only Close
+				b Warnung! 
+				|Wir befinden uns momentan im 
+				a.alert-link(href='#') Betastatus
+				|.
+			
+	div.container
+		div.jumbotron
+			h1 Behalte den Überblick.
+			p 
+				|Sie tätigen öfters Gruppeneinkäufe für die Firma, Freunde oder Familie. 
+				|Wollen einen Überblick über die Einkäufe Ihrer Gruppe behalten. 
+				|Planen die Kosten Ihrer Wohngemeinschaft.
+			p
+				|Melden Sie sich noch heute kostenlos an und genießen Sie die Vorteile einer gemeinsamen Onlineplanung.
+			p
+				a(class='btn btn-primary btn-lg' role='button' href='/register') Kostenlos Anmelden
+		div.row
+			div.col-md-4
+				h2 Schnell und Einfach
+				p
+					|Sparen Sie sich lästiges Kopfrechnen. 
+					|Ihre Einkäufe werden sofort mit der Gruppe geteilt 
+					|und schon nach jeder Eingabe berechnet. 
+					|Behalten Sie den Überblick durch unsere übersichtliche Gestaltung.
+				p
+					a.btn.btn-default(role='button' href='#') Details »
+			div.col-md-4
+				h2 Übersicht
+				p
+					|Durch eine speziell entworfene Übersicht behalten Sie immer den 
+					|Überblick über Ihre Gruppen und Einkaufslisten.
+				p
+					a.btn.btn-default(role='button' href='#') Details »
+			div.col-md-4
+				h2 Jetzt neu
+				p
+					|Dynamisches Dashboard.
+				p
+					a.btn.btn-default(role='button' href='#') Details »
 	
