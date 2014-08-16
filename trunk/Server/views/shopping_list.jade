@@ -3,14 +3,14 @@ extends layout-customer
 block head
 
 block content
-	h1= title
+	h1.page-header= title
 	
-	h2 Infos
+	h2.sub-header Infos
 	
 	form(method='post', action='/shopping_list/update')
 		input(type='hidden', name='_csrf', value=_csrf)
 		input(type='hidden', name='id', value=shoppingList.id)
-		table
+		table.table.table-striped
 			tr
 				td Laden
 				td
@@ -32,11 +32,11 @@ block content
 			tr
 				td Erstellt
 				td= 'von ' + shoppingList.creator_name + ' am ' + formatDate(shoppingList.created)
-		input(type='submit', value='Ändern')
+		input.btn.btn-primary(type='submit', value='Ändern')
 	
-	h2 Anteile
+	h2.sub-header Anteile
 	
-	table
+	table.table.table-striped
 		each person in stats
 			tr
 				td= person.name
@@ -45,9 +45,9 @@ block content
 			th Gesamt
 			th= formatCurrency(shoppingList.total_price)
 	
-	h2 Items
+	h2.sub-header Items
 	
-	table
+	table.table.table-striped
 		each item in shoppingItems
 			tr
 				td= item.name
