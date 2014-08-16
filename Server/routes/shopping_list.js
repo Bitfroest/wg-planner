@@ -102,7 +102,7 @@ exports.shoppingList = function(req, res) {
 			}
 			
 			client.query(
-				'SELECT l.shop_name AS shop_name, bp.name AS buyer_name, cp.name AS creator_name, l.created AS created, ' +
+				'SELECT l.shop_name AS shop_name, bp.id AS buyer_id, bp.name AS buyer_name, cp.name AS creator_name, l.created AS created, ' +
 				'h.name AS household_name, l.household_id AS household_id, l.shopped AS shopped, m.role IS NOT NULL AS is_member, ' +
 				'l.id AS id, ' +
 				'(SELECT coalesce(sum(i.price), 0) FROM shopping_item i WHERE i.shopping_list_id= $2) AS total_price ' +
@@ -175,6 +175,81 @@ exports.shoppingList = function(req, res) {
 			});
 		});
 		
+	} else {
+		res.redirect('/sid_wrong');
+	}
+};
+
+exports.shoppingListUpdate = function(req, res) {
+	if(req.session.loggedIn) {
+	
+		req.checkBody('id').isInt();
+		req.checkBody('buyer').isInt();
+		req.checkBody('shop').isLength(1);
+		req.checkBody('shopped_date').matches(/^[0-3]?[0-9]\.[01]?[0-9]\.[0-9]{4}$/);
+		req.checkBody('shopped_time').matches(/^[0-2]?[0-9]:[0-5]?[0-9]$/);
+	
+		var errors = req.validationErrors();
+	
+		if(errors) {
+			res.redirect('/internal_error');
+			return;
+		}
+		
+		req.sanitize('id').toInt();
+		req.sanitize('buyer').toInt();
+		req.sanitize('shop').toString();
+		req.sanitize('shopped_date').toString();
+		req.sanitize('shopped_time').toString();
+	
+		var dateParts = String.prototype.split.call(req.body.shopped_date, '.');
+		var timeParts = String.prototype.split.call(req.body.shopped_time, ':');
+	
+		var form = {
+			id : req.body.id,
+			buyer : req.body.buyer,
+			shop : req.body.shop,
+			shopped : new Date(dateParts[2], dateParts[1]-1, dateParts[0], timeParts[0], timeParts[1])
+				// year, month, day, hour, minute, second, millisecond
+		};
+		
+		req.getDb(function(err, client, done) {
+			if(err) {
+				return console.error('Failed to connect in customer.household');
+			}
+			
+			client.query('WITH hh AS (SELECT household_id AS id FROM shopping_list WHERE id=$1 LIMIT 1) ' +
+				'SELECT EXISTS (SELECT 1 FROM household_member JOIN hh ON (household_id=hh.id) WHERE person_id=$2 LIMIT 1) AS is_member, ' +
+				'EXISTS (SELECT 1 FROM household_member JOIN hh ON (household_id=hh.id) WHERE person_id=$3 LIMIT 1) AS buyer_is_member',
+				[form.id, req.session.personId, form.buyer], function(err, result) {
+			
+				if(err) {
+					return console.error('Failed to check if household member', err);
+				}
+				
+				if(result.rows[0].is_member == false) {
+					res.redirect('/internal_error?not_member');
+					return;
+				}
+				
+				if(result.rows[0].buyer_is_member == false) {
+					res.redirect('/internal_error?buyer_not_member');
+					return;
+				}
+				
+				client.query('UPDATE shopping_list SET buyer_person_id=$1, shop_name=$2, shopped=$3 WHERE id=$4',
+					[form.buyer, form.shop, form.shopped, form.id], function(err, result) {
+				
+					done();
+				
+					if(err) {
+						return console.error('Failed to update shopping_list', err);
+					}
+					
+					res.redirect('/shopping_list/' + form.id);
+				});
+			});
+		});
 	} else {
 		res.redirect('/sid_wrong');
 	}
