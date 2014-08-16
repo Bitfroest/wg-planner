@@ -55,6 +55,11 @@ exports.household = function(req, res) {
 						'FROM person p JOIN household_member m ON (p.id=m.person_id) WHERE m.household_id=$1 ' +
 						'ORDER BY p.id ASC',
 						[form.householdId]),
+					invitations: client.query.bind(client,
+						'SELECT p.id AS to_person_id, p.name AS to_person_name ' +
+						'FROM household_invitation i JOIN person p ON (i.to_person_id = p.id) ' +
+						'WHERE i.household_id = $1',
+						[form.householdId]),
 					shoppingLists: client.query.bind(client,
 						'SELECT l.id AS id, p.name AS person_name, l.shopped AS shopped, l.shop_name AS shop_name, ' +
 						'(SELECT coalesce(sum(i.price),0) FROM shopping_item i WHERE i.shopping_list_id = l.id) AS total ' +
@@ -76,6 +81,7 @@ exports.household = function(req, res) {
 					res.render('show-household', {
 						_csrf: req.csrfToken(),
 						members: result.members.rows,
+						invitations: result.invitations.rows,
 						shoppingLists: result.shoppingLists.rows,
 						household: form.householdId,
 						householdName : form.householdName,

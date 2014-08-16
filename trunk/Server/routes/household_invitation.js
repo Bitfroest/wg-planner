@@ -207,6 +207,7 @@ exports.householdInvitationDecline = function(req, res) {
 	}
 };
 
+// used on /dashboard page
 exports.householdInvitationCancel = function(req, res) {
 	if(req.session.loggedIn) {
 	
@@ -239,7 +240,7 @@ exports.householdInvitationCancel = function(req, res) {
 				done();
 				
 				if(err) {
-					return console.error('Failed to accept invitation', err);
+					return console.error('Failed to cancel invitation', err);
 				}
 				
 				if(result.rowCount == 0) {
@@ -248,6 +249,74 @@ exports.householdInvitationCancel = function(req, res) {
 				}
 				
 				res.redirect('/dashboard?success=true');
+			});
+		});
+	
+	} else {
+		res.redirect('/sid_wrong');
+	}
+};
+
+// used on /household/[id] page
+exports.householdInvitationCancel2 = function(req, res) {
+	if(req.session.loggedIn) {
+	
+		req.checkBody('household').isInt();
+		req.checkBody('to_person').isInt();
+		
+		var errors = req.validationErrors();
+	
+		if(errors) {
+			res.redirect('/dashboard?error=true');
+			return;
+		}
+		
+		req.sanitize('household').toInt();
+		req.sanitize('to_person').toInt();
+		
+		var form = {
+			household : req.body.household,
+			toPerson : req.body.to_person
+		};
+		
+		req.getDb(function(err, client, done) {
+			if(err) {
+				return console.error('Failed to connect in householdInvitationCancel2', err);
+			}
+			
+			client.query('SELECT role FROM household_member WHERE household_id=$1 AND person_id=$2 LIMIT 1',
+				[form.household, req.session.personId], function(err, result) {
+			
+				if(err) {
+					return console.error('Could not check membership', err);
+				}
+				
+				if(result.rows.length == 0) {
+					res.redirect('/household/' + form.household + '?not_member');
+					return;
+				}
+				
+				if(result.rows[0].role !== 'founder') {
+					res.redirect('/household/' + form.household + '?not_founder');
+					return;
+				}
+			
+				client.query('DELETE FROM household_invitation WHERE to_person_id=$1 AND household_id=$2',
+					[form.toPerson, form.household], function(err, result) {
+					
+					done();
+					
+					if(err) {
+						return console.error('Failed to cancel invitation', err);
+					}
+					
+					if(result.rowCount == 0) {
+						res.redirect('/household/' + form.household + '?error=inv_not_found');
+						return;
+					}
+					
+					res.redirect('/household' + form.household + '?success=true');
+				});
 			});
 		});
 	
