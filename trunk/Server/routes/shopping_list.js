@@ -60,7 +60,7 @@ exports.shoppingListCreate = function(req, res) {
 				}
 				
 				client.query('INSERT INTO shopping_list(shop_name,household_id,buyer_person_id,creator_person_id,shopped,created)' +
-					' VALUES($1,$2,$3,$4,$5,$6)',
+					' VALUES($1,$2,$3,$4,$5,$6) RETURNING id',
 					[form.shop, form.household, form.buyer, req.session.personId, form.shopped, new Date()], function(err, result) {
 				
 					done();
@@ -69,7 +69,7 @@ exports.shoppingListCreate = function(req, res) {
 						return console.error('Failed to insert new shopping_list', err);
 					}
 					
-					res.redirect('/household/' + form.household);
+					res.redirect('/shopping_list/' + result.rows[0].id);
 				});
 			});
 		});
