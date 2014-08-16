@@ -112,8 +112,10 @@ exports.householdCreate = function(req, res) {
 					return console.error('Failed to insert household', err);
 				}
 				
+				var householdId = result.rows[0].id;
+				
 				client.query('INSERT INTO household_member(household_id,person_id,role,created) VALUES ($1,$2,$3,$4)',
-					[result.rows[0].id, req.session.personId, 'founder', new Date()], function(err, result){
+					[householdId, req.session.personId, 'founder', new Date()], function(err, result){
 				
 					done();
 					
@@ -121,7 +123,7 @@ exports.householdCreate = function(req, res) {
 						return console.error('Failed to insert household_member', err);
 					}
 					
-					res.redirect('/dashboard');
+					res.redirect('/household/' + householdId);
 				});
 			});
 		});
