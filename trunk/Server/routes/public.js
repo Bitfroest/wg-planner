@@ -5,7 +5,7 @@
 var passwordHelper = require('./password.js');
 
 exports.index = function(req, res) {
-	res.render('home');
+	res.render('home', {_csrf: req.csrfToken()});
 };
  
 exports.login = function(req, res) {
@@ -188,5 +188,5 @@ exports.personUpdate = function(req, res) {
 };
 
 exports.imprint = function(req, res) {
-	res.render('imprint', {title : 'Impressum'});
+	res.render('imprint', {title : 'Impressum', _csrf: req.csrfToken()});
 };
