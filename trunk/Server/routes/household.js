@@ -78,7 +78,7 @@ exports.household = function(req, res) {
 						return console.error('Could not load members of household', err);
 					}
 					
-					res.render('show-household', {
+					res.render('household', {
 						_csrf: req.csrfToken(),
 						members: result.members.rows,
 						invitations: result.invitations.rows,

@@ -28,7 +28,7 @@ exports.dashboard = function(req, res) {
 					return console.error('Failed to load households by person', err);
 				}
 				
-				res.render('household', {
+				res.render('dashboard', {
 					_csrf: req.csrfToken(),
 					person : result.person.rows[0],
 					households: result.households.rows,
