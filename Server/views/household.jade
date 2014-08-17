@@ -26,7 +26,7 @@ block content
 					if member.role === 'founder'
 						span &#9733;
 	p &#9733; = Gründer
-	table
+	table.table.table-striped
 		each invitation in invitations
 			tr
 				td= invitation.to_person_name
@@ -36,7 +36,7 @@ block content
 							input(type='hidden', name='_csrf', value=_csrf)
 							input(type='hidden', name='household', value=household)
 							input(type='hidden', name='to_person', value=invitation.to_person_id)
-							input(type='submit', value='Zurückziehen')
+							input.btn.btn-warning.pull-right(type='submit', value='Zurückziehen')
 	div.alert.alert-info(role='alert')
 		p Du musst Gründer sein, um Einladen zu können.	
 	if householdRole === 'founder'
@@ -111,7 +111,7 @@ block content
 					|	document.getElementById('shopping-list-add-button').value = value;
 					|	document.getElementById('shopping-add-button-text').textContent = name+" ";
 					|};
-				div.input-three
+				div.input-flex
 					input.form-control.noborder(type='text', name='shop', value='', placeholder='Laden, z.B. Supermarkt an der Ecke')
 					input.form-control.noborder(type='text', name='shopped_date', placeholder='TT.MM.JJJJ')
 					input.form-control.noborder(type='text', name='shopped_time', placeholder='HH:MM')

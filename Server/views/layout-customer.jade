@@ -3,7 +3,7 @@ html(lang='de')
 	include inc/head
 	link(type="text/css"
 		rel="stylesheet"
-		href="../css/dashboard.css"
+		href="/css/dashboard.css"
 		media="all")
 	body
 		header
@@ -17,13 +17,22 @@ html(lang='de')
 							span.icon-bar
 						a.navbar-brand(href='#') Wg-Planner
 					div.collapse.navbar-collapse
-						ul.nav.navbar-nav
-							li
+						ul.nav.navbar-nav#link-breadcrumb
+							li#link-dashboard(class='')
 								a(href='/dashboard') Dashboard
+							- var breadLinks = new Array()
+							- var i = 0
+							- breadLinks[0] = "dashboard"
 							each crumb in breadcrumbs
+								- i = i + 1
+								- breadLinks[i] = crumb.url.split("/")[1]
 								p.navbar-text.breadcrumbs-arrow &#8594;
-								li
+								li(id='link-'+crumb.url.split("/")[1], class='')
 									a(href=crumb.url)= crumb.text
+							script(type='application/javascript')
+								| document.getElementById("link-
+								=breadLinks[i]
+								|").className="active";
 						form.navbar-form.navbar-right(role='logout', name='logout', method='post', action='/logout')
 							input(type='hidden', name='_csrf', value=_csrf)
 							div.form-group
@@ -33,9 +42,15 @@ html(lang='de')
 		div.container-fluid
 			div.row
 				div.col-sm-3.col-md-2.sidebar
+					ul.nav.nav-sidebar
+						li
+							a(href='#') Überblick
+						li
+							a(href='#') Statistiken
+						li
+							a(href='#') bla
 				div.col-sm-9.col-sm-offset-3.col-md-10.col-md-offset-2.main
 					block content
-					
 		//jQuery (necessary for Bootstrap's JavaScript plugins)
 		script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js')
 		//local jQuery just for testing
