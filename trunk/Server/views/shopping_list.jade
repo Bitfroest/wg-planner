@@ -14,7 +14,7 @@ block content
 			tr
 				td Laden
 				td
-					input(type='text', name='shop', value=shoppingList.shop_name)
+					input.form-control(type='text', name='shop', value=shoppingList.shop_name)
 				td= shoppingList.shop_name
 			tr
 				td Einkäufer
@@ -26,8 +26,9 @@ block content
 			tr
 				td Wann?
 				td
-					input(type='text', name='shopped_date', value=formatDate(shoppingList.shopped, 'date'))
-					input(type='text', name='shopped_time', value=formatDate(shoppingList.shopped, 'time'))
+					span.input-group.input-flex
+						input.form-control(type='text', name='shopped_date', value=formatDate(shoppingList.shopped, 'date'))
+						input.form-control(type='text', name='shopped_time', value=formatDate(shoppingList.shopped, 'time'))
 				td= formatDate(shoppingList.shopped)
 			tr
 				td Erstellt
