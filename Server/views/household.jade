@@ -3,122 +3,117 @@ extends layout-customer
 block head
 
 block content
-	h1.page-header Dashboard
-	h2.sub-header Mein Account
+	h1.page-header= title
 	
-	form(method='post', action='/person/update')
-		input(type='hidden', name='_csrf', value=_csrf)
-		table.table.table-striped
-			thead
-				tr
-					td Anzeige-Name
-					td
-						div.input-group
-							input.form-control(type='text', name='name', value=person.name)
-							span.input-group-btn
-								input.btn.btn-primary(type='submit', value='Aktualisieren')
-			tbody
-				tr
-					td Mail-Adresse
-					td= person.email
-				tr
-					td Status
-					td= ({customer:'Standard-Account', admin:'Admin'})[person.role]
-
-	h2.sub-header Haushalte
+	if householdRole === 'founder'
+		form(method='post', action='/household/update')
+			input(type='hidden', name='_csrf', value=_csrf)
+			input(type='hidden', name='id', value=household)
+			div.input-group
+				span.input-group-addon Name
+				input.form-control(type='text', name='name', value=householdName)
+				span.input-group-btn
+					input.btn.btn-primary(type='submit', value='Ändern')
+	
+	h2.sub-header Mitglieder
 	
 	table.table.table-striped
-		each household in households
+		each member in members
 			tr
+				td= member.name
+				td= member.email
 				td
-					a.btn.btn-primary(href='/household/' + household.id)= household.name + " » "
-						span.badge(id='household'+ household.id + 'new') Neu
-				td
-					if household.role === 'founder'
+					if member.role === 'founder'
 						span &#9733;
-				td
-					//- a(href='/household/leave?id=' + household.id) Verlassen
-
 	p &#9733; = Gründer
-					
-	form(method='POST', action='/household/create')
-		input(type='hidden', name='_csrf', value=_csrf)
-		div.input-group
-			input.form-control(type='text', placeholder='Name, z.B. Wohnung in München', name='name', required='required')
-			span.input-group-btn
-				input.btn.btn-primary(type='submit', value='Gründen')
-	
-
-	h2.sub-header Einladungen an mich
-	
-
-	table.table.table-striped
-		thead
-			tr
-				th Von
-				th Haushalt
-				th(colspan='2')
-		tbody
-			each invitation in invitationsToMe
-				tr
-					td= invitation.person_name
-					td= invitation.household_name
-					td
-						form(method='POST', action='/household/invitation/accept')
-							input(type='hidden', name='_csrf', value=_csrf)
-							input(type='hidden', name='household', value=invitation.household_id)
-							input.btn.btn-success(type='submit', value='Annehmen')
-					td
-						form(method='POST', action='/household/invitation/decline')
-							input(type='hidden', name='_csrf', value=_csrf)
-							input(type='hidden', name='household', value=invitation.household_id)
-							input.btn.btn-warning(type='submit', value='Ablehnen')
-	
-	h2.sub-header Einladungen von mir
-	
-	table.table.table-striped
 	table
-		thead
-		th An
-			th An
-			th Haushalt
-			th
-		tbody
-			each invitation in invitationsFromMe
-				tr
-					td= invitation.person_name
-					td= invitation.household_name
+		each invitation in invitations
+			tr
+				td= invitation.to_person_name
+				if householdRole === 'founder'
 					td
-						form(method='POST', action='/household/invitation/cancel')
+						form(method='post', action='/household/invitation/cancel2')
 							input(type='hidden', name='_csrf', value=_csrf)
-							input(type='hidden', name='household', value=invitation.household_id)
+							input(type='hidden', name='household', value=household)
 							input(type='hidden', name='to_person', value=invitation.to_person_id)
-							input(type='submit', value='Zurücknehmen')
-				
-	h2.sub-header Einladen
-	
+							input(type='submit', value='Zurückziehen')
 	div.alert.alert-info(role='alert')
-		p Du musst Gründer sein, um Einladen zu können.
-	div.form
+		p Du musst Gründer sein, um Einladen zu können.	
+	if householdRole === 'founder'
 		form(method='POST', action='/household/invitation/create')
 			input(type='hidden', name='_csrf', value=_csrf)
+			input(type='hidden', name='household', value=household)
 			div.input-group
-				div.input-group-btn
-					button.btn.btn-default.dropdown-toggle#invite-button(type='button', data-toggle='dropdown', name='household', size='1', value='')
-						span#invite-button-text -- Wähle Haushalt -- 
-						span.caret
-					ul.dropdown-menu(role='menu')
-						each household in households
-							if household.role === 'founder' 
-								li
-									a(onclick='changeInviteButton('+household.id+',"'+household.name+'")' value=household.id)= household.name
-								
-				script(type="application/javascript")
-					|function changeInviteButton(value,name){
-					|	//console.log("v:"+value+" n:"+name);
-					|	document.getElementById('invite-button').value = value;
-					|	document.getElementById('invite-button-text').textContent = name+" ";
-					|};
 				input.form-control(type='email', name='email', placeholder='freund@example.de', required='required')
 				span.input-group-btn
 					input.btn.btn-primary(type='submit', value='Einladen')
+		
+	h2.sub-header Schuldenmatrix
+	
+	table.table.table-striped
+		tr
+			td
+			th(colspan=members.length) ... hat Schulden bei ...
+		tr
+			td
+			each buyer in members
+				th= buyer.name
+			th Schulden-Summe
+			th Differenz
+		each owner, ownerIndex in members
+			tr
+				th= owner.name
+				each buyer, buyerIndex in members
+					if ownerIndex == buyerIndex
+						td -
+					else
+						td= formatCurrency2(debtsMatrix[ownerIndex * members.length + buyerIndex].total)
+				th= formatCurrency2(debtsSummary[ownerIndex].incoming)
+				th= formatCurrency2(debtsSummary[ownerIndex].diff)
+		tr
+			th Bezahlt-Summe
+			each sum in debtsSummary
+				th= formatCurrency2(sum.outgoing)
+					
+	div.alert.alert-info(role='alert')
+		p Von links nach rechts lesen!
+
+	h2.sub-header Einkaufslisten
+	
+	table.table.table-striped
+		each shoppingList in shoppingLists
+			tr
+				td
+					a.btn.btn-default(href='/shopping_list/' + shoppingList.id) Ansehen »
+				td= shoppingList.person_name
+				td= shoppingList.shop_name
+				td= formatDate(shoppingList.shopped)
+				td= formatCurrency(shoppingList.total)
+	
+	div.form
+		form(method='POST', action='/shopping_list/create')
+			input(type='hidden', name='_csrf', value=_csrf)
+			input(type='hidden', name='household', value=household)
+			div.input-group
+				div.input-group-btn
+					button.btn.btn-default.dropdown-toggle#shopping-list-add-button(style='', type='button', data-toggle='dropdown', size='1', name='buyer', value='')
+						span#shopping-add-button-text -- Wähle Einkäufer --
+						span.caret
+					ul.dropdown-menu(role='menu')
+						each member in members
+							li
+								a(onclick='changeShoppingAddButton('+member.id+',"'+member.name+'")')= member.name
+							//option(value=member.id)= member.name
+				
+				script(type="application/javascript")
+					|function changeShoppingAddButton(value,name){
+					|	console.log("v:"+value+" n:"+name);
+					|	document.getElementById('shopping-list-add-button').value = value;
+					|	document.getElementById('shopping-add-button-text').textContent = name+" ";
+					|};
+				div.input-three
+					input.form-control.noborder(type='text', name='shop', value='', placeholder='Laden, z.B. Supermarkt an der Ecke')
+					input.form-control.noborder(type='text', name='shopped_date', placeholder='TT.MM.JJJJ')
+					input.form-control.noborder(type='text', name='shopped_time', placeholder='HH:MM')
+				div.input-group-btn
+					input.btn.btn-primary(type='submit', value='Erstellen')
