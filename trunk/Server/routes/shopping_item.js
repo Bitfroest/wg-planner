@@ -1,3 +1,75 @@
+var async = require('async');
+
+exports.shoppingItem = function(req, res) {
+	if(req.session.loggedIn) {
+		
+		req.checkParams('id').isInt();
+		
+		var errors = req.validationErrors();
+		
+		if(errors) {
+			res.redirect('/internal_error');
+			return;
+		}
+		
+		var form = {
+			id : req.sanitize('id').toInt()
+		};
+		
+		req.getDb(function(err, client, done) {
+			if(err) {
+				return console.error('Failed to connect in shoppingItem', err);
+			}
+			
+			async.series({
+				item : client.query.bind(client, 'SELECT i.id AS id, i.name AS name, i.owner_person_id AS owner, i.price AS price, ' +
+					'm.role IS NOT NULL AS is_member, l.id AS shopping_list_id, l.household_id AS household_id ' +
+					'FROM shopping_item i LEFT JOIN shopping_list l ON (i.shopping_list_id=l.id) ' +
+					'LEFT JOIN household_member m ON (l.household_id=m.household_id AND m.person_id=$1) ' +
+					'WHERE i.id=$2', [req.session.personId, form.id]),
+				members : client.query.bind(client, 'SELECT p.id AS id, p.name AS name ' +
+					'FROM shopping_item i JOIN shopping_list l ON (i.shopping_list_id=l.id) ' +
+					'JOIN household_member m ON (l.household_id=m.household_id) ' +
+					'JOIN person p ON (p.id=m.person_id) WHERE i.id=$1',
+					[form.id])
+			}, function(err, result) {
+			
+				done();
+			
+				if(err) {
+					return console.error('Failed to load shopping item data', err);
+				}
+				
+				if(result.item.rows.length !== 1) {
+					res.redirect('/internal_error?item_not_found');
+					return;
+				}
+				
+				if(!result.item.rows[0].is_member) {
+					res.redirect('/internal_error?not_member');
+					return;
+				}
+				
+				var item = result.item.rows[0];
+				
+				res.render('shopping_item', {
+					_csrf : req.csrfToken(),
+					item : item,
+					members : result.members.rows,
+					breadcrumbs : [
+						{url: '/household/' + item.household_id, text: 'Haushalt'},
+						{url: '/shopping_list/' + item.shopping_list_id, text: 'Einkaufsliste'},
+						{url: 'shopping_item/' + item.id, text: 'Einkaufsartikel'}
+					]
+				});
+			});	
+		});
+	
+	} else {
+		res.redirect('/sid_wrong');
+	}
+};
+
 exports.shoppingItemCreate = function(req, res) {
 	if(req.session.loggedIn) {
 	

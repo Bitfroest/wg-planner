@@ -51,6 +51,8 @@ block content
 	table.table.table-striped
 		each item in shoppingItems
 			tr
+				td
+					a(href='/shopping_item/' + item.id) Ansehen
 				td= item.name
 				td= item.owner_name
 				td= formatCurrency(item.price)

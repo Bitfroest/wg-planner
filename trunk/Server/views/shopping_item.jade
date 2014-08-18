@@ -1,0 +1,28 @@
+extends layout-customer
+
+block head
+
+block content
+	h1.page-header= title
+	
+	h2.sub-header Einkaufsartikel
+	
+	form(method='post', action='/shopping_item/update')
+		input(type='hidden', name='_csrf', value=_csrf)
+		input(type='hidden', name='id', value=item.id)
+		table
+			tr
+				td Name
+				td
+					input(type='text', name='name', value=item.name)
+			tr
+				td Besitzer
+				td
+					select(name='owner')
+						each member in members
+							option(value=member.id, selected=(member.id === item.owner))= member.name
+			tr
+				td Preis
+				td
+					input(type='text', name='price', value=item.price/100)
+		input(type='submit', value='Ändern (not implemented)', disabled)
