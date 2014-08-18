@@ -3,5 +3,7 @@ extends layout-simple
 block head
 
 block content
-	p Erfolgreich abgemeldet.
-	a(href='/login') Zur Startseite
+	div.container
+		div.alert.alert-success.centered(role='alert')
+			p Erfolgreich abgemeldet.
+		a.btn.btn-primary(href='/login') Zur Startseite
