@@ -24,27 +24,19 @@ html(lang='de')
 								button(class='btn btn-primary' type='') Registrieren
 												
 						
-						div(class='nav-login', id='nav-login')
-							form(class='navbar-form navbar-right' role='login' name='login', action='/login', method='post')
-								div.form-group
-									input(class='form-control', type='hidden', name='_csrf', value=_csrf)
-								div.form-group
-									input(class='form-control', type='email', required='required', id='email', name='email',spellcheck='false', placeholder='jemand@example.com')
-								div.form-group
-									input(class='form-control', type='password', required='required', id='password', name='password', placeholder='Kennwort')
-								div.form-group
-									input(class='form-control', type='hidden', name='persistent', id='persistent', value='1')
-								div.form-group
-									input(class='form-control', class='btn btn-success' type='submit', value='Anmelden')
-						
-						script(type="application/javascript")
-							|function loginDisplay() {
-							|	var path = window.location.pathname;
-							|	if (path == '/login') {
-							|		document.getElementById('nav-login').style.display= "none";
-							|	}
-							|};
-							|loginDisplay();
+						if !doNotShowNavbarLogin
+							div(class='nav-login', id='nav-login')
+								form(class='navbar-form navbar-right' role='login' name='login', action='/login', method='post')
+									div.form-group
+										input(class='form-control', type='hidden', name='_csrf', value=_csrf)
+									div.form-group
+										input(class='form-control', type='email', required='required', id='email', name='email',spellcheck='false', placeholder='jemand@example.com')
+									div.form-group
+										input(class='form-control', type='password', required='required', id='password', name='password', placeholder='Kennwort')
+									div.form-group
+										input(class='form-control', type='hidden', name='persistent', id='persistent', value='1')
+									div.form-group
+										input(class='form-control', class='btn btn-success' type='submit', value='Anmelden')
 		div.container
 			div.fail-popups#fail-popups
 				div.alert.alert-danger.centered(role='alert')
