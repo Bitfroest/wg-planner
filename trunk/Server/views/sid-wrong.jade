@@ -3,5 +3,7 @@ extends layout-simple
 block head
 
 block content
-	p Sitzung ist abgelaufen.
-	a(href='/login') Anmelden
+	div.container
+		div.alert.alert-warning.centered(role='alert')
+			p Sitzung ist abgelaufen.
+		a.btn.btn-success(href='/login') Anmelden
