@@ -50,6 +50,7 @@ module.exports = function(app) {
 	app.get('/shopping_list/:id', shoppingListRouter.shoppingList);
 	
 	app.post('/shopping_item/create', shoppingItemRouter.shoppingItemCreate);
+	app.get('/shopping_item/:id', shoppingItemRouter.shoppingItem);
 	
 	//imprint page
 	app.get('/imprint', publicRouter.imprint);

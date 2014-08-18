@@ -132,7 +132,7 @@ exports.shoppingList = function(req, res) {
 				
 				async.series({
 					items : client.query.bind(client,
-						'SELECT i.name AS name, p.name as owner_name, i.price AS price ' +
+						'SELECT i.id AS id, i.name AS name, p.name as owner_name, i.price AS price ' +
 						'FROM shopping_item i ' +
 						'LEFT JOIN person p ON (i.owner_person_id=p.id) ' +
 						'WHERE i.shopping_list_id = $1 ',
