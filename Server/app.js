@@ -13,6 +13,7 @@ var compress = require('compression');
 var morgan = require('morgan');
 var expressValidator = require('express-validator');
 var csrf = require('csurf');
+var slashes = require("connect-slashes");
 var routes = require('./routes');
 var config = require('./config.js');
 var pg = require('pg.js');
@@ -27,6 +28,11 @@ var app = express();
 
 //Disable the 'X-Powered-By: Express' header
 app.disable('x-powered-by');
+
+// SEO as hell
+// read more: http://googlewebmastercentral.blogspot.de/2010/04/to-slash-or-not-to-slash.html
+app.enable('strict routing');
+app.enable('case sensitive routing');
 
 //Use jade as view engine
 app.set('view engine', 'jade');
@@ -46,6 +52,9 @@ app.use(compress(/*{threshold: '1kb'}*/));
 
 //Serve static files (images/stylesheets/javascripts) from public/ folder
 app.use(serveStatic('public/'));
+
+// redirect /path/ to /path
+app.use(slashes(false));
 
 //Parse body (urlencoded/json) from HTML forms and XHR requests
 app.use(bodyParser());
