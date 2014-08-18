@@ -9,7 +9,11 @@ exports.index = function(req, res) {
 };
  
 exports.login = function(req, res) {
-	res.render('login', {title : 'Anmelden', _csrf: req.csrfToken()});
+	res.render('login', {
+		title : 'Anmelden',
+		doNotShowNavbarLogin : true,
+		_csrf: req.csrfToken()
+	});
 };
 
 exports.doLogin = function(req, res) {
