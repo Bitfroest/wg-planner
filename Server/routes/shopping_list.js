@@ -3,6 +3,20 @@ var async = require('async');
 var formatEuro = require('../utils/currency_formatter.js').formatEuro;
 var formatDate = require('../utils/date_formatter.js').formatDate;
 
+/*
+ * Router for creating new shopping lists.
+ *
+ * Parameter:
+ * - household int: ID of the household that will be parent for the new shopping list
+ * - buyer int: ID of the person who bought all the things on the list
+ * - shop string: Name of the shop where the shopping was done
+ * - shopped_date string: When the shopping was done (only date), Format: "DD.MM.YYYY"
+ * - shopped_time string: When the shopping was done (only time), Format: "HH:MM"
+ *
+ * Requirements:
+ * - loggedIn
+ * - Protagonist and buyer must be member of the household
+ */
 exports.shoppingListCreate = function(req, res) {
 	if(req.session.loggedIn) {
 	
@@ -78,6 +92,17 @@ exports.shoppingListCreate = function(req, res) {
 	}
 };
 
+/*
+ * Router for displaying a single shopping list.
+ *
+ * Parameter:
+ * - id int: ID of the shopping list that should be displayed
+ *
+ * Requirements:
+ * - loggedIn
+ * - shopping list must exist
+ * - Protagonist must be member of the household that belongs to the shopping list
+ */
 exports.shoppingList = function(req, res) {
 	if(req.session.loggedIn) {
 		
@@ -180,6 +205,22 @@ exports.shoppingList = function(req, res) {
 	}
 };
 
+/*
+ * Router for updating shopping lists.
+ *
+ * Parameter:
+ * - id int: ID of the shopping list
+ * - buyer int: ID of the buyer person (will be changed)
+ * - shop string: Name of the shop (will be changed)
+ * - shopped_date string: When the shopping was done, Format "DD.MM.YYYY" (will be changed)
+ * - shopped_time string: When the shopping was done, Format "HH:MM" (will be changed)
+ * 
+ * Requirements:
+ * - loggedIn
+ * - shopping list must exist
+ * - Protagonist must be member of the household that belongs to the shopping list
+ * - buyer must be member of the household that belongs to the shopping list
+ */
 exports.shoppingListUpdate = function(req, res) {
 	if(req.session.loggedIn) {
 	
