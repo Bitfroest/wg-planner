@@ -1,5 +1,17 @@
 var async = require('async');
 
+/*
+ * Router for displaying a single shopping item
+ *
+ * Parameter:
+ * - id int: ID of the displayed shopping item
+ *
+ * Requirements:
+ * - loggedIn
+ * - shopping item must exist
+ * - Protagonist must be member of the household belonging
+ *   to the shopping list belonging to the shopping item
+ */
 exports.shoppingItem = function(req, res) {
 	if(req.session.loggedIn) {
 		
@@ -59,7 +71,7 @@ exports.shoppingItem = function(req, res) {
 					breadcrumbs : [
 						{url: '/household/' + item.household_id, text: 'Haushalt'},
 						{url: '/shopping_list/' + item.shopping_list_id, text: 'Einkaufsliste'},
-						{url: 'shopping_item/' + item.id, text: 'Einkaufsartikel'}
+						{url: '/shopping_item/' + item.id, text: 'Einkaufsartikel'}
 					]
 				});
 			});	
@@ -70,6 +82,19 @@ exports.shoppingItem = function(req, res) {
 	}
 };
 
+/*
+ * Router for creating shopping items.
+ *
+ * Parameter: 
+ * - shopping_list int: ID of the shopping list that will be parent of the new shopping item
+ * - name string: name of the item
+ * - owner int: ID of the person who want to have this item
+ * - price float: price in Euro of the item (using '.' as decimal separator)
+ *
+ * Requirements:
+ * - loggedIn
+ * - Protagonist and owner must be member of the household belonging to the shopping list
+ */
 exports.shoppingItemCreate = function(req, res) {
 	if(req.session.loggedIn) {
 	
