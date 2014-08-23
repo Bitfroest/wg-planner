@@ -99,7 +99,7 @@ exports.shoppingItemCreate = function(req, res) {
 	if(req.session.loggedIn) {
 	
 		req.checkBody('shopping_list').isInt();
-		req.checkBody('name').isLength(1);
+		req.checkBody('name').isLength(1, 50);
 		req.checkBody('owner').isInt();
 		req.checkBody('price').isFloat();
 	

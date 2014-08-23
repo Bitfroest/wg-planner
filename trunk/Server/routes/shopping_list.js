@@ -3,6 +3,23 @@ var async = require('async');
 var formatEuro = require('../utils/currency_formatter.js').formatEuro;
 var formatDate = require('../utils/date_formatter.js').formatDate;
 
+function validateShoppingList(req) {
+	req.checkBody('buyer').isInt();
+	req.checkBody('shop').isLength(1, 30);
+	req.checkBody('shopped_date').matches(/^[0-3]?[0-9]\.[01]?[0-9]\.[0-9]{4}$/);
+	req.checkBody('shopped_time').matches(/^[0-2]?[0-9]:[0-5]?[0-9]$/);
+}
+
+function sanitizeShoppingList(req, form) {
+	var dateParts = req.sanitize('shopped_date').toString().split('.');
+	var timeParts = req.sanitize('shopped_time').toString().split(':');
+	
+	form.buyer = req.sanitize('buyer').toInt();
+	form.shop = req.sanitize('shop').toString();
+	form.shopped = new Date(dateParts[2], dateParts[1]-1, dateParts[0], timeParts[0], timeParts[1]);
+		// year, month, day, hour, minute, second, millisecond
+}
+
 /*
  * Router for creating new shopping lists.
  *
@@ -21,10 +38,7 @@ exports.shoppingListCreate = function(req, res) {
 	if(req.session.loggedIn) {
 	
 		req.checkBody('household').isInt();
-		req.checkBody('buyer').isInt();
-		req.checkBody('shop').isLength(1);
-		req.checkBody('shopped_date').matches(/^[0-3]?[0-9]\.[01]?[0-9]\.[0-9]{4}$/);
-		req.checkBody('shopped_time').matches(/^[0-2]?[0-9]:[0-5]?[0-9]$/);
+		validateShoppingList(req);
 	
 		var errors = req.validationErrors();
 	
@@ -32,23 +46,11 @@ exports.shoppingListCreate = function(req, res) {
 			res.redirect('/internal_error');
 			return;
 		}
-		
-		req.sanitize('household').toInt();
-		req.sanitize('buyer').toInt();
-		req.sanitize('shop').toString();
-		req.sanitize('shopped_date').toString();
-		req.sanitize('shopped_time').toString();
-	
-		var dateParts = String.prototype.split.call(req.body.shopped_date, '.');
-		var timeParts = String.prototype.split.call(req.body.shopped_time, ':');
 	
 		var form = {
-			household : req.body.household,
-			buyer : req.body.buyer,
-			shop : req.body.shop,
-			shopped : new Date(dateParts[2], dateParts[1]-1, dateParts[0], timeParts[0], timeParts[1])
-				// year, month, day, hour, minute, second, millisecond
+			household : req.sanitize('household').toInt()
 		};
+		sanitizeShoppingList(req, form);
 	
 		req.getDb(function(err, client, done) {
 			if(err) {
@@ -115,10 +117,8 @@ exports.shoppingList = function(req, res) {
 			return;
 		}
 		
-		req.sanitize('id').toInt();
-		
 		var form = {
-			shoppingListId : parseInt(req.params.id)
+			shoppingListId : req.sanitize('id').toInt()
 		};
 		
 		req.getDb(function(err, client, done) {
@@ -225,10 +225,7 @@ exports.shoppingListUpdate = function(req, res) {
 	if(req.session.loggedIn) {
 	
 		req.checkBody('id').isInt();
-		req.checkBody('buyer').isInt();
-		req.checkBody('shop').isLength(1);
-		req.checkBody('shopped_date').matches(/^[0-3]?[0-9]\.[01]?[0-9]\.[0-9]{4}$/);
-		req.checkBody('shopped_time').matches(/^[0-2]?[0-9]:[0-5]?[0-9]$/);
+		validateShoppingList(req)
 	
 		var errors = req.validationErrors();
 	
@@ -236,23 +233,11 @@ exports.shoppingListUpdate = function(req, res) {
 			res.redirect('/internal_error');
 			return;
 		}
-		
-		req.sanitize('id').toInt();
-		req.sanitize('buyer').toInt();
-		req.sanitize('shop').toString();
-		req.sanitize('shopped_date').toString();
-		req.sanitize('shopped_time').toString();
-	
-		var dateParts = String.prototype.split.call(req.body.shopped_date, '.');
-		var timeParts = String.prototype.split.call(req.body.shopped_time, ':');
 	
 		var form = {
-			id : req.body.id,
-			buyer : req.body.buyer,
-			shop : req.body.shop,
-			shopped : new Date(dateParts[2], dateParts[1]-1, dateParts[0], timeParts[0], timeParts[1])
-				// year, month, day, hour, minute, second, millisecond
+			id : req.sanitize('id').toInt()
 		};
+		sanitizeShoppingList(req, form);
 		
 		req.getDb(function(err, client, done) {
 			if(err) {

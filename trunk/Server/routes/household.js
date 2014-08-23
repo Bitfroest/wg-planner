@@ -2,6 +2,24 @@ var async = require('async');
 var formatEuro = require('../utils/currency_formatter.js').formatEuro;
 var formatDate = require('../utils/date_formatter.js').formatDate;
 
+function validateHousehold(req) {
+	req.checkBody('name').isLength(3, 30);
+}
+
+function sanitizeHousehold(req, form) {
+	form.name = req.sanitize('name').toString();
+}
+
+/*
+ * Router for displaying a single household.
+ *
+ * Parameter:
+ * - id int: ID of the household that should be displayed
+ *
+ * Requirements:
+ * - loggedIn
+ * - Protagonist must be member of the household
+ */
 exports.household = function(req, res) {
 	if(req.session.loggedIn) {
 	
@@ -13,11 +31,9 @@ exports.household = function(req, res) {
 			res.redirect('/internal_error');
 			return;
 		}
-		
-		req.sanitize('id').toInt();
 	
 		var form = {
-			householdId : req.params.id
+			householdId : req.sanitize('id').toInt()
 		};
 	
 		req.getDb(function(err, client, done) {
@@ -103,8 +119,31 @@ exports.household = function(req, res) {
 	}
 };
 
+/*
+ * Router for creating households.
+ * It will also create a membership association between
+ * the protagonist and the newly created household.
+ * 
+ * Parameter:
+ * - name string: name of the household
+ * 
+ * Requirements:
+ * - loggedIn
+ */
 exports.householdCreate = function(req, res) {
 	if(req.session.loggedIn) {
+		
+		validateHousehold(req);
+		
+		var errors = req.validationErrors();
+	
+		if(errors) {
+			res.redirect('/internal_error');
+			return;
+		}
+		
+		var form = {};
+		sanitizeHousehold(req, form);
 		
 		req.getDb(function(err, client, done){
 			if(err) {
@@ -112,7 +151,7 @@ exports.householdCreate = function(req, res) {
 			}
 			
 			client.query('INSERT INTO household(name, created) VALUES($1, $2) RETURNING id',
-				[req.body.name, new Date()], function(err, result){
+				[form.name, new Date()], function(err, result){
 				
 				if(err) {
 					return console.error('Failed to insert household', err);
@@ -139,11 +178,23 @@ exports.householdCreate = function(req, res) {
 	}
 };
 
+/*
+ * Router for updating households.
+ *
+ * Parameter:
+ * - id int: ID of the household
+ * - name string: name of the household
+ *
+ * Requirements
+ * - loggedIn
+ * - household must exist
+ * - Protagonist must be founder of the household
+ */
 exports.householdUpdate = function(req, res) {
 	if(req.session.loggedIn) {
 		
 		req.checkBody('id').isInt();
-		req.checkBody('name').isLength(3, 30);
+		validateHousehold(req);
 		
 		var errors = req.validationErrors();
 	
@@ -153,9 +204,9 @@ exports.householdUpdate = function(req, res) {
 		}
 		
 		var form = {
-			id : req.sanitize('id').toInt(),
-			name : req.sanitize('name').toString()
+			id : req.sanitize('id').toInt()
 		};
+		sanitizeHousehold(req, form);
 		
 		req.getDb(function(err, client, done) {
 			if(err) {
