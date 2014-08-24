@@ -1,8 +1,24 @@
+
+/*
+ * Router for creating household invitations.
+ *
+ * Parameter:
+ * - household int: ID of the household
+ * - email string: mail address of the person to invite
+ *
+ * Requirements:
+ * - loggedIn
+ * - protagonist must be founder of the household
+ * - there must be a person with the given mail address.
+ * - the person to invite must not be the protagonist (self invite)
+ * - the person to invite must not have an invitation to the household (double invite)
+ * - the person to invite must not be member of the household
+ */
 exports.householdInvitationCreate = function(req, res) {
 	if(req.session.loggedIn) {
 	
 		req.checkBody('household', 'Haushalt auswählen').isInt();
-		req.checkBody('email', 'Mail-Adresse hat ungültiges Format').isEmail();
+		req.checkBody('email', 'Mail-Adresse hat ungültiges Format').isLength(1, 60).isEmail();
 		
 		var errors = req.validationErrors();
 	
@@ -10,13 +26,10 @@ exports.householdInvitationCreate = function(req, res) {
 			res.redirect('/dashboard?error=true');
 			return;
 		}
-	
-		req.sanitize('household').toInt();
-		req.sanitize('email').toString();
-	
+
 		var form = {
-			householdId: req.body.household,
-			email: req.body.email
+			householdId: req.sanitize('household').toInt(),
+			email: req.sanitize('email').toString()
 		};
 	
 		req.getDb(function(err, client, done) {
@@ -104,6 +117,18 @@ exports.householdInvitationCreate = function(req, res) {
 	}
 };
 
+/*
+ * Router for accepting household invitations.
+ * The person will be member of the household.
+ * (This is only possible for the invitation receiver!)
+ *
+ * Parameter:
+ * - household int: ID of the household
+ *
+ * Requirements:
+ * - loggedIn
+ * - there must be an invitation for the protagonist and the household
+ */
 exports.householdInvitationAccept = function(req, res) {
 	if(req.session.loggedIn) {
 		
@@ -160,6 +185,17 @@ exports.householdInvitationAccept = function(req, res) {
 	}
 };
 
+/*
+ * Router for declining household invitations.
+ * (This is only possible for the invitation receiver!)
+ *
+ * Parameter:
+ * - household int: ID of the household
+ *
+ * Requirements:
+ * - loggedIn
+ * - there must be an invitation for the protagonist and the household
+ */
 exports.householdInvitationDecline = function(req, res) {
 	if(req.session.loggedIn) {
 	
@@ -172,10 +208,8 @@ exports.householdInvitationDecline = function(req, res) {
 			return;
 		}
 		
-		req.sanitize('household').toInt();
-		
 		var form = {
-			household : req.body.household
+			household : req.sanitize('household').toInt()
 		};
 		
 		req.getDb(function(err, client, done) {
@@ -207,7 +241,19 @@ exports.householdInvitationDecline = function(req, res) {
 	}
 };
 
-// used on /dashboard page
+/*
+ * Router for cancelling household invitations.
+ * (This is only possible for the invitation sender!)
+ *
+ * Parameter:
+ * - household int: ID of the household
+ * - to_person int: ID of the invitation receiver
+ *
+ * Requirements:
+ * - loggedIn
+ * - there must be an invitation for the household, the receiver (=parameter)
+ *   and the sender (=protagonist)
+ */
 exports.householdInvitationCancel = function(req, res) {
 	if(req.session.loggedIn) {
 	
@@ -221,12 +267,9 @@ exports.householdInvitationCancel = function(req, res) {
 			return;
 		}
 		
-		req.sanitize('household').toInt();
-		req.sanitize('to_person').toInt();
-		
 		var form = {
-			household : req.body.household,
-			toPerson : req.body.to_person
+			household : req.sanitize('household').toInt(),
+			toPerson : req.sanitize('to_person').toInt()
 		};
 		
 		req.getDb(function(err, client, done) {
@@ -257,7 +300,19 @@ exports.householdInvitationCancel = function(req, res) {
 	}
 };
 
-// used on /household/[id] page
+/*
+ * Router for cancelling household invitations.
+ * (This is only possible for the household founder!)
+ *
+ * Parameter:
+ * - household int: ID of the household
+ * - to_person int: ID of the invitation receiver
+ *
+ * Requirements:
+ * - loggedIn
+ * - protagonist must be founder of the household
+ * - there must be an invitation for the household and the receiver (=parameter)
+ */
 exports.householdInvitationCancel2 = function(req, res) {
 	if(req.session.loggedIn) {
 	
@@ -271,12 +326,9 @@ exports.householdInvitationCancel2 = function(req, res) {
 			return;
 		}
 		
-		req.sanitize('household').toInt();
-		req.sanitize('to_person').toInt();
-		
 		var form = {
-			household : req.body.household,
-			toPerson : req.body.to_person
+			household : req.sanitize('household').toInt(),
+			toPerson : req.sanitize('to_person').toInt()
 		};
 		
 		req.getDb(function(err, client, done) {

@@ -1,5 +1,13 @@
 var async = require('async');
 
+/*
+ * Router for displaying the customer dashboard.
+ *
+ * Parameter: none
+ *
+ * Requirements:
+ * - loggedIn
+ */
 exports.dashboard = function(req, res) {
 	if(req.session.loggedIn) {
 		
