@@ -17,10 +17,21 @@ exports.login = function(req, res) {
 };
 
 exports.doLogin = function(req, res) {
+	
+	req.checkBody('email').isLength(1, 60).isEmail();
+	req.checkBody('password').isLength(6, 40);
+	
+	var errors = req.validationErrors();
+	
+	if(errors) {
+		res.redirect('/login?error=true');
+		return;
+	}
+	
 	var login = {
-		email : ''+req.body.email,
-		password : ''+req.body.password,
-		persistent : '1' === ''+req.body.persistent
+		email : req.sanitize('email').toString(),
+		password : req.sanitize('password').toString(),
+		persistent : '1' === req.sanitize('persistent').toString()
 	};
 	
 	req.getDb(function(err, client, done) {
@@ -103,18 +114,13 @@ exports.doRegister = function(req, res) {
 	if(errors) {
 		req.session.errors = errors;
 		res.redirect('/register');
-		
 		return;
 	}
 	
-	req.sanitize('user').toString();
-	req.sanitize('email').toString();
-	req.sanitize('password').toString();
-	
 	var person = {
-		name : req.body.user,
-		email : req.body.email,
-		password : req.body.password
+		name : req.sanitize('user').toString(),
+		email : req.sanitize('email').toString(),
+		password : req.sanitize('password').toString()
 	};
 
 	passwordHelper.hashPassword(person.password, function(err, key) {
@@ -161,10 +167,8 @@ exports.personUpdate = function(req, res) {
 		return;
 	}
 	
-	req.sanitize('name').toString();
-	
 	var form = {
-		name : req.body.name
+		name : req.sanitize('name').toString()
 	};
 	
 	req.getDb(function(err, client, done) {
