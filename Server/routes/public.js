@@ -4,6 +4,25 @@
 
 var passwordHelper = require('./password.js');
 
+function validateEmailPassword(req) {
+	req.checkBody('email').isLength(5, 60).isEmail();
+	req.checkBody('password').isLength(6, 40);
+}
+
+function sanitizeEmailPassword(req, form) {
+	form.email = req.sanitize('email').toString();
+	form.password = req.sanitize('password').toString();
+}
+
+function validateName(req) {
+	req.checkBody('name', 'Name muss zwischen 3 und 20 Zeichen lang sein.').isLength(3, 20);
+	req.checkBody('name', 'Name darf nur Buchstaben, Zahlen, Punkte, Binde- und Unterstriche enthalten.').matches(/^[a-zA-Z][a-zA-Z0-9 \.\-_]*$/);
+}
+
+function sanitizeName(req, form) {
+	form.name = req.sanitize('name').toString();
+}
+
 exports.index = function(req, res) {
 	res.render('home', {_csrf: req.csrfToken()});
 };
@@ -16,10 +35,20 @@ exports.login = function(req, res) {
 	});
 };
 
+/*
+ * Router for logging in a person.
+ *
+ * Parameter:
+ * - email string: mail address of the person
+ * - password string: unencrypted password of the person
+ *
+ * Requirements:
+ * - there must be a person with the email
+ * - the person must have the password (need to hash first!)
+ */
 exports.doLogin = function(req, res) {
 	
-	req.checkBody('email').isLength(1, 60).isEmail();
-	req.checkBody('password').isLength(6, 40);
+	validateEmailPassword(req);
 	
 	var errors = req.validationErrors();
 	
@@ -29,10 +58,9 @@ exports.doLogin = function(req, res) {
 	}
 	
 	var login = {
-		email : req.sanitize('email').toString(),
-		password : req.sanitize('password').toString(),
 		persistent : '1' === req.sanitize('persistent').toString()
 	};
+	sanitizeEmailPassword(req, login);
 	
 	req.getDb(function(err, client, done) {
 		if(err) {
@@ -83,6 +111,14 @@ exports.doLogin = function(req, res) {
 	});
 };
 
+/*
+ * Router for logging out a person.
+ *
+ * Parameter: none.
+ *
+ * Requirements:
+ * - loggedIn
+ */
 exports.logout = function(req, res) {
 	req.session.loggedIn = false;
 	res.render('logout');
@@ -101,13 +137,21 @@ exports.register = function(req, res) {
 	res.render('register', {title : 'Registrieren', errors : errors, _csrf: req.csrfToken()});
 };
 
+/*
+ * Router for registering a new person.
+ *
+ * Parameter:
+ * - name string: name of the person
+ * - email string: mail address of the person
+ * - password string: password of the person
+ *
+ * Requirements: none.
+ */
 exports.doRegister = function(req, res) {
 	// creates a new user/person or fails if any data is not given
 	
-	req.checkBody('user', 'Name muss zwischen 3 und 20 Zeichen lang sein.').len(3, 20);
-	req.checkBody('user', 'Name darf nur Buchstaben, Zahlen, Punkte, Binde- und Unterstriche enthalten.').matches(/^[a-zA-Z][a-zA-Z0-9 \.\-_]*$/);
-	req.checkBody('email', 'E-Mail-Adresse muss ein gültiges Format haben.').len(3, 40).isEmail();
-	req.checkBody('password', 'Passwort muss zwischen 6 und 40 Zeichen lang sein.').len(6, 40);
+	validateName(req);
+	validateEmailPassword(req);
 	
 	var errors = req.validationErrors();
 	
@@ -117,11 +161,9 @@ exports.doRegister = function(req, res) {
 		return;
 	}
 	
-	var person = {
-		name : req.sanitize('user').toString(),
-		email : req.sanitize('email').toString(),
-		password : req.sanitize('password').toString()
-	};
+	var person = {};
+	sanitizeEmailPassword(req, person);
+	sanitizeName(req, person);
 
 	passwordHelper.hashPassword(person.password, function(err, key) {
 		if(err) {
@@ -154,11 +196,19 @@ exports.doRegister = function(req, res) {
 	});
 };
 
+/*
+ * Router for updating a person's data.
+ *
+ * Parameter:
+ * - name string: new name for the person
+ *
+ * Requirements:
+ * - loggedIn
+ */
 exports.personUpdate = function(req, res) {
 	// creates a new user/person or fails if any data is not given
 	
-	req.checkBody('name', 'Name muss zwischen 3 und 20 Zeichen lang sein.').len(3, 20);
-	req.checkBody('name', 'Name darf nur Buchstaben, Zahlen, Punkte, Binde- und Unterstriche enthalten.').matches(/^[a-zA-Z][a-zA-Z0-9 \.\-_]*$/);
+	validateName(req);
 	
 	var errors = req.validationErrors();
 	
@@ -167,9 +217,8 @@ exports.personUpdate = function(req, res) {
 		return;
 	}
 	
-	var form = {
-		name : req.sanitize('name').toString()
-	};
+	var form = {};
+	sanitizeName(req, form);
 	
 	req.getDb(function(err, client, done) {
 		if(err) {
