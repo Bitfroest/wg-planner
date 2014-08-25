@@ -124,3 +124,20 @@ block content
 				tr
 					td Status
 					td= ({customer:'Standard-Account', admin:'Admin'})[person.role]
+
+	form(method='post', action='/person/password_change')
+		input(type='hidden', name='_csrf', value=_csrf)
+		table.table.table-striped
+			tr
+				td Aktuelles Passwort
+				td
+					input(type='password', name='password_old')
+			tr
+				td Neues Passwort
+				td
+					input(type='password', name='password')
+			tr
+				td Neues Passwort bestätigen
+				td
+					input(type='password', name='password_confirm')
+		input(type='submit', value='Passwort ändern')

@@ -31,6 +31,7 @@ module.exports = function(app) {
 	app.post('/register', publicRouter.doRegister);
 	
 	app.post('/person/update', publicRouter.personUpdate);
+	app.post('/person/password_change', publicRouter.personPasswordChange);
 	
 	//main page if logged in
 	app.get('/dashboard', customerRouter.dashboard);

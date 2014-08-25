@@ -4,13 +4,19 @@
 
 var passwordHelper = require('./password.js');
 
-function validateEmailPassword(req) {
+function validateEmail(req) {
 	req.checkBody('email').isLength(5, 60).isEmail();
+}
+
+function sanitizeEmail(req, form) {
+	form.email = req.sanitize('email').toString();
+}
+
+function validatePassword(req) {
 	req.checkBody('password').isLength(6, 40);
 }
 
-function sanitizeEmailPassword(req, form) {
-	form.email = req.sanitize('email').toString();
+function sanitizePassword(req, form) {
 	form.password = req.sanitize('password').toString();
 }
 
@@ -48,7 +54,8 @@ exports.login = function(req, res) {
  */
 exports.doLogin = function(req, res) {
 	
-	validateEmailPassword(req);
+	validateEmail(req);
+	validatePassword(req);
 	
 	var errors = req.validationErrors();
 	
@@ -60,7 +67,8 @@ exports.doLogin = function(req, res) {
 	var login = {
 		persistent : '1' === req.sanitize('persistent').toString()
 	};
-	sanitizeEmailPassword(req, login);
+	sanitizeEmail(req, login);
+	sanitizePassword(req, login);
 	
 	req.getDb(function(err, client, done) {
 		if(err) {
@@ -151,7 +159,8 @@ exports.doRegister = function(req, res) {
 	// creates a new user/person or fails if any data is not given
 	
 	validateName(req);
-	validateEmailPassword(req);
+	validateEmail(req);
+	validatePassword(req);
 	
 	var errors = req.validationErrors();
 	
@@ -162,8 +171,9 @@ exports.doRegister = function(req, res) {
 	}
 	
 	var person = {};
-	sanitizeEmailPassword(req, person);
 	sanitizeName(req, person);
+	sanitizeEmail(req, person);
+	sanitizePassword(req, person);
 
 	passwordHelper.hashPassword(person.password, function(err, key) {
 		if(err) {
@@ -206,43 +216,132 @@ exports.doRegister = function(req, res) {
  * - loggedIn
  */
 exports.personUpdate = function(req, res) {
-	// creates a new user/person or fails if any data is not given
-	
-	validateName(req);
-	
-	var errors = req.validationErrors();
-	
-	if(errors) {
-		res.redirect('/internal_error?validation_error');
-		return;
-	}
-	
-	var form = {};
-	sanitizeName(req, form);
-	
-	req.getDb(function(err, client, done) {
-		if(err) {
-			console.error('Failed to connect in personUpdate', err);
-			res.redirect('/register?error=internal');
+	if(req.session.loggedIn) {
+		validateName(req);
+		
+		var errors = req.validationErrors();
+		
+		if(errors) {
+			res.redirect('/internal_error?validation_error');
 			return;
 		}
 		
-		client.query('UPDATE person SET name=$1 WHERE id=$2', [form.name, req.session.personId], function(err, result) {
-			done();
-			
+		var form = {};
+		sanitizeName(req, form);
+		
+		req.getDb(function(err, client, done) {
 			if(err) {
-				console.error('Failed to update person', err);
+				console.error('Failed to connect in personUpdate', err);
+				res.redirect('/register?error=internal');
 				return;
 			}
+			
+			client.query('UPDATE person SET name=$1 WHERE id=$2', [form.name, req.session.personId], function(err, result) {
+				done();
+				
+				if(err) {
+					console.error('Failed to update person', err);
+					return;
+				}
+			
+				if(result.rowCount !== 1) {
+					console.error('Did not update any row in personUpdate');
+				}
+				
+				res.redirect('/dashboard');
+			});
+		});
+	} else {
+		res.redirect('/sid_wrong');
+	}
+};
+
+/*
+ * Router for changing a person's password.
+ *
+ * Parameter:
+ * - password_old string: current password of the person
+ * - password string: new password for the person
+ * - password_confirm string: confirmed new password for the person
+ *
+ * Requirements:
+ * - loggedIn
+ * - password_old must be the current password of the person
+ * - password and password_confirm must be the same
+ */
+exports.personPasswordChange = function(req, res) {
+	if(req.session.loggedIn) {
+	
+		req.checkBody('password_old').isLength(6, 40);
+		validatePassword(req);
 		
-			if(result.rowCount !== 1) {
-				console.error('Did not update any row in personUpdate');
+		var errors = req.validationErrors();
+		
+		if(errors) {
+			res.redirect('/dashboard?errors');
+			return;
+		}
+		
+		var form = {
+			password_old : req.sanitize('password_old').toString(),
+			password : req.sanitize('password').toString(),
+			password_confirm : req.sanitize('password_confirm').toString()
+		};
+		
+		if(form.password !== form.password_confirm) {
+			res.redirect('/dashboard?error=not_confirmed');
+			return;
+		}
+		
+		req.getDb(function(err, client, done) {
+			if(err) {
+				return console.error('Failed to connect in personPasswordChange', err);
 			}
 			
-			res.redirect('/dashboard');
+			client.query('SELECT password FROM person WHERE id=$1', [req.session.personId], function(err, result) {
+				if(err) {
+					return console.error('Failed to load password of person', err);
+				}
+				
+				if(result.rows.length !== 1) {
+					return console.error('Did not find person ' +req.session.personId);
+				}
+				
+				var savedPassword = result.rows[0].password;
+				
+				passwordHelper.checkPassword(form.password_old, savedPassword, function(err, pwMatch) {
+					if(err) {
+						return console.error('Error during password check', err);
+					}
+					
+					if(!pwMatch) {
+						res.redirect('/dashboard?password_wrong');
+						return;
+					}
+					
+					passwordHelper.hashPassword(form.password, function(err, key) {
+						if(err) {
+							return console.error('Could not hash new password', err);
+						}
+						
+						client.query('UPDATE person SET password=$1 WHERE id=$2', [key, req.session.personId], function(err, result) {
+							done();
+							
+							if(err) {
+								return console.error('Failed to update new password', err);
+							}
+							
+							res.redirect('/dashboard?password_change=success');
+						});
+					});
+				});
+			});
 		});
-	});		
-};
+	
+	} else {
+		res.redirect('/sid_wrong');
+	}
+}
 
 exports.imprint = function(req, res) {
 	res.render('imprint', {title : 'Impressum', _csrf: req.csrfToken()});
