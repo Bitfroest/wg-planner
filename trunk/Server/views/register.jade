@@ -9,7 +9,7 @@ block content
 		form(class='form-register' name='register', action='/register', method='post')
 			input(type='hidden', name='_csrf', value=_csrf)
 			label(for='name') Benutzername
-			input(class='form-control' type='text', required='required', id='user', name='user', placeholder='User1234', autofocus)
+			input(class='form-control' type='text', required='required', id='name', name='name', placeholder='User1234', autofocus)
 			label(for='email') E-Mail
 			input(class='form-control' type='email', required='required', id='email', name='email', value='', spellcheck='false', placeholder='jemand@example.com')
 			label(for='password') Passwort
