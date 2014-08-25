@@ -131,13 +131,13 @@ block content
 			tr
 				td Aktuelles Passwort
 				td
-					input(type='password', name='password_old')
+					input.form-control(type='password', name='password_old')
 			tr
 				td Neues Passwort
 				td
-					input(type='password', name='password')
+					input.form-control(type='password', name='password')
 			tr
 				td Neues Passwort bestätigen
 				td
-					input(type='password', name='password_confirm')
-		input(type='submit', value='Passwort ändern')
+					input.form-control(type='password', name='password_confirm')
+		input.btn.btn-success.pull-right(type='submit', value='Passwort ändern')
