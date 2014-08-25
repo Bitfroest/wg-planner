@@ -10,11 +10,11 @@ block content
 	form(method='post', action='/shopping_item/update')
 		input(type='hidden', name='_csrf', value=_csrf)
 		input(type='hidden', name='id', value=item.id)
-		table
+		table.table.table-striped
 			tr
 				td Name
 				td
-					input(type='text', name='name', value=item.name)
+					input.form-control(type='text', name='name', value=item.name)
 			tr
 				td Besitzer
 				td
@@ -24,5 +24,7 @@ block content
 			tr
 				td Preis
 				td
-					input(type='text', name='price', value=item.price/100)
-		input(type='submit', value='Ändern (not implemented)', disabled)
+					div.input-group
+						input.form-control(type='text', name='price', value=item.price/100)
+						span.input-group-addon €
+		input.disabled.btn.btn-primary(type='submit', value='Ändern (not implemented)', disabled)
