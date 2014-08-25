@@ -56,6 +56,10 @@ block content
 				td= item.name
 				td= item.owner_name
 				td= formatCurrency(item.price)
+				td
+					a.disabled.pull-right.btn.btn-danger(href='/shopping_item/delete?id=' + item.id)
+						span(aria-hidden='true') &times;
+						span.sr-only Verlassen
 				
 	form(method='post', action='/shopping_item/create')
 		input(type='hidden', name='_csrf', value=_csrf)
