@@ -83,9 +83,10 @@ block content
 	div.form
 		form(method='POST', action='/household/invitation/create')
 			input(type='hidden', name='_csrf', value=_csrf)
+			input#invite-household(type='hidden', name='household')
 			div.input-group
 				div.input-group-btn
-					button.btn.btn-default.dropdown-toggle#invite-button(type='button', data-toggle='dropdown', name='household', size='1', value='')
+					button.btn.btn-default.dropdown-toggle#invite-button(type='button', data-toggle='dropdown', size='1')
 						span#invite-button-text -- Wähle Haushalt -- 
 						span.caret
 					ul.dropdown-menu(role='menu')
@@ -97,7 +98,7 @@ block content
 				script(type="application/javascript")
 					|function changeInviteButton(value,name){
 					|	//console.log("v:"+value+" n:"+name);
-					|	document.getElementById('invite-button').value = value;
+					|	document.getElementById('invite-household').value = value;
 					|	document.getElementById('invite-button-text').textContent = name+" ";
 					|};
 				input.form-control(type='email', name='email', placeholder='freund@example.de', required='required')
