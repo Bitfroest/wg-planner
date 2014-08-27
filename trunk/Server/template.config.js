@@ -5,5 +5,8 @@
 
 module.exports = {
 	// Database connection URL, for PostgreSQL: postgres://username:password@localhost/database
-	databaseURL : ''
+	databaseURL : '',
+	
+	// HTTP port used for the application web server, should be port 80 for production and 8080 for development
+	httpPort : 8080
 };

@@ -15,9 +15,20 @@ var expressValidator = require('express-validator');
 var csrf = require('csurf');
 var slashes = require("connect-slashes");
 var routes = require('./routes');
-var config = require('./config.js');
 var pg = require('pg.js');
 var PostgresStore = require('./database/pg-session.js')(session);
+
+// Load configuration, show info message on failure
+var config;
+try {
+	config = require('./config.js');
+} catch(err) {
+	if(err.code === 'MODULE_NOT_FOUND') {
+		console.warn('Could not find the configuration file config.js');
+		console.warn('Please follow the instructions in template.config.js');
+		return;
+	}
+}
 
 require('./database/init.js').init(pg, config.databaseURL, function(err, dbinfo) {
 
@@ -97,7 +108,7 @@ app.use(function(err, req, res, next){
 });
 
 //Start listening on a specific port
-var server = app.listen(8080, function() {
+var server = app.listen(config.httpPort || 8080, function() {
 	console.log('Listening on port %d in %s mode', server.address().port, app.get('env'));
 });
 
