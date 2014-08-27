@@ -32,6 +32,12 @@ try {
 
 require('./database/init.js').init(pg, config.databaseURL, function(err, dbinfo) {
 
+// check errors in database initialization
+if(err) {
+	console.error(err);
+	return;
+}
+
 //Create a new app
 var app = express();
 
