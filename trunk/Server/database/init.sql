@@ -112,6 +112,6 @@ RETURNS TABLE(id INTEGER, outgoing BIGINT, incoming BIGINT, diff BIGINT) AS $$
 		SELECT person_id AS id FROM household_member WHERE household_id = param_household_id
 	)
 	SELECT m.id AS id, coalesce(b.sum, 0) AS outgoing, coalesce(o.sum, 0) AS incoming, coalesce(b.sum, 0) - coalesce(o.sum, 0) AS diff
-	FROM members m LEFT JOIN buyers b ON (m.id=b.id) LEFT JOIN owners o ON (b.id = o.id)
+	FROM members m LEFT JOIN buyers b ON (m.id=b.id) LEFT JOIN owners o ON (m.id = o.id)
 	ORDER BY m.id ASC
 $$ LANGUAGE SQL;
