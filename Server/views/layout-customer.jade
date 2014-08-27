@@ -18,21 +18,12 @@ html(lang='de')
 						a.navbar-brand(href='#') Wg-Planner
 					div.collapse.navbar-collapse
 						ul.nav.navbar-nav#link-breadcrumb
-							li#link-dashboard(class='')
+							li#link-dashboard(class= breadcrumbs.length === 0 ? 'active' : '')
 								a(href='/dashboard') Dashboard
-							- var breadLinks = new Array()
-							- var i = 0
-							- breadLinks[0] = "dashboard"
-							each crumb in breadcrumbs
-								- i = i + 1
-								- breadLinks[i] = crumb.url.split("/")[1]
+							each crumb, crumbIndex in breadcrumbs
 								p.navbar-text.breadcrumbs-arrow &#8594;
-								li(id='link-'+crumb.url.split("/")[1], class='')
+								li(class= crumbIndex === breadcrumbs.length-1 ? 'active' : '')
 									a(href=crumb.url)= crumb.text
-							script(type='application/javascript')
-								| document.getElementById("link-
-								=breadLinks[i]
-								|").className="active";
 						form.navbar-form.navbar-right(role='logout', name='logout', method='post', action='/logout')
 							input(type='hidden', name='_csrf', value=_csrf)
 							div.form-group
