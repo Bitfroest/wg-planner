@@ -6,7 +6,7 @@
  */
  
 var publicRouter = require('./public');
-var customerRouter = require('./customer');
+var dashboardRouter = require('./dashboard');
 var householdRouter = require('./household');
 var householdInvitationRouter = require('./household_invitation');
 var shoppingListRouter = require('./shopping_list');
@@ -34,7 +34,7 @@ module.exports = function(app) {
 	app.post('/person/password_change', publicRouter.personPasswordChange);
 	
 	//main page if logged in
-	app.get('/dashboard', customerRouter.dashboard);
+	app.get('/dashboard', dashboardRouter.dashboard);
 	
 	app.post('/household/create', householdRouter.householdCreate);
 	app.post('/household/update', householdRouter.householdUpdate);
