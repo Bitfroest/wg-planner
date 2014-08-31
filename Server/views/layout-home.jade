@@ -1,6 +1,7 @@
 doctype html
 html(lang='de')
-	include inc/head
+	head
+		include inc/head
 	body
 		noscript
 			div#noscript-padding
@@ -47,16 +48,14 @@ html(lang='de')
 				div#noscript-warning
 					|Diese Seite funktioniert am Besten mit JavaScript
 			block content
-		include inc/foot
+		div.footer
+			div.container
+				p.text-muted.centered Copyright (c) 2014 Bitfröst Studios 
+					a(href='imprint') Impressum
 		script(type="application/javascript")
 			|function fpDisplay(visibility) {
 			|	document.getElementById('fail-popups').style.display= visibility;
 			|};
 			|fpDisplay("none");
-		//jQuery (necessary for Bootstrap's JavaScript plugins)
-		script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js')
-		//local jQuery just for testing
-		script(src='/js/jquery.js')
-		//Include all compiled plugins (below), or include individual files as needed
-		script(src='/js/bootstrap.min.js')
+		include inc/foot
 		

@@ -51,6 +51,9 @@ app.disable('x-powered-by');
 app.enable('strict routing');
 app.enable('case sensitive routing');
 
+// forward useCDN setting to views
+app.locals._useCDN = config.useCDN;
+
 //Use jade as view engine
 app.set('view engine', 'jade');
 app.set('views', __dirname + '/views');

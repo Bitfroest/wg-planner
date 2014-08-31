@@ -8,5 +8,8 @@ module.exports = {
 	databaseURL : '',
 	
 	// HTTP port used for the application web server, should be port 80 for production and 8080 for development
-	httpPort : 8080
+	httpPort : 8080,
+	
+	// use an external content delivery network, should be false for (offline) development
+	useCDN : false
 };
