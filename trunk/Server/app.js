@@ -93,15 +93,21 @@ app.use(session({
 //CSRF protection
 app.use(csrf());
 
-app.use(function(req, res, next){
-	req.getDb = function(callback) {
-		pg.connect(config.databaseURL, callback);
-	};
+app.use(function(req, res, next) {
+	req.getDb = pg.connect.bind(pg, config.databaseURL);
 	next();
 });
 
 //Router for all dynamic services
 routes(app);
+
+// Send custom 404 error page
+app.use(function(req, res) {
+	res.status(404).render('error-404', {
+		title : 'Seite nicht gefunden!',
+		url : decodeURI(req.path)
+	});
+});
 
 //Error handler
 app.use(function(err, req, res, next){
@@ -109,7 +115,10 @@ app.use(function(err, req, res, next){
 		res.send(403, 'Invalid CSRF Token');
 	} else {
 		console.error(err.stack);
-		res.send(500, 'Something broke!');
+		res.status(500).render('error-500', {
+			title: 'Interner Fehler',
+			err : app.get('env') === 'development' ? err : undefined // show details only in development mode
+		});
 	}
 });
 

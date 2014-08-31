@@ -1,0 +1,11 @@
+extends layout-simple
+
+block head
+
+block content
+	div.container
+		h1= title
+		div.alert.alert-success(role='alert')
+			if err && err.stack		
+				textarea(readonly, style='font-family: Monospace; width:100%; height: 400px')= err.stack
+		a.btn.btn-primary(href='/login') Zur Startseite
