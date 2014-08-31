@@ -1,0 +1,11 @@
+extends layout-simple
+
+block head
+
+block content
+	div.container
+		div.alert.alert-warning.centered(role='alert')
+			p= 'Seite kann nicht gefunden werden: ' + url
+		div.btn-group
+			a.btn.btn-primary(href='/login') Zur Startseite
+			a.btn.btn-default(href='javascript:history.back();') Zurück
