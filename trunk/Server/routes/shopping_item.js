@@ -1,5 +1,17 @@
 var async = require('async');
 
+function validateShoppingItem(req) {
+	req.checkBody('name').isLength(1, 50);
+	req.checkBody('owner').isInt();
+	req.checkBody('price').isFloat();
+}
+
+function sanitizeShoppingItem(req, form) {
+	form.name = req.sanitize('name').toString();
+	form.owner = req.sanitize('owner').toInt();
+	form.price = Math.round(req.sanitize('price').toFloat() * 100);
+}
+
 /*
  * Router for displaying a single shopping item
  *
@@ -98,10 +110,8 @@ exports.shoppingItem = function(req, res) {
 exports.shoppingItemCreate = function(req, res) {
 	if(req.session.loggedIn) {
 	
+		validateShoppingItem(req);
 		req.checkBody('shopping_list').isInt();
-		req.checkBody('name').isLength(1, 50);
-		req.checkBody('owner').isInt();
-		req.checkBody('price').isFloat();
 	
 		var errors = req.validationErrors();
 	
@@ -109,18 +119,11 @@ exports.shoppingItemCreate = function(req, res) {
 			res.redirect('/internal_error');
 			return;
 		}
-		
-		req.sanitize('shopping_list').toInt();
-		req.sanitize('name').toString();
-		req.sanitize('owner').toInt();
-		req.sanitize('price').toFloat();
 	
 		var form = {
-			shoppingList : req.body.shopping_list,
-			name : req.body.name,
-			owner : req.body.owner,
-			price : Math.round(req.body.price * 100)
+			shoppingList : req.sanitize('shopping_list').toInt()
 		};
+		sanitizeShoppingItem(req, form);
 	
 		req.getDb(function(err, client, done) {
 			if(err) {
@@ -167,6 +170,80 @@ exports.shoppingItemCreate = function(req, res) {
 				});
 			});
 		});
+	} else {
+		res.redirect('/sid_wrong');
+	}
+};
+
+/*
+ * Router for updating shopping items
+ *
+ * Parameter:
+ * - id int: ID of shopping item to update
+ * - name string: new name of the shopping item
+ * - owner int: new ID of the owner for the shopping item
+ * - price float: new price of the shopping item
+ *
+ * Requirements:
+ * - loggedIn
+ * - shopping item must exist
+ * - Protagonist and owner must be owner of the household that belongs to the shopping item
+ */
+exports.shoppingItemUpdate = function(req, res) {
+	if(req.session.loggedIn) {
+		
+		validateShoppingItem(req);
+		req.checkBody('id').isInt();
+	
+		var errors = req.validationErrors();
+	
+		if(errors) {
+			res.redirect('/internal_error');
+			return;
+		}
+	
+		var form = {
+			id : req.sanitize('id').toInt()
+		};
+		sanitizeShoppingItem(req, form);
+		
+		req.getDb(function(err, client, done) {
+			if(err) {
+				return console.error('Failed to connect in shoppingItemUpdate', err);
+			}
+			
+			client.query(
+				'WITH hh AS (SELECT l.household_id AS id FROM shopping_item i ' +
+				'JOIN shopping_list l ON (i.shopping_list_id=l.id) WHERE i.id=$1) ' +
+				'SELECT EXISTS (SELECT 1 FROM household_member JOIN hh ON (household_id=hh.id) WHERE person_id=$2 LIMIT 1) AS is_member,' +
+				'EXISTS (SELECT 1 FROM household_member JOIN hh ON (household_id=hh.id) WHERE person_id=$3 LIMIT 1) AS owner_is_member',
+				[form.id, req.session.personId, form.owner], function(err, result) {
+			
+				if(err) {
+					return console.error('Failed to load membership data in shoppingItemUpdate', err);
+				}
+				
+				if(result.rows[0].is_member == false) {
+					res.redirect('/internal_error?not_member');
+					return;
+				}
+				
+				if(result.rows[0].owner_is_member == false) {
+					res.redirect('/internal_error?owner_not_member');
+					return;
+				}
+				
+				client.query('UPDATE shopping_item SET name=$1, owner_person_id=$2, price=$3 WHERE id=$4',
+					[form.name, form.owner, form.price, form.id], function(err, result) {
+				
+					if(err) {
+						return console.error('Failed to update shopping item', err);
+					}
+					
+					res.redirect('/shopping_item/' + form.id);
+				});
+			});
+		});	
 	} else {
 		res.redirect('/sid_wrong');
 	}
