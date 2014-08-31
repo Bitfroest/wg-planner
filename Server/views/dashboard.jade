@@ -15,8 +15,7 @@ block content
 				td
 					if household.role === 'founder'
 						span &#9733;
-				td
-					//- Mitglieder des Haushalts 
+				td= household.members
 				td
 					a.disabled.pull-right.btn.btn-danger(href='/household/leave?id=' + household.id)
 						span(aria-hidden='true') &times;
