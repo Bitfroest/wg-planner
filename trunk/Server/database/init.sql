@@ -88,7 +88,7 @@ RETURNS TABLE(owner INTEGER, buyer INTEGER, total BIGINT) AS $$
 	SELECT n.owner AS owner, n.buyer AS buyer, coalesce(a.total, 0) AS total
 	FROM nullmatrix n LEFT JOIN actualmatrix a ON (n.buyer=a.buyer AND n.owner=a.owner)
 	ORDER BY owner ASC, buyer ASC
-$$ LANGUAGE SQL;
+$$ LANGUAGE SQL STABLE ROWS 25;
 
 CREATE FUNCTION household_debts_summary (param_household_id INTEGER)
 RETURNS TABLE(id INTEGER, outgoing BIGINT, incoming BIGINT, diff BIGINT) AS $$
@@ -114,4 +114,28 @@ RETURNS TABLE(id INTEGER, outgoing BIGINT, incoming BIGINT, diff BIGINT) AS $$
 	SELECT m.id AS id, coalesce(b.sum, 0) AS outgoing, coalesce(o.sum, 0) AS incoming, coalesce(b.sum, 0) - coalesce(o.sum, 0) AS diff
 	FROM members m LEFT JOIN buyers b ON (m.id=b.id) LEFT JOIN owners o ON (m.id = o.id)
 	ORDER BY m.id ASC
-$$ LANGUAGE SQL;
+$$ LANGUAGE SQL STABLE ROWS 5;
+
+CREATE FUNCTION is_household_member (param_household_id INTEGER, param_person_id INTEGER)
+RETURNS BOOLEAN AS $$
+	SELECT EXISTS (
+		SELECT 1 FROM household_member
+		WHERE household_id = param_household_id AND person_id = param_person_id
+		LIMIT 1
+	)
+$$ LANGUAGE SQL STABLE;
+
+CREATE FUNCTION get_household_id_by_shopping_item_id (param_shopping_item_id INTEGER)
+RETURNS INTEGER AS $$
+	SELECT l.household_id
+	FROM shopping_item i
+	JOIN shopping_list l ON (i.shopping_list_id = l.id)
+	WHERE i.id = param_shopping_item_id
+$$ LANGUAGE SQL STABLE;
+
+CREATE FUNCTION get_household_id_by_shopping_list_id (param_shopping_list_id INTEGER)
+RETURNS INTEGER AS $$
+	SELECT household_id
+	FROM shopping_list
+	WHERE id = param_shopping_list_id
+$$ LANGUAGE SQL STABLE;
