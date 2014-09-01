@@ -2,7 +2,7 @@ var crypto = require('crypto');
 var fs = require('fs');
 
 // Current schema version
-var CURRENT_VERSION = 2;
+var CURRENT_VERSION = 3;
 
 exports.init = function(pg, url, callback) {
 	// connect to database the first time

@@ -131,14 +131,8 @@ exports.shoppingItemCreate = function(req, res) {
 			}
 			
 			client.query(
-				'SELECT EXISTS(SELECT 1 ' +
-				'FROM shopping_list l ' +
-				'JOIN household_member m ON (m.household_id=l.household_id) ' +
-				'WHERE l.id=$1 AND m.person_id=$2 LIMIT 1) AS is_member, ' +
-				'EXISTS (SELECT 1 ' +
-				'FROM shopping_list l '+
-				'JOIN household_member m ON (m.household_id=l.household_id) ' +
-				'WHERE l.id=$1 AND m.person_id=$3 LIMIT 1) AS owner_is_member',
+				'SELECT is_household_member(get_household_id_by_shopping_list_id($1), $2) AS is_member, ' +
+				'is_household_member(get_household_id_by_shopping_list_id($1), $3) AS owner_is_member'
 				[form.shoppingList, req.session.personId, form.owner],
 				function(err, result) {
 				
@@ -213,10 +207,8 @@ exports.shoppingItemUpdate = function(req, res) {
 			}
 			
 			client.query(
-				'WITH hh AS (SELECT l.household_id AS id FROM shopping_item i ' +
-				'JOIN shopping_list l ON (i.shopping_list_id=l.id) WHERE i.id=$1) ' +
-				'SELECT EXISTS (SELECT 1 FROM household_member JOIN hh ON (household_id=hh.id) WHERE person_id=$2 LIMIT 1) AS is_member,' +
-				'EXISTS (SELECT 1 FROM household_member JOIN hh ON (household_id=hh.id) WHERE person_id=$3 LIMIT 1) AS owner_is_member',
+				'SELECT is_household_member(get_household_id_by_shopping_item_id($1), $2) as is_member, ' +
+				'is_household_member(get_household_id_by_shopping_item_id($1), $3) as owner_is_member',	
 				[form.id, req.session.personId, form.owner], function(err, result) {
 			
 				if(err) {
