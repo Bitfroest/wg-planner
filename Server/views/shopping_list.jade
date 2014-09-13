@@ -57,9 +57,12 @@ block content
 				td= item.owner_name
 				td= formatCurrency(item.price)
 				td
-					a.disabled.pull-right.btn.btn-danger(href='/shopping_item/delete?id=' + item.id)
-						span(aria-hidden='true') &times;
-						span.sr-only Verlassen
+					form(method='post', action='/shopping_item/delete')
+						input(type='hidden', name='_csrf', value=_csrf)
+						input(type='hidden', name='id', value=item.id)
+						button.pull-right.btn.btn-danger(type='submit')
+							span(aria-hidden='true') &times;
+							span.sr-only Verlassen
 				
 	form(method='post', action='/shopping_item/create')
 		input(type='hidden', name='_csrf', value=_csrf)

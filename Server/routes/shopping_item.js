@@ -80,6 +80,7 @@ exports.shoppingItem = function(req, res) {
 					_csrf : req.csrfToken(),
 					item : item,
 					members : result.members.rows,
+					title : 'Einkaufsartikel',
 					breadcrumbs : [
 						{url: '/household/' + item.household_id, text: 'Haushalt'},
 						{url: '/shopping_list/' + item.shopping_list_id, text: 'Einkaufsliste'},
@@ -181,7 +182,7 @@ exports.shoppingItemCreate = function(req, res) {
  * Requirements:
  * - loggedIn
  * - shopping item must exist
- * - Protagonist and owner must be owner of the household that belongs to the shopping item
+ * - Protagonist and owner must be member of the household that belongs to the shopping item
  */
 exports.shoppingItemUpdate = function(req, res) {
 	if(req.session.loggedIn) {
@@ -236,6 +237,75 @@ exports.shoppingItemUpdate = function(req, res) {
 				});
 			});
 		});	
+	} else {
+		res.redirect('/sid_wrong');
+	}
+};
+
+/*
+ * Router for deleting shopping items.
+ *
+ * Parameter:
+ * - id int: ID of the shopping item
+ *
+ * Requirements:
+ * - loggedIn
+ * - shopping item must exist
+ * - Protagonist must be member of the household that belongs to the shopping item
+ */
+exports.shoppingItemDelete = function(req, res) {
+	if(req.session.loggedIn) {
+
+		req.checkBody('id').isInt();
+
+		var errors = req.validationErrors();
+		
+		if(errors) {
+			res.redirect('/internal_error');
+			return;
+		}
+		
+		var form = {
+			id : req.sanitize('id').toInt()
+		};
+		
+		req.getDb(function(err, client, done) {
+			if(err) {
+				return console.error('Failed to connect in shoppingItemDelete', err);
+			}
+			
+			client.query(
+				'SELECT is_household_member(get_household_id_by_shopping_item_id($1), $2) as is_member',
+				[form.id, req.session.personId], function(err, result) {
+				
+				if(err) {
+					return console.error('Failed to check membership', err);
+				}
+				
+				if(! result.rows[0].is_member) {
+					res.redirect('/internal_error?not_member');
+					return;
+				}
+				
+				client.query(
+					'DELETE FROM shopping_item WHERE id=$1 RETURNING shopping_list_id',
+					[form.id], function(err, result) {
+				
+					done();
+				
+					if(err) {
+						return console.error('Failed to delete shopping item', err);
+					}
+					
+					if(result.rowCount !== 1) {
+						res.redirect('/internal_error?not_found');
+						return;
+					}
+					
+					res.redirect('/shopping_list/' + result.rows[0].shopping_list_id);
+				});
+			});
+		});
 	} else {
 		res.redirect('/sid_wrong');
 	}

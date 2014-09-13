@@ -28,3 +28,8 @@ block content
 						input.form-control(type='text', name='price', value=item.price/100)
 						span.input-group-addon €
 		input.btn.btn-primary(type='submit', value='Ändern')
+		
+	form(method='post', action='/shopping_item/delete')
+		input(type='hidden', name='_csrf', value=_csrf)
+		input(type='hidden', name='id', value=item.id)
+		input(type='submit', value='Löschen')

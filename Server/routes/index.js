@@ -12,6 +12,8 @@ var householdInvitationRouter = require('./household_invitation');
 var shoppingListRouter = require('./shopping_list');
 var shoppingItemRouter = require('./shopping_item');
 
+var apiRouter = require('./api');
+
 module.exports = function(app) {
 
 	//index page
@@ -52,7 +54,10 @@ module.exports = function(app) {
 	
 	app.post('/shopping_item/create', shoppingItemRouter.shoppingItemCreate);
 	app.post('/shopping_item/update', shoppingItemRouter.shoppingItemUpdate);
+	app.post('/shopping_item/delete', shoppingItemRouter.shoppingItemDelete);
 	app.get('/shopping_item/:id', shoppingItemRouter.shoppingItem);
+	
+	app.use('/api', apiRouter());
 	
 	//imprint page
 	app.get('/imprint', publicRouter.imprint);

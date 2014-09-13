@@ -1,5 +1,6 @@
 var crypto = require('crypto');
 var fs = require('fs');
+var async = require('async');
 
 // Current schema version
 var CURRENT_VERSION = 3;
@@ -81,12 +82,25 @@ function checkVersion(pg, url, callback) {
 }
 
 function upgradeTables(version, pg, url, callback) {
-	// read upgrade file and execute it
-	fs.readFile('./database/upgrade/upgrade_' + version + '_' + CURRENT_VERSION + '.sql', 'utf-8', function(err, sql) {
+	var upgradeFiles = [];
+	
+	// create list of upgrade files to apply
+	for(var ver = version; ver < CURRENT_VERSION; ver++) {
+		upgradeFiles.push('./database/upgrade/upgrade_' + ver + '_' + (ver + 1) + '.sql');
+	}
+
+	// read SQL upgrade files
+	async.map(upgradeFiles, function(path, callback) {
+		console.info('Load file ' + path);
+		fs.readFile(path, 'utf-8', callback);
+	}, function(err, results) {
 		if(err) {
 			callback(err);
 			return;
 		}
+		
+		// reduce list of SQL file data to one long SQL thingy
+		var sql = results.join('\n');
 		
 		// get client
 		pg.connect(url, function(err, client, done) {
@@ -95,18 +109,36 @@ function upgradeTables(version, pg, url, callback) {
 				return;
 			}
 			
-			// execute upgrade script
-			client.query(sql, function(err) {
+			// start transaction
+			client.query('BEGIN', function(err) {
 				if(err) {
 					done();
 					callback(err);
 					return;
 				}
+			
+				// execute upgrade script
+				client.query(sql, function(err) {
+					if(err) {
+						done();
+						callback(err);
+						return;
+					}
 				
-				// upgrade version info in dbinfo table
-				client.query('UPDATE dbinfo SET version = $1', [CURRENT_VERSION], function(err) {
-					done();
-					callback(err);
+					// upgrade version info in dbinfo table
+					client.query('UPDATE dbinfo SET version = $1', [CURRENT_VERSION], function(err) {
+						if(err) {
+							done();
+							callback(err);
+							return;
+						}
+					
+						// commit transaction
+						client.query('COMMIT', function(err) {
+							done();
+							callback(err);
+						});
+					});
 				});
 			});
 		});
@@ -123,6 +155,7 @@ function createTables(pg, url, callback) {
 		// Read the initial SQL script
 		fs.readFile('./database/init.sql', 'utf-8', function(err, sql){
 			if(err) {
+				done();
 				callback(err);
 				return;
 			}
