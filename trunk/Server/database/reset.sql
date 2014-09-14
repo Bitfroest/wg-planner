@@ -1,5 +1,8 @@
-DROP FUNCTION household_debts_summary (INTEGER);
-DROP FUNCTION household_debts_matrix (INTEGER);
+DROP FUNCTION IF EXISTS household_debts_summary (INTEGER);
+DROP FUNCTION IF EXISTS household_debts_matrix (INTEGER);
+DROP FUNCTION IF EXISTS is_household_member (INTEGER, INTEGER);
+DROP FUNCTION IF EXISTS get_household_id_by_shopping_item_id (INTEGER);
+DROP FUNCTION IF EXISTS get_household_id_by_shopping_list_id (param_shopping_list_id INTEGER);
 
 DROP TABLE IF EXISTS shopping_item CASCADE;
 DROP TABLE IF EXISTS shopping_list CASCADE;
