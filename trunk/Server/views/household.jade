@@ -54,6 +54,8 @@ block content
 		tr
 			td
 			th(colspan=members.length) ... hat Schulden bei ...
+			td
+			td
 		tr
 			td
 			each buyer in members
@@ -74,6 +76,8 @@ block content
 			th Bezahlt-Summe
 			each sum in debtsSummary
 				th= formatCurrency2(sum.outgoing)
+			th
+			th
 					
 	div.alert.alert-info(role='alert')
 		p Von links nach rechts lesen!
