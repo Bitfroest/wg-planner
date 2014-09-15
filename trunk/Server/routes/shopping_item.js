@@ -133,7 +133,7 @@ exports.shoppingItemCreate = function(req, res) {
 			
 			client.query(
 				'SELECT is_household_member(get_household_id_by_shopping_list_id($1), $2) AS is_member, ' +
-				'is_household_member(get_household_id_by_shopping_list_id($1), $3) AS owner_is_member'
+				'is_household_member(get_household_id_by_shopping_list_id($1), $3) AS owner_is_member',
 				[form.shoppingList, req.session.personId, form.owner],
 				function(err, result) {
 				
