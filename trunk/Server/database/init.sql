@@ -73,7 +73,7 @@ CREATE INDEX ON shopping_item(owner_person_id);
 CREATE FUNCTION household_debts_matrix (param_household_id INTEGER)
 RETURNS TABLE(owner INTEGER, buyer INTEGER, total BIGINT) AS $$
     WITH members AS (
-		SELECT person_id AS id FROM household_member WHERE household_id = param_household_id
+		SELECT person_id AS id FROM household_member WHERE household_id = $1
 	),
 	nullmatrix AS (
 		SELECT a.id AS owner, b.id AS buyer, 0 AS total FROM members a, members b
@@ -82,7 +82,7 @@ RETURNS TABLE(owner INTEGER, buyer INTEGER, total BIGINT) AS $$
 		SELECT owner_person_id AS owner, buyer_person_id AS buyer, sum(price) AS total
 		FROM shopping_list l
 		JOIN shopping_item i ON (i.shopping_list_id = l.id) 
-		WHERE l.household_id = param_household_id
+		WHERE l.household_id = $1
 		GROUP BY i.owner_person_id, l.buyer_person_id
 	)
 	SELECT n.owner AS owner, n.buyer AS buyer, coalesce(a.total, 0) AS total
@@ -96,7 +96,7 @@ RETURNS TABLE(id INTEGER, outgoing BIGINT, incoming BIGINT, diff BIGINT) AS $$
 		SELECT owner_person_id AS owner_id, buyer_person_id AS buyer_id, price
 		FROM shopping_list l
 		JOIN shopping_item i ON (i.shopping_list_id = l.id)
-		WHERE l.household_id = param_household_id AND owner_person_id != buyer_person_id
+		WHERE l.household_id = $1 AND owner_person_id != buyer_person_id
 	),
 	owners AS (
 		SELECT owner_id AS id, sum(price) AS sum
@@ -109,7 +109,7 @@ RETURNS TABLE(id INTEGER, outgoing BIGINT, incoming BIGINT, diff BIGINT) AS $$
 		GROUP BY buyer_id
 	),
 	members AS (
-		SELECT person_id AS id FROM household_member WHERE household_id = param_household_id
+		SELECT person_id AS id FROM household_member WHERE household_id = $1
 	)
 	SELECT m.id AS id, coalesce(b.sum, 0) AS outgoing, coalesce(o.sum, 0) AS incoming, coalesce(b.sum, 0) - coalesce(o.sum, 0) AS diff
 	FROM members m LEFT JOIN buyers b ON (m.id=b.id) LEFT JOIN owners o ON (m.id = o.id)
@@ -120,7 +120,7 @@ CREATE FUNCTION is_household_member (param_household_id INTEGER, param_person_id
 RETURNS BOOLEAN AS $$
 	SELECT EXISTS (
 		SELECT 1 FROM household_member
-		WHERE household_id = param_household_id AND person_id = param_person_id
+		WHERE household_id = $1 AND person_id = $2
 		LIMIT 1
 	)
 $$ LANGUAGE SQL STABLE;
@@ -130,12 +130,12 @@ RETURNS INTEGER AS $$
 	SELECT l.household_id
 	FROM shopping_item i
 	JOIN shopping_list l ON (i.shopping_list_id = l.id)
-	WHERE i.id = param_shopping_item_id
+	WHERE i.id = $1
 $$ LANGUAGE SQL STABLE;
 
 CREATE FUNCTION get_household_id_by_shopping_list_id (param_shopping_list_id INTEGER)
 RETURNS INTEGER AS $$
 	SELECT household_id
 	FROM shopping_list
-	WHERE id = param_shopping_list_id
+	WHERE id = $1
 $$ LANGUAGE SQL STABLE;
