@@ -12,11 +12,11 @@ module.exports = function() {
 			collections : collections
 		});
 	});
-	
+
 	// register all collections
 	collections.forEach(function(coll) {
 		router.use('/' + coll, require('./' + coll + '.api.js')());
 	});
-	
+
 	return router;
 };

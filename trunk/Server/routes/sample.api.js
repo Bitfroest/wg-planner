@@ -1,22 +1,32 @@
 module.exports = function() {
-	var router = new require('express').Router();
+	var resources = {};
 	
-	var resources = ['bla'];
-	
-	router.get('/', function(req, res) {
-		res.json(resources);
+	return require('./api-helper')({
+		'/' : {
+			get : function(req, res) {
+				res.json(resources);
+			},
+			post: function(req, res) {
+				var id = Math.round(1000000 * Math.random());
+				resources[id] = req.json;
+				res.json({
+					id : id
+				});
+			}
+		},
+		'/:id' : {
+			get : function(req, res) {
+				res.json(resources[req.params.id]);
+			},
+			delete : function(req, res) {
+				delete resources[req.params.id];
+				res.json({
+					id : req.params.id
+				});
+			},
+			put : function(req, res) {
+				resources[req.params.id] = req.json;
+			}
+		}
 	});
-	
-	router.post('/', function(req, res) {
-		resources.push(req.json);
-		res.json({
-			id : resources.length - 1
-		});
-	});
-	
-	router.get('/:id', function(req, res) {
-		res.json(resources[req.params.id]);
-	});
-
-	return router;
 };
