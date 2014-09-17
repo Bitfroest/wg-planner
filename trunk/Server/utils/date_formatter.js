@@ -17,3 +17,5 @@ exports.formatDate = function(date, type) {
 function zeroPadding2(x) {
 	return ('0' + x).slice(-2);
 }
+
+exports.zeroPadding2 = zeroPadding2;

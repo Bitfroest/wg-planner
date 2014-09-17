@@ -11,5 +11,10 @@ module.exports = {
 	httpPort : 8080,
 	
 	// use an external content delivery network, should be false for (offline) development
-	useCDN : false
+	useCDN : false,
+	
+	// Path to Postgresql's bin folder (with trailing slash/backslash)
+	// - for Linux this is mostly not needed and can be ''
+	// - for Windows this must be configured to something like 'C:\\Program Files\\PostgreSQL\\9.3\\bin\\'
+	postgresBin : ''
 };
