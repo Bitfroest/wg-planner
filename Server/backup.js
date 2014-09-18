@@ -8,9 +8,16 @@ var filename = ['./database/backups/', 'backup_',
 	'_', padding(now.getHours()), '_', padding(now.getMinutes()), '_', padding(now.getSeconds())].join('');
 
 
-var dumper = spawn(config.postgresBin + 'pg_dump', ['--format=custom', '-f', filename, config.databaseURL], {
+var dumper = spawn(config.postgresBin + 'pg_dump', ['--format=custom', '-f', filename], {
 	cwd : __dirname,
-	stdio: ['ignore', 1, 2]
+	stdio: ['ignore', 1, 2],
+	env : {
+		PGDATABASE : config.databaseDatabase,
+		PGHOST : config.databaseHost,
+		PGPORT : config.databasePort,
+		PGUSER : config.databaseUser,
+		PGPASSWORD : config.databasePassword // TODO: giving password via environment variable can be insecure
+	}
 });
 
 dumper.on('error', function(err) {

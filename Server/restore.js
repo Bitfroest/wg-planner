@@ -8,9 +8,15 @@ if(process.argv.length !== 3) {
 
 var filename = process.argv[2];
 
-var dumper = spawn(config.postgresBin + 'pg_restore', ['--clean', '-d', config.databaseURL, filename], {
+var dumper = spawn(config.postgresBin + 'pg_restore', ['--clean', '-d', config.databaseDatabase,filename], {
 	cwd : __dirname,
-	stdio: ['ignore', 1, 2]
+	stdio: ['ignore', 1, 2],
+	env : {
+		PGHOST : config.databaseHost,
+		PGPORT : config.databasePort,
+		PGUSER : config.databaseUser,
+		PGPASSWORD : config.databasePassword // TODO: giving password via environment variable can be insecure
+	}
 });
 
 dumper.on('error', function(err) {
