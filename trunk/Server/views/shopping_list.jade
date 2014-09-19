@@ -27,7 +27,7 @@ block content
 						|};	
 					input#change-buyer(type='hidden', name='buyer')
 					div.input-group
-						div.input-group-btn								
+						div.input-group-btn
 							button.btn.btn-default.dropdown-toggle#buyer-button(type='button', data-toggle='dropdown', size='1')
 								span#buyer-button-text -- Wähle Käufer --
 								span.caret
@@ -87,11 +87,23 @@ block content
 	form(method='post', action='/shopping_item/create')
 		input(type='hidden', name='_csrf', value=_csrf)
 		input(type='hidden', name='shopping_list', value=shoppingList.id)
-		div.input-group.input-flex
+		input#select-owner(type='hidden', name='owner')
+		div.input-group
 			input.form-control(type='text', name='name', placeholder='Produktname')
-			select(name='owner')
-				option(value='') --Wähle Besitzer--
-				each member in members
-					option(value=member.id)= member.name
+			div.input-group-btn
+				button.btn.btn-default.dropdown-toggle#owner-button(type='button', data-toggle='dropdown', size='1')
+					span#owner-button-text -- Wähle Besitzer -- 
+					span.caret
+				ul.dropdown-menu(role='menu')
+					each member in members
+						li
+							a(onclick='changeOwnerButton('+member.id+',"'+member.name+'")' value=member.id)= member.name
 			input.form-control(type='text', name='price', placeholder='Preis in €, z.B. 12.30')
-			input.btn.btn-primary.pull-right(type='submit', value='Erstellen')
+			div.input-group-btn
+				input.btn.btn-primary.pull-right(type='submit', value='Erstellen')
+			script(type="application/javascript")
+				|function changeOwnerButton(value,name){
+				|	console.log("v:"+value+" n:"+name);
+				|	document.getElementById('select-owner').value = value;
+				|	document.getElementById('owner-button-text').textContent = name+" ";
+				|};
