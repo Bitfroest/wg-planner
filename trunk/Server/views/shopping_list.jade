@@ -19,9 +19,29 @@ block content
 			tr
 				td Einkäufer
 				td
-					select(name='buyer')
-						each member in members
-								option(value=member.id, selected=(shoppingList.buyer_id == member.id))= member.name
+					script(type="application/javascript")
+						|function changeBuyerButton(value,name){
+						|	console.log("v:"+value+" n:"+name);
+						|	document.getElementById('change-buyer').value = value;
+						|	document.getElementById('buyer-button-text').textContent = name+" ";
+						|};	
+					input#change-buyer(type='hidden', name='buyer')
+					div.input-group
+						div.input-group-btn								
+							button.btn.btn-default.dropdown-toggle#buyer-button(type='button', data-toggle='dropdown', size='1')
+								span#buyer-button-text -- Wähle Käufer --
+								span.caret
+							ul.dropdown-menu(role='menu')
+								each member in members
+									li
+										a(onclick='changeBuyerButton('+member.id+',"'+member.name+'")' value=member.id)= member.name
+									if shoppingList.buyer_id == member.id
+										script(type="application/javascript")
+											|changeBuyerButton(
+											= member.id
+											|,"
+											= member.name
+											|");
 				td= shoppingList.buyer_name
 			tr
 				td Wann?
