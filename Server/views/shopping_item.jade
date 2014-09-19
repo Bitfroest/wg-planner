@@ -18,9 +18,29 @@ block content
 			tr
 				td Besitzer
 				td
-					select(name='owner')
-						each member in members
-							option(value=member.id, selected=(member.id === item.owner))= member.name
+					script(type="application/javascript")
+						|function changeOwnerButton(value,name){
+						|	console.log("v:"+value+" n:"+name);
+						|	document.getElementById('select-owner').value = value;
+						|	document.getElementById('owner-button-text').textContent = name+" ";
+						|};	
+					input#select-owner(type='hidden', name='owner')
+					div.input-group
+						div.input-group-btn
+							button.btn.btn-default.dropdown-toggle#owner-button(type='button', data-toggle='dropdown', size='1')
+								span#owner-button-text -- Wähle Besitzer --
+								span.caret
+							ul.dropdown-menu(role='menu')
+								each member in members
+									li
+										a(onclick='changeOwnerButton('+member.id+',"'+member.name+'")' value=member.id)= member.name
+									if member.id === item.owner
+										script(type="application/javascript")
+											|changeOwnerButton(
+											= member.id
+											|,"
+											= member.name
+											|");
 			tr
 				td Preis
 				td
@@ -32,4 +52,4 @@ block content
 	form(method='post', action='/shopping_item/delete')
 		input(type='hidden', name='_csrf', value=_csrf)
 		input(type='hidden', name='id', value=item.id)
-		input(type='submit', value='Löschen')
+		input.btn.btn-danger(type='submit', value='Löschen')
