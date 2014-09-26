@@ -57,8 +57,9 @@ exports.shoppingListCreate = function(req, res) {
 				return console.error('Failed to connect in customer.household');
 			}
 			
-			client.query('SELECT EXISTS (SELECT 1 FROM household_member WHERE household_id=$1 AND person_id=$2 LIMIT 1) AS is_member, ' +
-				'EXISTS (SELECT 1 FROM household_member WHERE household_id=$1 AND person_id=$3 LIMIT 1) AS buyer_is_member',
+			client.query(
+				'SELECT is_household_member($1, $2) AS is_member, ' +
+				'is_household_member($1, $3) AS buyer_is_member',
 				[form.household, req.session.personId, form.buyer], function(err, result) {
 			
 				if(err) {
@@ -225,7 +226,7 @@ exports.shoppingListUpdate = function(req, res) {
 	if(req.session.loggedIn) {
 	
 		req.checkBody('id').isInt();
-		validateShoppingList(req)
+		validateShoppingList(req);
 	
 		var errors = req.validationErrors();
 	
@@ -244,9 +245,9 @@ exports.shoppingListUpdate = function(req, res) {
 				return console.error('Failed to connect in customer.household');
 			}
 			
-			client.query('WITH hh AS (SELECT household_id AS id FROM shopping_list WHERE id=$1 LIMIT 1) ' +
-				'SELECT EXISTS (SELECT 1 FROM household_member JOIN hh ON (household_id=hh.id) WHERE person_id=$2 LIMIT 1) AS is_member, ' +
-				'EXISTS (SELECT 1 FROM household_member JOIN hh ON (household_id=hh.id) WHERE person_id=$3 LIMIT 1) AS buyer_is_member',
+			client.query(
+				'SELECT is_household_member(get_household_id_by_shopping_list_id($1), $2) AS is_member, ' +
+				'is_household_member(get_household_id_by_shopping_list_id($1), $3) AS buyer_is_member',
 				[form.id, req.session.personId, form.buyer], function(err, result) {
 			
 				if(err) {
@@ -273,6 +274,79 @@ exports.shoppingListUpdate = function(req, res) {
 					}
 					
 					res.redirect('/shopping_list/' + form.id);
+				});
+			});
+		});
+	} else {
+		res.redirect('/sid_wrong');
+	}
+};
+
+/*
+ * Router for deleting shopping lists.
+ *
+ * Parameter:
+ * - id int: ID of the shopping list
+ *
+ * Requirements:
+ * - loggedIn
+ * - shopping list must exist
+ * - Protagonist must be member of the household that belongs to the shopping list
+ */
+exports.shoppingListDelete = function(req, res) {
+	if(req.session.loggedIn) {
+	
+		req.checkBody('id').isInt();
+	
+		var errors = req.validationErrors();
+	
+		if(errors) {
+			res.redirect('/internal_error');
+			return;
+		}
+	
+		var form = {
+			id : req.sanitize('id').toInt()
+		};
+		
+		req.getDb(function(err, client, done) {
+			if(err) {
+				return console.error('Failed to connect in customer.household');
+			}
+			
+			client.query(
+				'SELECT is_household_member(get_household_id_by_shopping_list_id($1), $2) AS is_member',
+				[form.id, req.session.personId],
+				function(err, result) {
+				
+				if(err) {
+					return console.error('Failed to load membership data', err);
+				}
+				
+				if(! result.rows[0].is_member) {
+					res.redirect('/internal_error?not_member');
+					return;
+				}
+				
+				client.query('DELETE FROM shopping_item WHERE shopping_list_id=$1', [form.id], function(err, result) {
+					if(err) {
+						return console.error('Failed to delete depending shopping items', err);
+					}
+				
+					client.query('DELETE FROM shopping_list WHERE id=$1 RETURNING household_id', [form.id], function(err, result) {
+						done();
+						
+						if(err) {
+							return console.error('Failed to delete shopping list', err);
+						}
+						
+						if(result.rowCount !== 1) {
+							res.redirect('/internal_error?not_found');
+							return;
+						}
+						
+						res.redirect('/household/' + result.rows[0].household_id);
+					});
 				});
 			});
 		});
