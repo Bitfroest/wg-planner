@@ -50,6 +50,7 @@ module.exports = function(app) {
 	
 	app.post('/shopping_list/create', shoppingListRouter.shoppingListCreate);
 	app.post('/shopping_list/update', shoppingListRouter.shoppingListUpdate);
+	app.post('/shopping_list/delete', shoppingListRouter.shoppingListDelete);
 	app.get('/shopping_list/:id', shoppingListRouter.shoppingList);
 	
 	app.post('/shopping_item/create', shoppingItemRouter.shoppingItemCreate);

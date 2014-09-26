@@ -55,6 +55,11 @@ block content
 				td= 'von ' + shoppingList.creator_name + ' am ' + formatDate(shoppingList.created)
 		input.btn.btn-primary(type='submit', value='Ändern')
 	
+	form(method='post', action='/shopping_list/delete')
+		input(type='hidden', name='_csrf', value=_csrf)
+		input(type='hidden', name='id', value=shoppingList.id)
+		input(type='submit', value='Löschen')
+	
 	h2.sub-header Anteile
 	
 	table.table.table-striped
