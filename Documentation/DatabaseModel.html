@@ -111,10 +111,20 @@
 	</table>
 	
 	<table id="shop" class="table">
-		<tr><th colspan="2">shop</th></tr>
+		<tr><th colspan="2">(shop)</th></tr>
 		<tr><td>id</td><td>identifier</td></tr>
 		<tr><td>name</td><td>string not null</td></tr>
 		<tr><td>location</td><td>geo coordinates</td></tr>
+	</table>
+	
+	<table id="notification" class="table">
+		<tr><th colspan="2">notification</th></tr>
+		<tr><td>id</td><td>identifier</td></tr>
+		<tr><td>created</td><td>timestamp not null</td></tr>
+		<tr><td>read</td><td>boolean not null default=false</td></tr>
+		<tr><td>recipient_person_id</td><td>foreign identifier to <a href="#person">person</a></td></tr>
+		<tr><td>type</td><td>text not null (could be 'new_household_member' ...)</td></tr>
+		<tr><td>data</td><td>text not null (could be id of new member)</td></tr>
 	</table>
 </body>
 </html>
