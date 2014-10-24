@@ -2,7 +2,8 @@ module.exports = function() {
 	var router = new require('express').Router();
 
 	var collections = [
-		'sample'
+		'sample',
+		'notification'
 	];
 
 	// show API options

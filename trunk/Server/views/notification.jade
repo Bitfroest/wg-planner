@@ -1,0 +1,19 @@
+extends layout-customer
+
+block head
+
+block content
+	h1.page-header= title
+	
+	input(type='hidden', value=_csrf, id='_csrf')
+	
+	div(ng-app='notification', ng-controller='NotificationController as not')
+		
+		table.table.table-striped
+			tr(ng-repeat='n in notifications')
+				td {{n.type}}
+				td {{n.data}}
+				td {{n.created | date : 'short' }}
+				td {{n.read}}
+				td
+					button.btn.btn-default(ng-click='read(n.id)') Gelesen
