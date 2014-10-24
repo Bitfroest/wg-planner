@@ -11,6 +11,7 @@ var householdRouter = require('./household');
 var householdInvitationRouter = require('./household_invitation');
 var shoppingListRouter = require('./shopping_list');
 var shoppingItemRouter = require('./shopping_item');
+var notificationRouter = require('./notification');
 
 var apiRouter = require('./api');
 
@@ -57,6 +58,8 @@ module.exports = function(app) {
 	app.post('/shopping_item/update', shoppingItemRouter.shoppingItemUpdate);
 	app.post('/shopping_item/delete', shoppingItemRouter.shoppingItemDelete);
 	app.get('/shopping_item/:id', shoppingItemRouter.shoppingItem);
+	
+	app.get('/notifications', notificationRouter.notification)
 	
 	app.use('/api', apiRouter());
 	
