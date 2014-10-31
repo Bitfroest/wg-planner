@@ -12,6 +12,8 @@ var householdInvitationRouter = require('./household_invitation');
 var shoppingListRouter = require('./shopping_list');
 var shoppingItemRouter = require('./shopping_item');
 var notificationRouter = require('./notification');
+var settingsRouter = require('./settings');
+var invitationRouter = require('./invitation');
 
 var apiRouter = require('./api');
 
@@ -39,6 +41,13 @@ module.exports = function(app) {
 	//main page if logged in
 	app.get('/dashboard', dashboardRouter.dashboard);
 	
+	//settings page 
+	app.get('/settings', settingsRouter.settings);
+	
+	//invitation page
+	app.get('/invitation', invitationRouter.invitation);
+	
+	//household page
 	app.post('/household/create', householdRouter.householdCreate);
 	app.post('/household/update', householdRouter.householdUpdate);
 	app.post('/household/invitation/create', householdInvitationRouter.householdInvitationCreate);
@@ -49,18 +58,22 @@ module.exports = function(app) {
 	app.get('/household/:id', householdRouter.household);
 	//app.post('/household/leave', customerRouter.householdLeave);
 	
+	//shopping_list page
 	app.post('/shopping_list/create', shoppingListRouter.shoppingListCreate);
 	app.post('/shopping_list/update', shoppingListRouter.shoppingListUpdate);
 	app.post('/shopping_list/delete', shoppingListRouter.shoppingListDelete);
 	app.get('/shopping_list/:id', shoppingListRouter.shoppingList);
 	
+	//shopping_item page
 	app.post('/shopping_item/create', shoppingItemRouter.shoppingItemCreate);
 	app.post('/shopping_item/update', shoppingItemRouter.shoppingItemUpdate);
 	app.post('/shopping_item/delete', shoppingItemRouter.shoppingItemDelete);
 	app.get('/shopping_item/:id', shoppingItemRouter.shoppingItem);
 	
+	//notofications page
 	app.get('/notifications', notificationRouter.notification)
 	
+	//api 
 	app.use('/api', apiRouter());
 	
 	//imprint page

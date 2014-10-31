@@ -1,0 +1,43 @@
+extends layout-customer
+
+block head
+
+block content
+	h1.page-header Einstellungen
+	h2.sub-header Mein Account
+	
+	form(method='post', action='/person/update')
+		input(type='hidden', name='_csrf', value=_csrf)
+		table.table.table-striped
+			thead
+				tr
+					td Anzeige-Name
+					td
+						div.input-group
+							input.form-control(type='text', name='name', value=person.name)
+							span.input-group-btn
+								input.btn.btn-primary(type='submit', value='Aktualisieren')
+			tbody
+				tr
+					td Mail-Adresse
+					td= person.email
+				tr
+					td Status
+					td= ({customer:'Standard-Account', admin:'Admin'})[person.role]
+
+	form(method='post', action='/person/password_change')
+		input(type='hidden', name='_csrf', value=_csrf)
+		table.table.table-striped
+			tr
+				td Aktuelles Passwort
+				td
+					input.form-control(type='password', name='password_old')
+			tr
+				td Neues Passwort
+				td
+					input.form-control(type='password', name='password')
+			tr
+				td Neues Passwort bestätigen
+				td
+					input.form-control(type='password', name='password_confirm')
+		input.btn.btn-success.pull-right(type='submit', value='Passwort ändern')

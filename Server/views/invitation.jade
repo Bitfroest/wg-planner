@@ -1,0 +1,78 @@
+extends layout-customer
+
+block head
+
+block content
+	h1.page-header Einladungen
+	h2.sub-header an mich
+	
+
+	table.table.table-striped
+		thead
+			tr
+				th Von
+				th Haushalt
+				th(colspan='2')
+		tbody
+			each invitation in invitationsToMe
+				tr
+					td= invitation.person_name
+					td= invitation.household_name
+					td
+						form(method='POST', action='/household/invitation/accept')
+							input(type='hidden', name='_csrf', value=_csrf)
+							input(type='hidden', name='household', value=invitation.household_id)
+							input.btn.btn-success.pull-right(type='submit', value='Annehmen')
+					td
+						form(method='POST', action='/household/invitation/decline')
+							input(type='hidden', name='_csrf', value=_csrf)
+							input(type='hidden', name='household', value=invitation.household_id)
+							input.btn.btn-warning.pull-right(type='submit', value='Ablehnen')
+	
+	h2.sub-header Einladungen von mir
+	
+	table.table.table-striped
+		thead
+			th An
+			th Haushalt
+			th
+		tbody
+			each invitation in invitationsFromMe
+				tr
+					td= invitation.person_name
+					td= invitation.household_name
+					td
+						form(method='POST', action='/household/invitation/cancel')
+							input(type='hidden', name='_csrf', value=_csrf)
+							input(type='hidden', name='household', value=invitation.household_id)
+							input(type='hidden', name='to_person', value=invitation.to_person_id)
+							input.btn.btn-warning.pull-right(type='submit', value='Zurücknehmen')
+				
+	h2.sub-header Einladen
+	
+	div.alert.alert-info(role='alert')
+		p Du musst Gründer sein, um Einladen zu können.
+	div.form
+		form(method='POST', action='/household/invitation/create')
+			input(type='hidden', name='_csrf', value=_csrf)
+			input#invite-household(type='hidden', name='household')
+			div.input-group
+				div.input-group-btn
+					button.btn.btn-default.dropdown-toggle#invite-button(type='button', data-toggle='dropdown', size='1')
+						span#invite-button-text -- Wähle Haushalt -- 
+						span.caret
+					ul.dropdown-menu(role='menu')
+						each household in households
+							if household.role === 'founder' 
+								li
+									a(onclick='changeInviteButton('+household.id+',"'+household.name+'")' value=household.id)= household.name
+								
+				script(type="application/javascript")
+					|function changeInviteButton(value,name){
+					|	//console.log("v:"+value+" n:"+name);
+					|	document.getElementById('invite-household').value = value;
+					|	document.getElementById('invite-button-text').textContent = name+" ";
+					|};
+				input.form-control(type='email', name='email', placeholder='freund@example.de', required='required')
+				span.input-group-btn
+					input.btn.btn-primary(type='submit', value='Einladen')
