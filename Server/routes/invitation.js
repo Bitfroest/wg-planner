@@ -46,7 +46,7 @@ exports.invitation = function(req, res) {
 					invitationsToMe: result.invitationsToMe.rows,
 					invitationsFromMe: result.invitationsFromMe.rows,
 					title: 'Einladungen',
-					breadcrumbs : []
+					breadcrumbs : [{url: '/invitation' , text: 'Einladungen'}]
 				});
 			});
 		});
