@@ -42,6 +42,7 @@ exports.invitation = function(req, res) {
 				res.render('invitation', {
 					_csrf: req.csrfToken(),
 					person : result.person.rows[0],
+					households: result.households.rows,
 					invitationsToMe: result.invitationsToMe.rows,
 					invitationsFromMe: result.invitationsFromMe.rows,
 					title: 'Einladungen',
