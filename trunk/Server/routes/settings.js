@@ -29,7 +29,7 @@ exports.settings = function(req, res) {
 					_csrf: req.csrfToken(),
 					person : result.person.rows[0],
 					title: 'Einstellungen',
-					breadcrumbs : []
+					breadcrumbs : [{url: '/settings' , text: 'Einstellungen'}]
 				});
 			});
 		});
