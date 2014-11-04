@@ -116,3 +116,19 @@ body {
   display: inline-block;
   border-radius: 50%;
 }
+
+/*
+ * Text colors for highlighting different money values
+ */
+ 
+.money-pos {
+	color: #5ccb30;
+}
+
+.money-neg {
+	color: red;
+}
+
+.money-zero {
+	color: black;
+}

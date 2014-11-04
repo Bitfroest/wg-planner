@@ -86,7 +86,10 @@ exports.household = function(req, res) {
 						[form.householdId]),
 					debtsSummary : client.query.bind(client,
 						'SELECT * FROM household_debts_summary($1)',
-						[form.householdId])
+						[form.householdId]),
+					mySummary : client.query.bind(client,
+						'SELECT * FROM household_debts_summary($1,$2)',
+						[form.householdId, req.session.personId])
 				}, function(err, result) {
 					done();
 					
@@ -104,6 +107,7 @@ exports.household = function(req, res) {
 						householdRole : form.householdRole,
 						debtsMatrix : result.debtsMatrix.rows,
 						debtsSummary : result.debtsSummary.rows,
+						mySummary : result.mySummary.rows,
 						title: 'Haushalt ' + form.householdName,
 						formatCurrency : formatEuro,
 						formatCurrency2 : function(x) { if(x === "0" || x === 0) return '-'; else return formatEuro(x); },

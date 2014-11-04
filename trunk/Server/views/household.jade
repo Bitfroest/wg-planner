@@ -82,6 +82,14 @@ block content
 	div.alert.alert-info(role='alert')
 		p Von links nach rechts lesen!
 
+	h2.sub-header Meine Schulden
+	
+	table.table
+		each row in mySummary
+			tr
+				td= row.name
+				td(class=row.diff < 0 ? 'money-neg' : (row.diff > 0 ? 'money-pos' : 'money-zero'))= formatCurrency(row.diff)
+
 	h2.sub-header Einkaufslisten
 	
 	table.table.table-striped
