@@ -1,15 +1,23 @@
 var async = require('async');
 
-function validateShoppingItem(req) {
+function validateShoppingItem(req, ownerArray) {
 	req.checkBody('name').isLength(1, 50);
-	req.checkBody('owner').isInt();
-	req.checkBody('price').isFloat();
+	if(ownerArray) {
+		// TODO hier bitte int array validieren
+	} else {
+		req.checkBody('owner').isInt();
+	}
+	req.checkBody('price').matches('^[0-9]+[,\\.]?[0-9]*$');
 }
 
-function sanitizeShoppingItem(req, form) {
+function sanitizeShoppingItem(req, form, ownerArray) {
 	form.name = req.sanitize('name').toString();
-	form.owner = req.sanitize('owner').toInt();
-	form.price = Math.round(req.sanitize('price').toFloat() * 100);
+	if(ownerArray) {
+		form.owner = req.sanitize('owner').toString().split('|');
+	} else {
+		form.owner = req.sanitize('owner').toInt();
+	}
+	form.price = Math.round(req.sanitize('price').toString().replace(',','.') * 100);
 }
 
 /*
@@ -111,7 +119,7 @@ exports.shoppingItem = function(req, res) {
 exports.shoppingItemCreate = function(req, res) {
 	if(req.session.loggedIn) {
 	
-		validateShoppingItem(req);
+		validateShoppingItem(req, true);
 		req.checkBody('shopping_list').isInt();
 	
 		var errors = req.validationErrors();
@@ -124,37 +132,53 @@ exports.shoppingItemCreate = function(req, res) {
 		var form = {
 			shoppingList : req.sanitize('shopping_list').toInt()
 		};
-		sanitizeShoppingItem(req, form);
+		sanitizeShoppingItem(req, form, true);
 	
 		req.getDb(function(err, client, done) {
 			if(err) {
 				return console.error('Failed to connect in shopping_item.shoppingItemCreate');
 			}
 			
-			client.query(
-				'SELECT is_household_member(get_household_id_by_shopping_list_id($1), $2) AS is_member, ' +
-				'is_household_member(get_household_id_by_shopping_list_id($1), $3) AS owner_is_member',
-				[form.shoppingList, req.session.personId, form.owner],
-				function(err, result) {
-				
+			var queries = [];
+			
+			queries.push(client.query.bind(client,
+				'SELECT is_household_member(get_household_id_by_shopping_list_id($1), $2) AS is_member',
+				[form.shoppingList, req.session.personId]
+			));
+			
+			for(var i = 0; i < form.owner.length; i++) {
+				queries.push(client.query.bind(client,
+					'SELECT is_household_member(get_household_id_by_shopping_list_id($1), $2) AS is_member',
+					[form.shoppingList, form.owner[i]]
+				));
+			}
+			
+			async.series(queries, function(err, result) {
 				if(err) {
 					return console.error('Could not load membership information', err);
 				}
 				
-				if(result.rows[0].is_member == false) {
-					res.redirect('/internal_error?not_member');
-					return;
+				for(var i = 0; i < result.length; i++) {
+					if(! result[i].rows[0].is_member) {
+						res.redirect('/internal_error?not_member' + i);
+						return;
+					}
 				}
 				
-				if(result.rows[0].owner_is_member == false) {
-					res.redirect('/internal_error?owner_not_member');
-					return;
+				
+				// TODO preis durch anzahl owner teilen
+				form.price = Math.ceil(form.price/form.owner.length);
+				
+				var queries = [];
+				
+				for(var i = 0; i < form.owner.length; i++) {
+					queries.push(client.query.bind(client,
+						'INSERT INTO shopping_item (name, shopping_list_id, owner_person_id, price) VALUES ($1,$2,$3,$4)',
+						[form.name, form.shoppingList, form.owner[i], form.price]
+					));
 				}
 				
-				client.query('INSERT INTO shopping_item (name, shopping_list_id, owner_person_id, price) VALUES ($1,$2,$3,$4)',
-					[form.name, form.shoppingList, form.owner, form.price],
-					function(err, result) {
-				
+				async.series(queries, function(err, result) {
 					done();
 				
 					if(err) {

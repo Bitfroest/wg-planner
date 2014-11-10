@@ -97,18 +97,33 @@ block content
 			input.form-control(type='text', name='name', placeholder='Produktname')
 			div.input-group-btn
 				button.btn.btn-default.dropdown-toggle#owner-button(type='button', data-toggle='dropdown', size='1')
-					span#owner-button-text -- Wähle Besitzer -- 
+					span#owner-button-text -- Wähle Besitzer --
+					span &nbsp;
 					span.caret
-				ul.dropdown-menu(role='menu')
+				ul.dropdown-menu.dropdown-menu-form#dropdown-owner(role='menu')
 					each member in members
 						li
-							a(onclick='changeOwnerButton('+member.id+',"'+member.name+'")' value=member.id)= member.name
+							label.checkbox.dropdown-checkbox
+								input(type='checkbox' data-id=member.id value=member.id data-name=member.name)
+								=member.name
 			input.form-control(type='text', name='price', placeholder='Preis in €, z.B. 12.30')
 			div.input-group-btn
 				input.btn.btn-primary.pull-right(type='submit', value='Erstellen')
 			script(type="application/javascript")
-				|function changeOwnerButton(value,name){
-				|	console.log("v:"+value+" n:"+name);
-				|	document.getElementById('select-owner').value = value;
-				|	document.getElementById('owner-button-text').textContent = name+" ";
+				|$('#dropdown-owner input[type=checkbox]').on('click', function(e) {
+				|	e.stopPropagation();
+				|	updateDropdown();
+				|});
+				|function updateDropdown(){
+				|	var owner = [];
+				|	var ids = [];
+				|	$('#dropdown-owner input[type=checkbox]:checked').each(function(index,element){
+				|		owner.push($(this).attr("data-name"));
+				|		ids.push($(this).attr("data-id"));
+				|	});
+				|	$('#owner-button-text').text(owner.join(", "));
+				|	$('#select-owner').val(ids.join("|"));
+				|	if(owner.length == 0){
+				|		$('#owner-button-text').text("-- Wähle Besitzer --");
+				|	}
 				|};

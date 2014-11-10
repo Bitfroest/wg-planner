@@ -59,4 +59,19 @@ script(src='https://oss.maxcdn.com/respond/1.4.2/respond.min.js')
 
 //END Bootstrap
 
+if _useCDN
+	//jQuery (necessary for Bootstrap's JavaScript plugins)
+	script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js')
+	script(src='https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js')
+	script(src='https://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.min.js')
+else
+	//local jQuery just for testing
+	script(src='/js/jquery.js')
+	//Include all compiled plugins (below), or include individual files as needed
+	script(src='/js/bootstrap.min.js')
+	//AngularJS rulez!
+	script(src='/js/angular.js')
+	
+script(src='/js/ng/notification.js')
+
 block head

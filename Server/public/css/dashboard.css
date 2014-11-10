@@ -132,3 +132,13 @@ body {
 .money-zero {
 	color: black;
 }
+
+ul.dropdown-menu-form {
+    padding: 5px 10px 0;
+    max-height: 300px;
+    overflow-y: scroll;
+}
+
+.dropdown-checkbox{
+	margin-left: 30px;
+}
