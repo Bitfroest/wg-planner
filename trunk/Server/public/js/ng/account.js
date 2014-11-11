@@ -32,5 +32,9 @@ angular.module('account', [])
 		}).success(function(data) {
 			console.log('Yeha!');
 		});
+		
+		$('input[name=password_old]').val('');
+		$('input[name=password]').val('');
+		$('input[name=password_confirm]').val('');
 	};
 }]);
