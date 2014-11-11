@@ -45,24 +45,24 @@ module.exports = function() {
 					return;
 				}
 				
+				req.checkParams('id').isInt();
+				
+				var err = req.validationErrors();
+				
+				if(err) {
+					errors.validation(res, err);
+					return;
+				}
+				
+				var form = {
+					id : req.sanitize('id').toInt()
+				};
+				
 				req.getDb(function(err, client, done) {
 					if(err) {
 						errors.db(res, err);
 						return;
 					}
-					
-					req.checkParams('id').isInt();
-					
-					var err = req.validationErrors();
-					
-					if(err) {
-						errors.validation(res, err);
-						return;
-					}
-					
-					var form = {
-						id : req.sanitize('id').toInt()
-					};
 					
 					client.query(
 						'UPDATE notification SET read=$1 WHERE notification_data_id=$2 AND recipient_person_id=$3',
@@ -75,8 +75,13 @@ module.exports = function() {
 							return;
 						}
 						
+						if(result.rowCount !== 1) {
+							errors.entityNotFound(res, err);
+							return;
+						}
+						
 						res.json({
-							success : (result.rowCount === 1)
+							success : true
 						});
 					});
 				});

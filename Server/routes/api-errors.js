@@ -29,4 +29,12 @@ exports.validation = function(res, err) {
 		'error' : 'validationError',
 		'errorMessage' : err
 	});
+};
+
+exports.entityNotFound = function(res, entityName) {
+	res.status(403);
+	res.json({
+		'error' : 'entityNotFound',
+		'errorMessage' : entityName
+	});
 }
