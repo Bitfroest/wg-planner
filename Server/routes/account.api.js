@@ -89,10 +89,10 @@ module.exports = function(req, res) {
 				
 				validateName(req);
 		
-				var errors = req.validationErrors();
+				var err = req.validationErrors();
 		
-				if(errors) {
-					errors.validation(res, errors);
+				if(err) {
+					errors.validation(res, err);
 					return;
 				}
 		
@@ -140,6 +140,9 @@ module.exports = function(req, res) {
 			 * - loggedIn
 			 * - password_old must be the current password of the person
 			 * - password and password_confirm must be the same
+			 * 
+			 * Errors:
+			 * - password_not_confirmed: confirmed password is not equals the password
 			 */
 			post : function(req, res) {
 				if(! req.session.loggedIn) {
@@ -150,10 +153,10 @@ module.exports = function(req, res) {
 				req.checkBody('password_old').isLength(6, 40);
 				validatePassword(req);
 	
-				var errors = req.validationErrors();
+				var err = req.validationErrors();
 	
-				if(errors) {
-					errors.validation(res, errors);
+				if(err) {
+					errors.validation(res, err);
 					return;
 				}
 	
@@ -164,8 +167,9 @@ module.exports = function(req, res) {
 				};
 	
 				if(form.password !== form.password_confirm) {
-					// TODO custom error
-					res.redirect('/dashboard?error=not_confirmed');
+					errors.custom(res,{
+						error: 'password_confirm'
+					});
 					return;
 				}
 	
@@ -177,32 +181,43 @@ module.exports = function(req, res) {
 		
 					client.query('SELECT password FROM person WHERE id=$1', [req.session.personId], function(err, result) {
 						if(err) {
+							done();						
 							errors.query(res, err);
 							return;
 						}
 			
 						if(result.rows.length !== 1) {
-							return console.error('Did not find person ' +req.session.personId);
+							done();
+							errors.entityNotFound(res, 'person');
+							return;
 						}
 			
 						var savedPassword = result.rows[0].password;
 			
 						passwordHelper.checkPassword(form.password_old, savedPassword, function(err, pwMatch) {
 							if(err) {
-								// TODO custom error
-								return console.error('Error during password check', err);
+								done();
+								errors.custom(res,{
+									error: 'password_check'
+								});
+								return;
 							}
 				
 							if(!pwMatch) {
-								//TODO custom error
-								res.redirect('/dashboard?password_wrong');
+								done();
+								errors.custom(res,{
+									error: 'password_wrong'
+								});
 								return;
 							}
 				
 							passwordHelper.hashPassword(form.password, function(err, key) {
 								if(err) {
-									// TODO custom error
-									return console.error('Could not hash new password', err);
+									done();
+									errors.custom(res,{
+										error: 'password_hash'
+									});
+									return;
 								}
 					
 								client.query('UPDATE person SET password=$1 WHERE id=$2', [key, req.session.personId], function(err, result) {
