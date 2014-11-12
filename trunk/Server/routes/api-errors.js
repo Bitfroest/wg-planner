@@ -38,3 +38,8 @@ exports.entityNotFound = function(res, entityName) {
 		'errorMessage' : entityName
 	});
 }
+
+exports.custom = function(res, message) {
+	res.status(403);
+	res.json(message);
+};

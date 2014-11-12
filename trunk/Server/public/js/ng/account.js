@@ -19,6 +19,18 @@ angular.module('account', [])
 			headers : {'X-CSRF-Token' : $('#_csrf').val()}
 		}).success(function(data) {
 			$scope.person = data.result;
+			
+			new PNotify({
+				title: 'Name geändert!',
+				text: $scope.person.name,
+				type: 'success'
+			});
+		}).error(function(data) {
+			new PNotify({
+				title: 'Fehler',
+				text: data.error,
+				type: 'error'
+			});
 		});
 	};
 	
@@ -30,9 +42,20 @@ angular.module('account', [])
 		},{
 			headers : {'X-CSRF-Token' : $('#_csrf').val()}
 		}).success(function(data) {
-			console.log('Yeha!');
-		});
+			new PNotify({
+				title: 'Passwort geändert!',
+				text: 'Verwende nun dein neues Passwort beim einloggen.',
+				type: 'success'
+			});
+		}).error(function(data) {
+			new PNotify({
+				title: 'Fehler',
+				text: data.error,
+				type: 'error'
+			});
+		});;
 		
+		// delete content of all password inputs
 		$('input[name=password_old]').val('');
 		$('input[name=password]').val('');
 		$('input[name=password_confirm]').val('');
