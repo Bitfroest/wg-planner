@@ -11,23 +11,19 @@ block content
 	div(ng-app='account', ng-controller='AccountController as acc')
 	
 		table.table.table-striped
-			thead
-				tr
-					td Anzeige-Name
-					td
-						div.input-group
-							input.form-control(type='text', name='name', value='{{person.name}}')
-							span.input-group-btn
-								button.btn.btn-primary(ng-click='setName()')= 'Aktualisieren'
-			tbody
-				tr
-					td Mail-Adresse
-					td {{person.email}}
-				tr
-					td Status
-					td {{({customer:'Standard-Account', admin:'Admin'})[person.role]}}
-
-		table.table.table-striped
+			tr
+				td Anzeige-Name
+				td
+					div.input-group
+						input.form-control(type='text', name='name', value='{{person.name}}')
+						span.input-group-btn
+							button.btn.btn-default(ng-click='setName()')= 'Aktualisieren'
+			tr
+				td Mail-Adresse
+				td {{person.email}}
+			tr
+				td Status
+				td {{({customer:'Standard-Account', admin:'Admin'})[person.role]}}
 			tr
 				td Aktuelles Passwort
 				td
