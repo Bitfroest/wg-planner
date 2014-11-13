@@ -1,3 +1,11 @@
+/*
+ * API for account information
+ *
+ * - get information about your own account
+ * - change name
+ * - change password
+ */
+
 var errors = require('./api-errors');
 var passwordHelper = require('./password.js');
 
