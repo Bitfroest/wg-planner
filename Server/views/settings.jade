@@ -10,30 +10,32 @@ block content
 	
 	div(ng-app='account', ng-controller='AccountController as acc')
 	
-		table.table.table-striped
-			tr
-				td Anzeige-Name
-				td
+		form.form-horizontal(role='form')
+			div.form-group
+				label.col-sm-2.control-label Anzeige-Name
+				div.col-sm-10
 					div.input-group
 						input.form-control(type='text', name='name', value='{{person.name}}')
 						span.input-group-btn
 							button.btn.btn-default(ng-click='setName()')= 'Aktualisieren'
-			tr
-				td Mail-Adresse
-				td {{person.email}}
-			tr
-				td Status
-				td {{({customer:'Standard-Account', admin:'Admin'})[person.role]}}
-			tr
-				td Aktuelles Passwort
-				td
+			div.form-group
+				label.col-sm-2.control-label Mail-Adresse
+				p.form-control-static.col-sm-10 {{person.email}}
+			div.form-group
+				label.col-sm-2.control-label Status
+				p.form-control-static.col-sm-10 {{({customer:'Standard-Account', admin:'Admin'})[person.role]}}
+			div.form-group
+				label.col-sm-2.control-label Aktuelles Passwort
+				div.col-sm-10
 					input.form-control(type='password', name='password_old')
-			tr
-				td Neues Passwort
-				td
+			div.form-group
+				label.col-sm-2.control-label Neues Passwort
+				div.col-sm-10
 					input.form-control(type='password', name='password')
-			tr
-				td Neues Passwort bestätigen
-				td
+			div.form-group
+				label.col-sm-2.control-label Neues Passwort bestätigen
+				div.col-sm-10
 					input.form-control(type='password', name='password_confirm')
-		button.btn.btn-success.pull-right(ng-click='changePassword()')= 'Passwort ändern'
+			div.form-group
+				div.col-sm-offset-2.col-sm-10
+					button.btn.btn-success.pull-right(ng-click='changePassword()')= 'Passwort ändern'
