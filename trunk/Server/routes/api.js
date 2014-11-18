@@ -3,7 +3,7 @@ module.exports = function() {
 
 	// API collections to load
 	var collections = [
-		'sample',
+		//'sample',
 		'notification',
 		'account'
 	];
@@ -18,7 +18,7 @@ module.exports = function() {
 
 	// register all collections
 	collections.forEach(function(coll) {
-		router.use('/' + coll, require('./' + coll + '.api.js')());
+		router.use('/' + coll, require('./' + coll + '/index.js')());
 	});
 
 	return router;
