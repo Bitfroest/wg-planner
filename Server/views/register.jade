@@ -14,6 +14,14 @@ block content
 			input(class='form-control' type='email', required='required', id='email', name='email', value='', spellcheck='false', placeholder='jemand@example.com')
 			label(for='password') Passwort
 			input(class='form-control' type='password', required='required', id='password', name='password', value='', placeholder='Kennwort')
+			div.checkbox
+				label
+					input(type='checkbox', name='terms', value='1', required='required') 
+					p Sie haben die 
+						a(href='policies') Nutzungsbedingungen 
+						|und 
+						a(href='privacy') Datenschutzerklärung 
+						| gelesen und akzeptieren diese.
 			input(class='btn btn-lg btn-primary btn-block' type='submit', value='Registrieren')
 			p.underline Sie haben bereits ein Konto? 
 				a(href='login') Jetzt Anmelden!

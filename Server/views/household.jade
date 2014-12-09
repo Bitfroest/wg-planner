@@ -135,3 +135,58 @@ block content
 					input.form-control.noborder(type='text', name='shopped_time', placeholder='HH:MM')
 				div.input-group-btn
 					input.btn.btn-primary(type='submit', value='Erstellen')
+					
+	//copy to test implementation of bootstrap.ui			
+	div.form
+		form(method='POST', action='/shopping_list/create')
+			input(type='hidden', name='_csrf', value=_csrf)
+			input(type='hidden', name='household', value=household)
+			input#shopping-list-create-buyer(type='hidden', name='buyer')
+			div.input-group
+				div.input-group-btn
+					button.btn.btn-default.dropdown-toggle#shopping-list-add-button(style='', type='button', data-toggle='dropdown', size='1', name='buyer', value='')
+						span#shopping-add-button-text -- Wähle Einkäufer --
+						span.caret
+					ul.dropdown-menu(role='menu')
+						each member in members
+							li
+								a(onclick='changeShoppingAddButton('+member.id+',"'+member.name+'")')= member.name
+							//option(value=member.id)= member.name
+				
+				script(type="application/javascript")
+					|function changeShoppingAddButton(value,name){
+					|	console.log("v:"+value+" n:"+name);
+					|	document.getElementById('shopping-list-create-buyer').value = value;
+					|	document.getElementById('shopping-add-button-text').textContent = name+" ";
+					|};
+				div.input-group
+					input.form-control(type='text', name='shop', value='', placeholder='Laden, z.B. Supermarkt an der Ecke')
+					input.form-control(type='text', name='shopped_date', placeholder='TT.MM.JJJJ')
+					input.form-control(type='text', name='shopped_time', placeholder='HH:MM')
+				script(type="application/javascript")
+					|// declare a module
+					|var myAppModule = angular.module('DatepickerDemoCtrl', ['ui.bootstrap.demo']);
+				div(ng-controller='DatepickerDemoCtrl')
+					pre Selected date is:
+						em {{dt | date:'fullDate' }}
+
+					h4 Inline
+					div(style='display:inline-block; min-height:290px;')
+						datepicker(ng-model='dt',min-date='minDate',show-weeks='true',class='well well-sm')
+					h4 Popup
+					div.row
+						div.col-md-6
+							div.input-group
+								input.form-control(type='text',datepicker-popup='{{format}}',ng-model='dt',is-open='opened',min-date='minDate',max-date="'2015-06-22'",datepicker-options='dateOptions',date-disabled='disabled(date, mode)',ng-required='true',close-text='Close')
+								span.input-group-btn
+									button.btn.btn-default(type='button',ng-click='open($event)')
+										i.glyphicon.glyphicon-calendar
+					div.row
+						div.col-md-6
+							label Format:
+							select.form-control(ng-model='format',ng-options='f for f in formats')
+								option
+					button.btn.btn-sm.btn-info(type='button',ng-click='today()') Today
+					button.btn.btn-sm.btn-danger(type='button',ng-click='clear()') Clear
+				div.input-group-btn
+					input.btn.btn-primary(type='submit', value='Erstellen')

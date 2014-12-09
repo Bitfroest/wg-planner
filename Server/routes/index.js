@@ -75,4 +75,10 @@ module.exports = function(app) {
 	
 	//imprint page
 	app.get('/imprint', publicRouter.imprint);
+	
+	//privacy page
+	app.get('/privacy', publicRouter.privacy);
+	
+	//policies page
+	app.get('/policies', publicRouter.policies);
 };
