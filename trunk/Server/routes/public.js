@@ -29,6 +29,10 @@ function sanitizeName(req, form) {
 	form.name = req.sanitize('name').toString();
 }
 
+function validateTerms(req) {
+	req.checkBody('terms', 'Nutzungebedinungen und Datenschutzerklärung muss akzeptiert werden.').matches(/^1$/);
+}
+
 exports.index = function(req, res) {
 	res.render('home', {_csrf: req.csrfToken()});
 };
@@ -152,6 +156,7 @@ exports.register = function(req, res) {
  * - name string: name of the person
  * - email string: mail address of the person
  * - password string: password of the person
+ * - terms string: accepted privacy and policies
  *
  * Requirements: none.
  */
@@ -161,6 +166,7 @@ exports.doRegister = function(req, res) {
 	validateName(req);
 	validateEmail(req);
 	validatePassword(req);
+	validateTerms(req);
 	
 	var errors = req.validationErrors();
 	
@@ -208,4 +214,12 @@ exports.doRegister = function(req, res) {
 
 exports.imprint = function(req, res) {
 	res.render('imprint', {title : 'Impressum', _csrf: req.csrfToken()});
+};
+
+exports.privacy = function(req, res) {
+	res.render('privacy', {title : 'Datenschutzerklärungen', _csrf: req.csrfToken()});
+};
+
+exports.policies = function(req, res) {
+	res.render('policies', {title : 'Nutzungebedinungen', _csrf: req.csrfToken()});
 };
