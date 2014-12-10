@@ -32,7 +32,7 @@ exports.checkPassword = function(userPassword, savedString, callback) {
 			return;
 		}
 		
-		callback(null, key == savedPassword);
+		callback(null, key === savedPassword);
 	});
 };
 

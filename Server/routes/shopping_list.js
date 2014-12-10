@@ -66,12 +66,12 @@ exports.shoppingListCreate = function(req, res) {
 					return console.error('Failed to check if household member', err);
 				}
 				
-				if(result.rows.length == 0 || result.rows[0].is_member == false) {
+				if(result.rows.length === 0 || result.rows[0].is_member === false) {
 					res.redirect('/internal_error?not_member');
 					return;
 				}
 				
-				if(result.rows[0].buyer_is_member == false) {
+				if(result.rows[0].buyer_is_member === false) {
 					res.redirect('/internal_error?buyer_not_member');
 					return;
 				}
@@ -145,12 +145,12 @@ exports.shoppingList = function(req, res) {
 					return console.error('Could not load shopping list information', err);
 				}
 				
-				if(result.rows.length == 0) {
+				if(result.rows.length === 0) {
 					res.redirect('/internal_error?error=shopping_list_not_found');
 					return;
 				}
 				
-				if(result.rows[0].is_member == false) {
+				if(result.rows[0].is_member === false) {
 					res.redirect('/internal_error?error=not_a_member');
 				}
 				
@@ -254,12 +254,12 @@ exports.shoppingListUpdate = function(req, res) {
 					return console.error('Failed to check if household member', err);
 				}
 				
-				if(result.rows[0].is_member == false) {
+				if(result.rows[0].is_member === false) {
 					res.redirect('/internal_error?not_member');
 					return;
 				}
 				
-				if(result.rows[0].buyer_is_member == false) {
+				if(result.rows[0].buyer_is_member === false) {
 					res.redirect('/internal_error?buyer_not_member');
 					return;
 				}
@@ -271,6 +271,10 @@ exports.shoppingListUpdate = function(req, res) {
 				
 					if(err) {
 						return console.error('Failed to update shopping_list', err);
+					}
+					
+					if(result.rowCount !== 1) {
+						return console.error('Failed to find shopping list', err);
 					}
 					
 					res.redirect('/shopping_list/' + form.id);
@@ -328,7 +332,7 @@ exports.shoppingListDelete = function(req, res) {
 					return;
 				}
 				
-				client.query('DELETE FROM shopping_item WHERE shopping_list_id=$1', [form.id], function(err, result) {
+				client.query('DELETE FROM shopping_item WHERE shopping_list_id=$1', [form.id], function(err) {
 					if(err) {
 						return console.error('Failed to delete depending shopping items', err);
 					}

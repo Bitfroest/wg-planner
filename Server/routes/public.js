@@ -76,8 +76,8 @@ exports.doLogin = function(req, res) {
 	
 	req.getDb(function(err, client, done) {
 		if(err) {
-			console.error('Failed to connect in doRegister', err),
-			res.redirect('/login?error=internal')
+			console.error('Failed to connect in doRegister', err);
+			res.redirect('/login?error=internal');
 			return;
 		}
 		
@@ -90,7 +90,7 @@ exports.doLogin = function(req, res) {
 				return;
 			}
 			
-			if(result.rows.length == 0) {
+			if(result.rows.length === 0) {
 				res.redirect('/login?error=user_not_found');
 				return;
 			}
@@ -197,7 +197,7 @@ exports.doRegister = function(req, res) {
 		
 			// insert new person into database
 			client.query('INSERT INTO person(name,email,password,role,created) VALUES($1,$2,$3,$4,$5)',
-				[person.name, person.email, key, 'customer', new Date()], function(err, result){
+				[person.name, person.email, key, 'customer', new Date()], function(err) {
 			
 				done();
 				

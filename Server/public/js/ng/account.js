@@ -53,7 +53,7 @@ angular.module('account', [])
 				text: data.error,
 				type: 'error'
 			});
-		});;
+		});
 		
 		// delete content of all password inputs
 		$('input[name=password_old]').val('');
