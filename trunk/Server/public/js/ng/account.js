@@ -41,7 +41,7 @@ angular.module('account', [])
 			password_confirm : $('input[name=password_confirm]').val()
 		},{
 			headers : {'X-CSRF-Token' : $('#_csrf').val()}
-		}).success(function(data) {
+		}).success(function() {
 			new PNotify({
 				title: 'Passwort geändert!',
 				text: 'Verwende nun dein neues Passwort beim einloggen.',

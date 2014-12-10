@@ -61,7 +61,11 @@ module.exports = function(grunt) {
 			options: {
 				browser: true,
 				jquery: true,
-				devel: true
+				devel: true,
+				globals: {
+					angular: false,
+					PNotify: false
+				}
 			}
 		}
 	},
