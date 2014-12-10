@@ -102,6 +102,10 @@ module.exports = function(req, res) {
 							errors.query(res, err);
 							return;
 						}
+						
+						if(result.rowCount !== 1) {
+							errors.entityNotFound(res, 'person');
+						}
 			
 						res.json({
 							success : true

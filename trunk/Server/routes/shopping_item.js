@@ -158,7 +158,9 @@ exports.shoppingItemCreate = function(req, res) {
 					return console.error('Could not load membership information', err);
 				}
 				
-				for(var i = 0; i < result.length; i++) {
+				var i;
+				
+				for(i = 0; i < result.length; i++) {
 					if(! result[i].rows[0].is_member) {
 						res.redirect('/internal_error?not_member' + i);
 						return;
@@ -171,14 +173,14 @@ exports.shoppingItemCreate = function(req, res) {
 				
 				var queries = [];
 				
-				for(var i = 0; i < form.owner.length; i++) {
+				for(i = 0; i < form.owner.length; i++) {
 					queries.push(client.query.bind(client,
 						'INSERT INTO shopping_item (name, shopping_list_id, owner_person_id, price) VALUES ($1,$2,$3,$4)',
 						[form.name, form.shoppingList, form.owner[i], form.price]
 					));
 				}
 				
-				async.series(queries, function(err, result) {
+				async.series(queries, function(err) {
 					done();
 				
 					if(err) {
@@ -237,15 +239,18 @@ exports.shoppingItemUpdate = function(req, res) {
 				[form.id, req.session.personId, form.owner], function(err, result) {
 			
 				if(err) {
+					done();
 					return console.error('Failed to load membership data in shoppingItemUpdate', err);
 				}
 				
-				if(result.rows[0].is_member == false) {
+				if(result.rows[0].is_member === false) {
+					done();
 					res.redirect('/internal_error?not_member');
 					return;
 				}
 				
-				if(result.rows[0].owner_is_member == false) {
+				if(result.rows[0].owner_is_member === false) {
+					done();
 					res.redirect('/internal_error?owner_not_member');
 					return;
 				}
@@ -253,8 +258,14 @@ exports.shoppingItemUpdate = function(req, res) {
 				client.query('UPDATE shopping_item SET name=$1, owner_person_id=$2, price=$3 WHERE id=$4',
 					[form.name, form.owner, form.price, form.id], function(err, result) {
 				
+					done();
+				
 					if(err) {
 						return console.error('Failed to update shopping item', err);
+					}
+					
+					if(result.rowCount !== 1) {
+						return console.error('Failed to find shopping item.', err);
 					}
 					
 					res.redirect('/shopping_item/' + form.id);

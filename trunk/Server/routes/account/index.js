@@ -7,7 +7,7 @@
  * - change password
  */
 
-module.exports = function(req, res) {
+module.exports = function() {
 	return require('../api-helper')({
 		'/' : {
 			get : require('./collection.get.js'),

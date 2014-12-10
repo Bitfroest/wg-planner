@@ -46,7 +46,7 @@ exports.householdInvitationCreate = function(req, res) {
 				}
 			
 				// if there is an entry the current user is the founder of this household
-				if(result.rows.length == 1 && result.rows[0].role === 'founder') {
+				if(result.rows.length === 1 && result.rows[0].role === 'founder') {
 					
 					// now get the id of the person with the given email
 					client.query('SELECT id FROM person WHERE email = $1', [form.email], function(err, result) {
@@ -55,22 +55,22 @@ exports.householdInvitationCreate = function(req, res) {
 							return console.error('Failed to get person.id by email', err);
 						}
 					
-						if(result.rows.length != 1) {
+						if(result.rows.length !== 1) {
 							return console.error('Could not find person by email');
 						}
 						
 						form.toPersonId = parseInt(result.rows[0].id);
 						
 						// tried to invite myself
-						if(form.toPersonId == req.session.personId) {
+						if(form.toPersonId === req.session.personId) {
 							res.redirect('/household/' + form.householdId + '?error=send_inv_to_myself');
 							return;
 						}
 						
 						// check if there is already an invitation for the given household and target person
-						client.query('SELECT '
-							+ 'EXISTS (SELECT 1 FROM household_invitation WHERE to_person_id=$1 AND household_id=$2 LIMIT 1) AS inv,'
-							+ 'EXISTS (SELECT 1 FROM household_member WHERE person_id=$1 AND household_id=$2 LIMIT 1) AS mem',
+						client.query('SELECT ' +
+							'EXISTS (SELECT 1 FROM household_invitation WHERE to_person_id=$1 AND household_id=$2 LIMIT 1) AS inv,' +
+							'EXISTS (SELECT 1 FROM household_member WHERE person_id=$1 AND household_id=$2 LIMIT 1) AS mem',
 							[form.toPersonId, form.householdId], function(err, result){
 						
 							if(err) {
@@ -92,7 +92,7 @@ exports.householdInvitationCreate = function(req, res) {
 							}
 					
 							client.query('INSERT INTO household_invitation(household_id,from_person_id,to_person_id,created) VALUES($1,$2,$3,$4)',
-								[form.householdId, req.session.personId, form.toPersonId, new Date()], function(err, result) {
+								[form.householdId, req.session.personId, form.toPersonId, new Date()], function(err) {
 								
 								done();
 								
@@ -161,13 +161,13 @@ exports.householdInvitationAccept = function(req, res) {
 				}
 				
 				// if there is no such invitation
-				if(result.rowCount == 0) {
+				if(result.rowCount === 0) {
 					res.redirect('/dashboard?error=inv_not_found');
 					return;
 				}
 				
 				client.query('INSERT INTO household_member(household_id,person_id,role,created) VALUES($1,$2,$3,$4)',
-					[form.household, req.session.personId, 'member', new Date()], function(err, result) {
+					[form.household, req.session.personId, 'member', new Date()], function(err) {
 				
 					done();
 				
@@ -226,7 +226,7 @@ exports.householdInvitationDecline = function(req, res) {
 					return console.error('Failed to decline invitation', err);
 				}
 				
-				if(result.rowCount == 0) {
+				if(result.rowCount === 0) {
 					res.redirect('/dashboard?error=inv_not_found');
 					return;
 				}
@@ -286,7 +286,7 @@ exports.householdInvitationCancel = function(req, res) {
 					return console.error('Failed to cancel invitation', err);
 				}
 				
-				if(result.rowCount == 0) {
+				if(result.rowCount === 0) {
 					res.redirect('/dashboard?error=inv_not_found');
 					return;
 				}
@@ -343,7 +343,7 @@ exports.householdInvitationCancel2 = function(req, res) {
 					return console.error('Could not check membership', err);
 				}
 				
-				if(result.rows.length == 0) {
+				if(result.rows.length === 0) {
 					res.redirect('/household/' + form.household + '?not_member');
 					return;
 				}
@@ -362,7 +362,7 @@ exports.householdInvitationCancel2 = function(req, res) {
 						return console.error('Failed to cancel invitation', err);
 					}
 					
-					if(result.rowCount == 0) {
+					if(result.rowCount === 0) {
 						res.redirect('/household/' + form.household + '?error=inv_not_found');
 						return;
 					}

@@ -68,7 +68,7 @@ module.exports = function(app) {
 	app.get('/shopping_item/:id', shoppingItemRouter.shoppingItem);
 	
 	//notofications page
-	app.get('/notifications', notificationRouter.notification)
+	app.get('/notifications', notificationRouter.notification);
 	
 	//api 
 	app.use('/api', apiRouter());

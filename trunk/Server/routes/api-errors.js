@@ -37,7 +37,7 @@ exports.entityNotFound = function(res, entityName) {
 		'error' : 'entityNotFound',
 		'errorMessage' : entityName
 	});
-}
+};
 
 exports.custom = function(res, message) {
 	res.status(403);

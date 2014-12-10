@@ -49,7 +49,7 @@ exports.household = function(req, res) {
 					return console.error('Could not load name of household', err);
 				}
 			
-				if(result.rows.length == 0) {
+				if(result.rows.length === 0) {
 					done();
 					res.redirect('/internal_error=household_not_found');
 					return;
@@ -110,7 +110,7 @@ exports.household = function(req, res) {
 						mySummary : result.mySummary.rows,
 						title: 'Haushalt ' + form.householdName,
 						formatCurrency : formatEuro,
-						formatCurrency2 : function(x) { if(x === "0" || x === 0) return '-'; else return formatEuro(x); },
+						formatCurrency2 : function(x) { if(x === "0" || x === 0) {return '-';} else {return formatEuro(x);} },
 						formatDate : formatDate,
 						breadcrumbs : [{url: '/household/' + form.householdId, text: 'Haushalt'}]
 					});
@@ -164,7 +164,7 @@ exports.householdCreate = function(req, res) {
 				var householdId = result.rows[0].id;
 				
 				client.query('INSERT INTO household_member(household_id,person_id,role,created) VALUES ($1,$2,$3,$4)',
-					[householdId, req.session.personId, 'founder', new Date()], function(err, result){
+					[householdId, req.session.personId, 'founder', new Date()], function(err){
 				
 					done();
 					
@@ -226,7 +226,7 @@ exports.householdUpdate = function(req, res) {
 					return;
 				}
 				
-				if(result.rows.length == 0) {
+				if(result.rows.length === 0) {
 					res.redirect('/internal_error?not_member');
 					return;
 				}
@@ -241,6 +241,11 @@ exports.householdUpdate = function(req, res) {
 					
 					if(err) {
 						console.error('Failed to update household', err);
+						return;
+					}
+					
+					if(result.rowCount !== 1) {
+						console.error('Could not find household', err);
 						return;
 					}
 					

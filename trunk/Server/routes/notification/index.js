@@ -1,5 +1,3 @@
-var errors = require('../api-errors');
-
 module.exports = function() {
 	return require('../api-helper')({
 		'/' : {
@@ -10,4 +8,3 @@ module.exports = function() {
 		}
 	});
 };
-

@@ -161,7 +161,7 @@ function createTables(pg, url, callback) {
 			}
 		
 			// Create all the tables
-			client.query(sql, function(err, result){
+			client.query(sql, function(err){
 				if(err) {
 					done();
 					callback(err);
@@ -176,7 +176,7 @@ function createTables(pg, url, callback) {
 				
 				// insert current schema version into table dbinfo
 				client.query('INSERT INTO dbinfo (version,cookiesecret,sessionsecret) VALUES ($1,$2,$3)',
-					[CURRENT_VERSION, cookieSecret, sessionSecret], function(err, result) {
+					[CURRENT_VERSION, cookieSecret, sessionSecret], function(err) {
 					
 					done();
 					

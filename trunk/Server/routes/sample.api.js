@@ -24,7 +24,7 @@ module.exports = function() {
 					id : req.params.id
 				});
 			},
-			put : function(req, res) {
+			put : function(req) {
 				resources[req.params.id] = req.json;
 			}
 		}

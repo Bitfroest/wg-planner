@@ -24,7 +24,7 @@ module.exports = function(session) {
 					return;
 				}
 				
-				if(result.rows.length == 1) {
+				if(result.rows.length === 1) {
 					callback(null, JSON.parse(result.rows[0].data));
 				} else {
 					console.error('Session not found');
@@ -53,10 +53,10 @@ module.exports = function(session) {
 				}
 				
 				// if the session is not already in our database ...
-				if(result.rowCount == 0) {
+				if(result.rowCount === 0) {
 					// ... then insert it
 					client.query('INSERT INTO session(id,data,created) VALUES($1,$2,$3)',
-						[sid,JSON.stringify(session),new Date()], function(err, result){
+						[sid,JSON.stringify(session),new Date()], function(err){
 					
 						done();
 					
@@ -85,7 +85,7 @@ module.exports = function(session) {
 				return;
 			}
 			
-			client.query('DELETE FROM session WHERE id = $1', [sid], function(err, result) {
+			client.query('DELETE FROM session WHERE id = $1', [sid], function(err) {
 				done();
 				
 				if(err) {

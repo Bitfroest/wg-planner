@@ -1,5 +1,3 @@
-var async = require('async');
-
 /*
  * Router for displaying the customer settings.
  *
