@@ -19,7 +19,7 @@ var errors = require('../api-errors');
  * Errors:
  * - password_not_confirmed: confirmed password is not equals the password
  */
-module.exports = function(req, res) {
+module.exports = function(req, res, opt) {
 	if(! req.session.loggedIn) {
 		errors.loggedIn(res);
 		return;
@@ -48,68 +48,54 @@ module.exports = function(req, res) {
 		return;
 	}
 
-	req.getDb(function(err, client, done) {
-		if(err) {
-			errors.db(res, err);
+	opt.client.query('SELECT password FROM person WHERE id=$1', [req.session.personId], function(err, result) {
+		if(err) {					
+			errors.query(res, err);
 			return;
 		}
 
-		client.query('SELECT password FROM person WHERE id=$1', [req.session.personId], function(err, result) {
+		if(result.rows.length !== 1) {
+			errors.entityNotFound(res, 'person');
+			return;
+		}
+
+		var savedPassword = result.rows[0].password;
+
+		passwordHelper.checkPassword(form.password_old, savedPassword, function(err, pwMatch) {
 			if(err) {
-				done();						
-				errors.query(res, err);
+				errors.custom(res,{
+					error: 'password_check'
+				});
 				return;
 			}
 
-			if(result.rows.length !== 1) {
-				done();
-				errors.entityNotFound(res, 'person');
+			if(!pwMatch) {
+				errors.custom(res,{
+					error: 'password_wrong'
+				});
 				return;
 			}
 
-			var savedPassword = result.rows[0].password;
-
-			passwordHelper.checkPassword(form.password_old, savedPassword, function(err, pwMatch) {
+			passwordHelper.hashPassword(form.password, function(err, key) {
 				if(err) {
-					done();
 					errors.custom(res,{
-						error: 'password_check'
+						error: 'password_hash'
 					});
 					return;
 				}
 	
-				if(!pwMatch) {
-					done();
-					errors.custom(res,{
-						error: 'password_wrong'
-					});
-					return;
-				}
-	
-				passwordHelper.hashPassword(form.password, function(err, key) {
+				opt.client.query('UPDATE person SET password=$1 WHERE id=$2', [key, req.session.personId], function(err, result) {
 					if(err) {
-						done();
-						errors.custom(res,{
-							error: 'password_hash'
-						});
+						errors.query(res, err);
 						return;
 					}
+					
+					if(result.rowCount !== 1) {
+						errors.entityNotFound(res, 'person');
+					}
 		
-					client.query('UPDATE person SET password=$1 WHERE id=$2', [key, req.session.personId], function(err, result) {
-						done();
-			
-						if(err) {
-							errors.query(res, err);
-							return;
-						}
-						
-						if(result.rowCount !== 1) {
-							errors.entityNotFound(res, 'person');
-						}
-			
-						res.json({
-							success : true
-						});
+					res.json({
+						success : true
 					});
 				});
 			});
