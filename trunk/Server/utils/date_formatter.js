@@ -10,7 +10,7 @@ exports.formatDate = function(date, type) {
 	case 'time': return timeString;
 	default: return dateString + ' ' + timeString;
 	}
-}
+};
 
 // Takes a number of at most two digits and pads zeroes to the
 // left until it reaches a length of 2

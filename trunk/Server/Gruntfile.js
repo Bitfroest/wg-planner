@@ -50,7 +50,7 @@ module.exports = function (grunt) {
 			unused: true
 		},
 		server: {
-			src: ['Gruntfile.js', 'routes/**/*.js', 'database/*.js'],
+			src: ['./*.js', 'routes/**/*.js', 'database/*.js', 'utils/**/*.js'],
 			options : {
 				node: true,
 				proto: true
@@ -71,7 +71,7 @@ module.exports = function (grunt) {
 	},
 	jslint: {
 		server: {
-			src: ['Gruntfile.js', 'routes/**/*.js', 'database/*.js'],
+			src: ['./*.js', 'routes/**/*.js', 'database/*.js', 'utils/**/*.js'],
 			directives: {
 				node: true,
 				sloppy: true,

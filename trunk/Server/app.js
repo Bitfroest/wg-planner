@@ -57,7 +57,7 @@ app.locals._useCDN = config.useCDN;
 //Use jade as view engine
 app.set('view engine', 'jade');
 app.set('views', __dirname + '/views');
-if(app.get('env') == 'development') {
+if(app.get('env') === 'development') {
 	app.locals.pretty = true;
 }
 
@@ -123,6 +123,9 @@ app.use(function(err, req, res, next){
 			err : app.get('env') === 'development' ? err : undefined // show details only in development mode
 		});
 	}
+	
+	// call next error handler
+	next(err);
 });
 
 //Start listening on a specific port
