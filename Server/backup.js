@@ -2,10 +2,17 @@ var config = require('./config.js');
 var spawn = require('child_process').spawn;
 var padding = require('./utils/date_formatter').zeroPadding2;
 
+if(process.argv.length !== 3) {
+	console.warn('Usage: node backup.js <backup folder>');
+	return;
+}
+
+var backupFolder = process.argv[2];
+
 var now = new Date();
-var filename = ['./database/backups/', 'backup_',
-	now.getFullYear(), '_', padding(now.getMonth() + 1), '_', padding(now.getDate()),
-	'_', padding(now.getHours()), '_', padding(now.getMinutes()), '_', padding(now.getSeconds())].join('');
+var filename = backupFolder + ['/backup',
+	now.getFullYear(), padding(now.getMonth() + 1), padding(now.getDate()),
+	padding(now.getHours()), padding(now.getMinutes()), padding(now.getSeconds())].join('_');
 
 
 var dumper = spawn(config.postgresBin + 'pg_dump', ['--format=custom', '-f', filename], {
@@ -28,3 +35,4 @@ dumper.on('exit', function(code) {
 	console.info('Backup ready, Exit code: %d', code);
 	console.info('File: %s', filename);
 });
+
