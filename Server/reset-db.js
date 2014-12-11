@@ -14,7 +14,7 @@ fs.readFile('./database/reset.sql', 'utf-8', function(err, sql){
 			return console.error('Failed to connect.', err);
 		}
 	
-		client.query(sql, function(err, result) {
+		client.query(sql, function(err) {
 			if(err) {
 				return console.error('Failed to reset database.', err);
 			}

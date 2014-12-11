@@ -5,7 +5,7 @@ exports.formatEuro = function(amount) {
 	amount = (amount / 100).toLocaleString();
 
 	// Calculate decimal separator, '.' for English, ',' for German
-	var decimalSeparator = (.1).toLocaleString()[1];
+	var decimalSeparator = (0.1).toLocaleString()[1];
 
 	var arParts = amount.split(decimalSeparator);
 	var intPart = arParts[0];
