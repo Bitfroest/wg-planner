@@ -16,5 +16,7 @@ module.exports = function() {
 		'/actions/change_password' : {
 			post : require('./collection.actions.changePassword.js')
 		}
+	}, {
+		autoDb : true
 	});
 };

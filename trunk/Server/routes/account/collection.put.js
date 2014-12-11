@@ -19,7 +19,7 @@ var errors = require('../api-errors');
  *    role : string
  * }
  */
-module.exports = function(req, res) {
+module.exports = function(req, res, opt) {
 	if(! req.session.loggedIn) {
 		errors.loggedIn(res);
 		return;
@@ -37,30 +37,21 @@ module.exports = function(req, res) {
 	var form = {};
 	validators.sanitizeName(req, form);
 
-	req.getDb(function(err, client, done) {
+	opt.client.query('UPDATE person SET name=$1 WHERE id=$2 RETURNING id, name, email, role',
+		[form.name, req.session.personId], function(err, result) {
+
 		if(err) {
-			errors.db(res, err);
+			errors.query(res, err);
 			return;
 		}
 
-		client.query('UPDATE person SET name=$1 WHERE id=$2 RETURNING id, name, email, role',
-			[form.name, req.session.personId], function(err, result) {
-		
-			done();
+		if(result.rowCount !== 1) {
+			errors.entityNotFound(res, 'person');
+			return;
+		}
 
-			if(err) {
-				errors.query(res, err);
-				return;
-			}
-
-			if(result.rowCount !== 1) {
-				errors.entityNotFound(res, 'person');
-				return;
-			}
-
-			res.json({
-				result: result.rows[0]
-			});
+		res.json({
+			result: result.rows[0]
 		});
 	});
 };
