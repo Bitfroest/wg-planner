@@ -26,3 +26,4 @@ dumper.on('error', function(err) {
 dumper.on('exit', function(code) {
 	console.info('Restored, Exit code: %d', code);
 });
+
