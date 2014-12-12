@@ -95,6 +95,14 @@ module.exports = function (grunt) {
 			}
 		}
 	},
+		csslint: {
+			src : ['public/css/**/*.css', 
+				'!public/css/bootstrap.css',
+				'!public/css/bootstrap.min.css',
+				'!public/css/bootstrap-theme.css',
+				'!public/css/bootstrap-theme.min.css',
+				'!public/css/pnotify.custom.min.css']
+		},
 		watch: {
 		files: ['<%=jsDir%>*.js', '<%=cssDir%>*.css'],
 		tasks: ['concat', 'uglify', 'cssmin']
@@ -106,6 +114,7 @@ module.exports = function (grunt) {
 	grunt.loadNpmTasks('grunt-contrib-cssmin');
 	grunt.loadNpmTasks('grunt-contrib-watch');
 	grunt.loadNpmTasks('grunt-contrib-jshint');
+	grunt.loadNpmTasks('grunt-contrib-csslint');
 	grunt.loadNpmTasks('grunt-jslint');
 
 	grunt.registerTask('default', [
