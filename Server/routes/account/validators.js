@@ -12,3 +12,15 @@ exports.validatePassword = function(req) {
 	req.checkBody('password').isLength(6, 40);
 };
 
+exports.sanitizePassword = function(req, form) {
+	form.password = req.sanitize('password').toString();
+};
+
+exports.validateEmail = function(req) {
+	req.checkBody('email').isLength(5, 60).isEmail();
+};
+
+exports.sanitizeEmail = function(req, form) {
+	form.email = req.sanitize('email').toString();
+};
+

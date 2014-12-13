@@ -3,18 +3,20 @@ extends layout-home
 block head
 
 block content
+	input(type='hidden', value=_csrf, id='_csrf')
+
 	div.container
-		form(class='form-signin' name='login', action='/login', method='post')
-			h2.form-signin-heading Jetzt Anmelden.
-			input(class='form-control' type='hidden', name='_csrf', value=_csrf)
-			//label(for='email', id='label_email') E-Mail
-			input(class='form-control' type='email', required='required', id='email', name='email',spellcheck='false', placeholder='jemand@example.com', autofocus)
-			//label(for='password') Passwort
-			input(class='form-control' type='password', required='required', id='password', name='password', placeholder='Kennwort')
-			div.checkbox
-				label
-					input(type='checkbox', name='persistent', value='1') 
-					span Angemeldet bleiben
-			input(class='btn btn-lg btn-primary btn-block' type='submit', value='Anmelden')
-			p.underline Noch nicht angemeldet? 
-				a(href='register') Jetzt Registrieren!
+		div(ng-app='login', ng-controller='LoginController as login')
+			form(class='form-signin' name='loginForm')
+				h2.form-signin-heading Jetzt Anmelden.
+				//label(for='email', id='label_email') E-Mail
+				input(class='form-control' type='email', required='required', ng-model='login.email', name='email',spellcheck='false', placeholder='jemand@example.com', autofocus)
+				//label(for='password') Passwort
+				input(class='form-control' type='password', required='required', ng-model='login.password', name='password', placeholder='Kennwort')
+				div.checkbox
+					label
+						input(type='checkbox', name='persistent', ng-model='login.persistent' ,value='1') 
+						span Angemeldet bleiben
+				input(class='btn btn-lg btn-primary btn-block' type='submit', value='Anmelden', ng-click='doLogin()', ng-disabled='loginForm.$invalid')
+				p.underline Noch nicht angemeldet? 
+					a(href='register') Jetzt Registrieren!
