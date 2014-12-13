@@ -10,7 +10,7 @@ block content
 			form(class='form-signin' name='loginForm')
 				h2.form-signin-heading Jetzt Anmelden.
 				//label(for='email', id='label_email') E-Mail
-				input(class='form-control' type='email', required='required', ng-model='login.email', name='email',spellcheck='false', placeholder='jemand@example.com', autofocus)
+				input(class='form-control' type='email', required='required', ng-model='login.email', ng-pattern='/^[^@]+@[^@]+\\.[^\\.@]+$/', name='email',spellcheck='false', placeholder='jemand@example.com', autofocus)
 				//label(for='password') Passwort
 				input(class='form-control' type='password', required='required', ng-model='login.password', name='password', placeholder='Kennwort')
 				div.checkbox

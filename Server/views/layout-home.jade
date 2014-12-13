@@ -31,7 +31,7 @@ html(lang='de')
 							div(class='nav-login', id='nav-login', ng-app='login', ng-controller='LoginController as login')
 								form(class='navbar-form navbar-right' role='login' name='loginForm')
 									div.form-group
-										input(class='form-control', type='email', required='required', ng-model='login.email', name='email',spellcheck='false', placeholder='jemand@example.com')
+										input(class='form-control', type='email', required='required', ng-model='login.email', name='email', ng-pattern='/^[^@]+@[^@]+\\.[^\\.@]+$/', spellcheck='false', placeholder='jemand@example.com')
 									div.form-group
 										input(class='form-control', type='password', required='required', ng-model='login.password', name='password', placeholder='Kennwort')
 									div.form-group
