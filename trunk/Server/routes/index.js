@@ -24,7 +24,6 @@ module.exports = function(app) {
 	
 	//login page
 	app.get('/login', publicRouter.login);
-	app.post('/login', publicRouter.doLogin);
 	
 	//logout
 	app.post('/logout', publicRouter.logout);
