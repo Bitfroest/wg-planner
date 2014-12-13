@@ -24,3 +24,7 @@ exports.sanitizeEmail = function(req, form) {
 	form.email = req.sanitize('email').toString();
 };
 
+exports.validateTerms = function(req) {
+	req.checkBody('terms', 'Nutzungebedinungen und Datenschutzerklärung muss akzeptiert werden.').matches(/^1$/);
+};
+
