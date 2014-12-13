@@ -13,7 +13,7 @@ block content
 			label(for='email') E-Mail
 			input(class='form-control' type='email', required='required', id='email', name='email', value='', spellcheck='false', placeholder='jemand@example.com')
 			label(for='password') Passwort
-			input(class='form-control' type='password', required='required', id='password', name='password', value='', placeholder='Kennwort')
+			input(class='form-control' type='password', required='required', pattern='.{6,40}', title='Passwort mit mindestens 6 Zeichen.', id='password', name='password', value='', placeholder='Kennwort')
 			div.checkbox
 				label
 					input(type='checkbox', name='terms', value='1', required='required') 
