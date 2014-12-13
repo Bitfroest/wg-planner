@@ -5,26 +5,42 @@ block head
 
 block content
 	div.container
+		input(type='hidden', id='_csrf', value=_csrf)
+	
 		h2.register-heading Richten Sie Ihr kostenloses Konto ein.
-		form(class='form-register' name='register', action='/register', method='post')
-			input(type='hidden', name='_csrf', value=_csrf)
-			label(for='name') Benutzername
-			input(class='form-control' type='text', required='required', id='name', name='name', placeholder='User1234', autofocus)
-			label(for='email') E-Mail
-			input(class='form-control' type='email', required='required', id='email', name='email', value='', spellcheck='false', placeholder='jemand@example.com')
-			label(for='password') Passwort
-			input(class='form-control' type='password', required='required', pattern='.{6,40}', title='Passwort mit mindestens 6 Zeichen.', id='password', name='password', value='', placeholder='Kennwort')
-			div.checkbox
-				label
-					input(type='checkbox', name='terms', value='1', required='required') 
-					p Sie haben die 
-						a(href='policies') Nutzungsbedingungen 
-						|und 
-						a(href='privacy') Datenschutzerklärung 
-						| gelesen und akzeptieren diese.
-			input(class='btn btn-lg btn-primary btn-block' type='submit', value='Registrieren')
-			p.underline Sie haben bereits ein Konto? 
-				a(href='login') Jetzt Anmelden!
+		div(ng-app='register', ng-controller='RegisterController as register')
+			form(class='form-register' name='registerForm')
+				
+				label(for='name') Benutzername
+				input(class='form-control', type='text', required='required', ng-model='register.name', ng-pattern='/^[a-zA-Z][a-zA-Z0-9 \\.\\-_]*$/', ng-minlength='3', name='name', placeholder='User1234', autofocus)
+				div.alert.alert-danger(ng-show='registerForm.name.$error.minlength') Der Benutzername muss mindestens 3 Zeichen enthalten.
+				div.alert.alert-danger(ng-show='registerForm.name.$error.pattern') Der Benutzername muss mit einem Buchstaben beginnen und darf nur Buchstaben, Zahlen, Leerzeichen, Punkt, Minus und Unterstrich enthalten.
+				div.alert.alert-danger(ng-show='registerForm.name.$dirty && registerForm.name.$error.required') Bitte geben Sie einen Benutzernamen ein.
+				
+				label(for='email') E-Mail
+				input(class='form-control', type='email', required='required', ng-model='register.email', ng-pattern='/^[^@]+@[^@]+\\.[^\\.@]+$/', name='email', value='', spellcheck='false', placeholder='jemand@example.com')
+				div.alert.alert-danger(ng-show='registerForm.email.$error.pattern') Die Mail-Adresse muss gültig sein.
+				div.alert.alert-danger(ng-show='registerForm.email.$dirty && registerForm.email.$error.required') Bitte geben Sie eine Mail-Adresse ein.
+				
+				label(for='password') Passwort
+				input(class='form-control', type='password', required='required', ng-model='register.password', ng-minlength='6', ng-maxlength='40', title='Passwort mit mindestens 6 Zeichen.', name='password', value='', placeholder='Kennwort')
+				div.alert.alert-danger(ng-show='registerForm.password.$error.minlength') Das Passwort muss mindestens 6 Zeichen enthalten.
+				div.alert.alert-danger(ng-show='registerForm.password.$error.maxlength') Das Passwort darf maximal 40 Zeichen enthalten.
+				div.alert.alert-danger(ng-show='registerForm.password.$dirty && registerForm.password.$error.required') Bitte geben Sie ein Passwort ein.
+				
+				div.checkbox
+					label
+						input(type='checkbox', name='terms', ng-model='register.terms', value='1', required='required') 
+						p Sie haben die 
+							a(href='policies', target='_blank') Nutzungsbedingungen
+							|  und 
+							a(href='privacy', target='_blank') Datenschutzerklärung
+							|  gelesen und akzeptieren diese.
+				div.alert.alert-danger(ng-show='(registerForm.terms.$dirty || (registerForm.name.$valid && registerForm.password.$valid && registerForm.email.$valid)) && registerForm.terms.$invalid') Bitte bestätigen Sie die Nutzungsbedingungen und die Datenschutzerklärung.
+				
+				input(class='btn btn-lg btn-primary btn-block', type='submit', value='Registrieren', ng-click='doRegister()', ng-disabled='registerForm.$invalid')
+				p.underline Sie haben bereits ein Konto? 
+					a(href='login') Jetzt Anmelden!
 	if errors
 		each error in errors
 			p= error.msg

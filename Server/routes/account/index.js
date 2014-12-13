@@ -18,6 +18,9 @@ module.exports = function() {
 		},
 		'/actions/login' : {
 			post : require('./collection.actions.login.post.js')
+		},
+		'/actions/register' : {
+			post : require('./collection.actions.register.js')
 		}
 	}, {
 		autoDb : true

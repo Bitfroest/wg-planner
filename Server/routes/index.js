@@ -32,7 +32,6 @@ module.exports = function(app) {
 	
 	//register page
 	app.get('/register', publicRouter.register);
-	app.post('/register', publicRouter.doRegister);
 	
 	//main page if logged in
 	app.get('/dashboard', dashboardRouter.dashboard);
