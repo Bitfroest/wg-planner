@@ -125,7 +125,7 @@ app.use(function(err, req, res, next){
 	}
 	
 	// call next error handler
-	next(err);
+	//next(err);
 });
 
 //Start listening on a specific port
