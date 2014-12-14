@@ -96,7 +96,8 @@ block content
 		each shoppingList in shoppingLists
 			tr
 				td
-					a.btn.btn-default(href='/shopping_list/' + shoppingList.id) Ansehen »
+					a.btn.btn-primary(href='/shopping_list/' + shoppingList.id)
+						i.glyphicon.glyphicon-pencil
 				td= shoppingList.person_name
 				td= shoppingList.shop_name
 				td= formatDate(shoppingList.shopped)
@@ -105,8 +106,8 @@ block content
 					form(method='post', action='/shopping_list/delete')
 						input(type='hidden', name='_csrf', value=_csrf)
 						input(type='hidden', name='id', value=shoppingList.id)
-						input(type='submit', value='Löschen')
-	
+						button.btn.btn-danger.pull-right(type='submit', value='Löschen')
+							span.glyphicon.glyphicon-trash
 	div.form
 		form(method='POST', action='/shopping_list/create')
 			input(type='hidden', name='_csrf', value=_csrf)

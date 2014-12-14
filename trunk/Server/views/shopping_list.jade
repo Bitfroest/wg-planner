@@ -55,10 +55,12 @@ block content
 				td= 'von ' + shoppingList.creator_name + ' am ' + formatDate(shoppingList.created)
 		input.btn.btn-primary(type='submit', value='Ändern')
 	
-	form(method='post', action='/shopping_list/delete')
-		input(type='hidden', name='_csrf', value=_csrf)
-		input(type='hidden', name='id', value=shoppingList.id)
-		input(type='submit', value='Löschen')
+	div
+		form(method='post', action='/shopping_list/delete')
+			input(type='hidden', name='_csrf', value=_csrf)
+			input(type='hidden', name='id', value=shoppingList.id)
+			input.btn.btn-danger(type='submit', value='Löschen')
+	
 	
 	h2.sub-header Anteile
 	
@@ -77,7 +79,8 @@ block content
 		each item in shoppingItems
 			tr
 				td
-					a.btn.btn-default(href='/shopping_item/' + item.id) Ansehen »
+					a.btn.btn-primary(href='/shopping_item/' + item.id)
+						i.glyphicon.glyphicon-pencil
 				td= item.name
 				td= item.owner_name
 				td= formatCurrency(item.price)
@@ -86,9 +89,10 @@ block content
 						input(type='hidden', name='_csrf', value=_csrf)
 						input(type='hidden', name='id', value=item.id)
 						button.pull-right.btn.btn-danger(type='submit')
-							span(aria-hidden='true') &times;
+							span.glyphicon.glyphicon-trash(aria-hidden='true')
 							span.sr-only Verlassen
-				
+
+							
 	form(method='post', action='/shopping_item/create')
 		input(type='hidden', name='_csrf', value=_csrf)
 		input(type='hidden', name='shopping_list', value=shoppingList.id)
