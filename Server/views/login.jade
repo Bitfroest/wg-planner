@@ -10,13 +10,14 @@ block content
 			form(class='form-signin' name='loginForm')
 				h2.form-signin-heading Jetzt Anmelden.
 				//label(for='email', id='label_email') E-Mail
-				input(class='form-control' type='email', required='required', ng-model='login.email', ng-pattern='/^[^@]+@[^@]+\\.[^\\.@]+$/', name='email',spellcheck='false', placeholder='jemand@example.com', autofocus)
+				input.form-control(type='email', required='required', ng-model='login.email', ng-pattern='/^[^@]+@[^@]+\\.[^\\.@]+$/', name='email',spellcheck='false', placeholder='jemand@example.com', autofocus)
 				//label(for='password') Passwort
-				input(class='form-control' type='password', required='required', ng-model='login.password', name='password', placeholder='Kennwort')
+				input.form-control(type='password', required='required', ng-model='login.password', name='password', placeholder='Kennwort')
 				div.checkbox
 					label
-						input(type='checkbox', name='persistent', ng-model='login.persistent' ,value='1') 
+						input(type='checkbox', name='persistent', ng-model='login.persistent', value='1') 
 						span Angemeldet bleiben
-				input(class='btn btn-lg btn-primary btn-block' type='submit', value='Anmelden', ng-click='doLogin()', ng-disabled='loginForm.$invalid')
+				input.btn.btn-lg.btn-primary.btn-block(type='submit', value='Anmelden', ng-click='doLogin()', ng-disabled='loginForm.$invalid')
 				p.underline Noch nicht angemeldet? 
 					a(href='register') Jetzt Registrieren!
+
