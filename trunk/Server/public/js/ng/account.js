@@ -93,5 +93,12 @@ angular.module('account', [])
 			});
 		}
 	};
+})
+.filter('accountType', function() {
+	var map = {customer:'Standard-Account', admin:'Admin'};
+
+	return function(input) {
+		return map[input];
+	};
 });
 
