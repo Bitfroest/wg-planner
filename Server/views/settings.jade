@@ -10,12 +10,12 @@ block content
 	
 	div(ng-app='account', ng-controller='AccountController as acc')
 	
-		form.form-horizontal(role='form')
+		form.form-horizontal(role='form', name='personForm')
 			div.form-group
 				label.col-sm-2.control-label Anzeige-Name
 				div.col-sm-10
 					div.input-group
-						input.form-control(type='text', name='name', value='{{person.name}}')
+						input.form-control(type='text', name='name', ng-model='person.name')
 						span.input-group-btn
 							button.btn.btn-default(ng-click='setName()')= 'Aktualisieren'
 			div.form-group
@@ -24,18 +24,41 @@ block content
 			div.form-group
 				label.col-sm-2.control-label Status
 				p.form-control-static.col-sm-10 {{({customer:'Standard-Account', admin:'Admin'})[person.role]}}
+
 			div.form-group
 				label.col-sm-2.control-label Aktuelles Passwort
 				div.col-sm-10
-					input.form-control(type='password', name='password_old')
+					input.form-control(type='password', name='passwordOld', ng-model='person.passwordOld', required='required')
+			div.form-group(ng-if='personForm.passwordOld.$invalid && personForm.passwordOld.$dirty')
+				div.col-sm-offset-2.col-sm-10
+					div.alert.alert-danger(ng-show='personForm.passwordOld.$error.required')
+						| Bitte geben Sie das alte Passwort ein.
+
 			div.form-group
 				label.col-sm-2.control-label Neues Passwort
 				div.col-sm-10
-					input.form-control(type='password', name='password')
+					input.form-control(type='password', name='password', ng-model='person.password', required='required', ng-minlength='6', ng-maxlength='40')
+			div.form-group(ng-if='personForm.password.$invalid && personForm.password.$dirty')
+				div.col-sm-offset-2.col-sm-10
+					div.alert.alert-danger(ng-show='personForm.password.$error.required')
+						| Bitte geben Sie ein neues Passwort ein.
+					div.alert.alert-danger(ng-show='personForm.password.$error.minlength')
+						| Das neue Passwort muss mindestens 6 Zeichen enthalten.
+					div.alert.alert-danger(ng-show='personForm.password.$error.maxlength')
+						| Das neue Passwort darf maximal 40 Zeichen enthalten.
+
 			div.form-group
 				label.col-sm-2.control-label Neues Passwort bestätigen
 				div.col-sm-10
-					input.form-control(type='password', name='password_confirm')
+					input.form-control(type='password', name='passwordConfirm', ng-model='person.passwordConfirm', required='required', wg-confirm="person.password")
+			div.form-group(ng-if='personForm.passwordConfirm.$invalid && personForm.passwordConfirm.$dirty')
+				div.col-sm-offset-2.col-sm-10
+					div.alert.alert-danger(ng-show='personForm.passwordConfirm.$error.confirm')
+						| Das neue Passwort muss zweimal exakt gleich eingegeben werden.
+					div.alert.alert-danger(ng-show='personForm.passwordConfirm.$error.required')
+						| Bestätigen Sie das neue Passwort.
+
 			div.form-group
 				div.col-sm-offset-2.col-sm-10
-					button.btn.btn-success.pull-right(ng-click='changePassword()')= 'Passwort ändern'
+					button.btn.btn-success.pull-right(ng-click='changePassword()', ng-disabled='personForm.$invalid')= 'Passwort ändern'
+
