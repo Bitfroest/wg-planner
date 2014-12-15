@@ -142,3 +142,47 @@ ul.dropdown-menu-form {
 .dropdown-checkbox{
 	margin-left: 30px;
 }
+
+/* Kacheln für die Einkaufslisten */
+.tile {
+	position: relative;
+	/*width: 60%;*/
+	background: #ddd;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+	padding: 5px 20px;
+	color: rgba(0,0,0, .8);
+	text-shadow: 0 1px 0 #fff;
+	line-height: 1.5;
+	margin: 10px 10px;
+	-webkit-box-shadow: inset 0px 0px 15px 10px rgba(255,255,255,0.5);
+	-moz-box-shadow: inset 0px 0px 15px 10px rgba(255,255,255,0.5);
+	box-shadow: inset 0px 0px 15px 10px rgba(255,255,255,0.5);
+}
+
+.tile .tile-fill {
+	padding-left: 10px;
+	padding-right: 10px;
+	padding-bottom: 2px;
+	padding-top: 2px;
+}
+
+.tile:before, .tile:after {
+	z-index: -1; 
+	position: absolute; 
+	content: "";
+	bottom: 15px;
+	left: 10px;
+	width: 50%; 
+	top: 80%;
+	max-width:300px;
+	background: rgba(0, 0, 0, 0.7); 
+	box-shadow: 0 15px 10px rgba(0, 0, 0, 0.7);
+	transform: rotate(-3deg);
+}
+
+.tile:after {
+	transform: rotate(3deg);
+	right: 10px;
+	left: auto;
+}
