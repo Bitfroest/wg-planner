@@ -14,7 +14,7 @@ angular.module('account', [])
 	
 	$scope.setName = function() {
 		$http.put('/api/account', {
-			name : $('input[name=name]').val()
+			name : $scope.person.name
 		}, {
 			headers : {'X-CSRF-Token' : $('#_csrf').val()}
 		}).success(function(data) {
@@ -36,9 +36,9 @@ angular.module('account', [])
 	
 	$scope.changePassword = function() {
 		$http.post('/api/account/actions/change_password', {
-			password_old : $('input[name=password_old]').val(),
-			password : $('input[name=password]').val(),
-			password_confirm : $('input[name=password_confirm]').val()
+			password_old : $scope.person.passwordOld,
+			password : $scope.person.password,
+			password_confirm : $scope.person.passwordConfirm
 		},{
 			headers : {'X-CSRF-Token' : $('#_csrf').val()}
 		}).success(function() {
@@ -56,8 +56,42 @@ angular.module('account', [])
 		});
 		
 		// delete content of all password inputs
-		$('input[name=password_old]').val('');
-		$('input[name=password]').val('');
-		$('input[name=password_confirm]').val('');
+		$scope.person.passwordOld = '';
+		$scope.person.password = '';
+		$scope.person.passwordConfirm = '';
 	};
-}]);
+}])
+.directive('wgConfirm', function() {
+	//console.log('directive init');
+
+	return {
+		require: 'ngModel',
+		link: function(scope, elm, attrs, ngModel) {
+			//console.log(attrs);
+
+			scope.$watch(attrs.wgConfirm, function(originalValue) {
+				var confirmedValue = scope.$eval(attrs.ngModel);
+				
+				//console.log('watch %s %s', confirmedValue, originalValue);
+				
+				ngModel.$setValidity('confirm', confirmedValue === originalValue);
+			});
+
+			ngModel.$parsers.unshift(function(confirmedValue) {
+				var originalValue = scope.$eval(attrs.wgConfirm);
+
+				//console.log('parser %s %s', confirmedValue, originalValue);
+
+				if(originalValue === confirmedValue) {
+					ngModel.$setValidity('confirm', true);
+					return confirmedValue;
+				} else {
+					ngModel.$setValidity('confirm', false);
+					return confirmedValue;
+					//return undefined;
+				}
+			});
+		}
+	};
+});
+
