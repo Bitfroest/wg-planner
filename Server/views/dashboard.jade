@@ -15,10 +15,15 @@ block content
 							h3
 								a(href='/household/' + household.id)= household.name + " » "
 									span.badge(id='household'+ household.id + 'new' style='display: none;') Neu
+								span
+									if household.role === 'founder'
+									span &nbsp; &#9733;
 						div.row.tile-fill
-							= household.members
-							if household.role === 'founder'
-								span &nbsp; &#9733;
+							span.value
+								= household.members
+						div.row.tile-fill
+							span.value
+								span(class=household.total < 0 ? 'money-neg' : (household.total > 0 ? 'money-pos' : 'money-zero'))= formatCurrency(household.total)
 						div.row.tile-fill
 							a.disabled.pull-right.btn.btn-danger(href='/household/leave?id=' + household.id)
 								span.glyphicon.glyphicon-trash(aria-hidden='true')
