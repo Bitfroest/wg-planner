@@ -6,20 +6,23 @@ block content
 	h1.page-header Dashboard
 	h2.sub-header Haushalte
 	
-	table.table.table-striped
-		each household in households
-			tr
-				td
-					a.btn.btn-primary(href='/household/' + household.id)= household.name + " » "
-						span.badge(id='household'+ household.id + 'new' style='display: none;') Neu
-				td
-					if household.role === 'founder'
-						span &#9733;
-				td= household.members
-				td
-					a.disabled.pull-right.btn.btn-danger(href='/household/leave?id=' + household.id)
-						span.glyphicon.glyphicon-trash(aria-hidden='true')
-						span.sr-only Verlassen
+	div.container-fluid
+		div.row
+			each household in households
+				div.col-xs-12.col-sm-6.col-md-3
+					div.tile
+						div.row.tile-fill
+							h3
+								a(href='/household/' + household.id)= household.name + " » "
+									span.badge(id='household'+ household.id + 'new' style='display: none;') Neu
+						div.row.tile-fill
+							= household.members
+							if household.role === 'founder'
+								span &nbsp; &#9733;
+						div.row.tile-fill
+							a.disabled.pull-right.btn.btn-danger(href='/household/leave?id=' + household.id)
+								span.glyphicon.glyphicon-trash(aria-hidden='true')
+								span.sr-only Verlassen
 
 	p &#9733; = Gründer
 					
