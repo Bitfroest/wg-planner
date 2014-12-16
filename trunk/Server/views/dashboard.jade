@@ -17,7 +17,7 @@ block content
 									span.badge(id='household'+ household.id + 'new' style='display: none;') Neu
 								span
 									if household.role === 'founder'
-									span &nbsp; &#9733;
+										span &nbsp; &#9733;
 						div.row.tile-fill
 							span.value
 								= household.members
@@ -29,7 +29,7 @@ block content
 								span.glyphicon.glyphicon-trash(aria-hidden='true')
 								span.sr-only Verlassen
 
-	p &#9733; = Gründer
+	p &#9733; = Sie sind Gründer
 					
 	form(method='POST', action='/household/create')
 		input(type='hidden', name='_csrf', value=_csrf)
