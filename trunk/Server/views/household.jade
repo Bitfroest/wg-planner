@@ -110,6 +110,17 @@ block content
 								span(class=row.diff < 0 ? 'money-neg' : (row.diff > 0 ? 'money-pos' : 'money-zero'))= formatCurrency(row.diff)
 			div.col-xs-12.col-sm-6.col-md-4
 				div.smalltile.box
+					if myTotal < 0
+							i.glyphicon.glyphicon-open.red
+						else 
+							i.glyphicon.glyphicon-save.green
+					div
+						span.title Total
+					div
+						span.value
+							span(class=myTotal < 0 ? 'money-neg' : (myTotal > 0 ? 'money-pos' : 'money-zero'))= formatCurrency(myTotal)
+			div.col-xs-12.col-sm-6.col-md-4
+				div.smalltile.box
 					i.glyphicon.glyphicon-list-alt.blue
 					div
 						span.title Einkaufslisten
