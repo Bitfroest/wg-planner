@@ -3,7 +3,7 @@ var fs = require('fs');
 var async = require('async');
 
 // Current schema version
-var CURRENT_VERSION = 5;
+var CURRENT_VERSION = 6;
 
 exports.init = function(pg, url, callback) {
 	// connect to database the first time
