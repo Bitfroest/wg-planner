@@ -17,14 +17,23 @@ block content
 	
 	h2.sub-header Mitglieder
 	
-	table.table.table-striped
-		each member in members
-			tr
-				td= member.name
-				td= member.email
-				td
-					if member.role === 'founder'
-						span &#9733;
+	div.container-fluid
+		div.row
+			each member in members
+				div.col-xs-12.col-sm-6.col-md-4
+					div.tile
+						div.row.tile-fill
+							h4
+								span.glyphicon.glyphicon-user
+									| &nbsp;
+								= member.name
+								span.pull-right
+									if member.role === 'founder'
+										span &#9733;
+						div.row.tile-fill
+							span.glyphicon.glyphicon-envelope
+								| &nbsp;
+							= member.email
 	p &#9733; = Gründer
 	table.table.table-striped
 		each invitation in invitations
@@ -84,71 +93,91 @@ block content
 
 	h2.sub-header Meine Schulden
 	
-	table.table
-		each row in mySummary
-			tr
-				td= row.name
-				td(class=row.diff < 0 ? 'money-neg' : (row.diff > 0 ? 'money-pos' : 'money-zero'))= formatCurrency(row.diff)
-
+	div.container-fluid
+		div.row
+			each row in mySummary
+				div.col-xs-12.col-sm-6.col-md-4
+					div.smalltile.box
+						if row.diff < 0
+							i.glyphicon.glyphicon-open.red
+						else 
+							i.glyphicon.glyphicon-save.green
+						div
+							span.title
+								= row.name
+						div
+							span.value
+								span(class=row.diff < 0 ? 'money-neg' : (row.diff > 0 ? 'money-pos' : 'money-zero'))= formatCurrency(row.diff)
+			div.col-xs-12.col-sm-6.col-md-4
+				div.smalltile.box
+					i.glyphicon.glyphicon-list-alt.blue
+					div
+						span.title Einkaufslisten
+					div
+						span.value
+							= shoppingLists.length
+					
 	h2.sub-header Einkaufslisten
 	
 	div.container-fluid
 		div.row
 			each shoppingList in shoppingLists
-				div.col-xs-12.col-sm-6.col-md-3.tile
-					div.row.tile-fill
-						h4
-							span.glyphicon.glyphicon-user
+				div.col-xs-12.col-sm-6.col-md-4
+					div.tile
+						div.row.tile-fill
+							h4
+								span.glyphicon.glyphicon-user
+								| &nbsp;
+								= shoppingList.person_name
+								a.pull-right(href='/shopping_list/' + shoppingList.id) 
+									i.glyphicon.glyphicon-pencil
+						div.row.tile-fill
+							span.glyphicon.glyphicon-shopping-cart
 							| &nbsp;
-							= shoppingList.person_name
-							a.pull-right(href='/shopping_list/' + shoppingList.id) 
-								i.glyphicon.glyphicon-pencil
-					div.row.tile-fill
-						span.glyphicon.glyphicon-shopping-cart
-						| &nbsp;
-						= shoppingList.shop_name
-					div.row.tile-fill
-						span.glyphicon.glyphicon-calendar
-						| &nbsp;
-						= formatDate(shoppingList.shopped)
-					div.row.tile-fill
-						span.glyphicon.glyphicon-briefcase
-						| &nbsp;
-						= formatCurrency(shoppingList.total)
-					div.row.tile-fill
-						form(method='post', action='/shopping_list/delete')
-							input(type='hidden', name='_csrf', value=_csrf)
-							input(type='hidden', name='id', value=shoppingList.id)
-							button.btn.btn-danger.pull-right(type='submit', value='Löschen')
-								span.glyphicon.glyphicon-trash
-			div.col-xs-12.col-sm-8.col-md-6.tile
-				h4 Erstellen 
-				form(method='POST', action='/shopping_list/create')
-					input(type='hidden', name='_csrf', value=_csrf)
-					input(type='hidden', name='household', value=household)
-					input#shopping-list-create-buyer(type='hidden', name='buyer')
-					div.row.tile-fill
-						button.btn.btn-default.dropdown-toggle#shopping-list-add-button(style='', type='button', data-toggle='dropdown', size='1', name='buyer', value='')
-							span#shopping-add-button-text -- Wähle Einkäufer --
-							span.caret
-						ul.dropdown-menu(role='menu', style='position: relative;')
-							each member in members
-								li
-									a(onclick='changeShoppingAddButton('+member.id+',"'+member.name+'")')= member.name
-								//option(value=member.id)= member.name
-						
-						script(type="application/javascript")
-							|function changeShoppingAddButton(value,name){
-							|	console.log("v:"+value+" n:"+name);
-							|	document.getElementById('shopping-list-create-buyer').value = value;
-							|	document.getElementById('shopping-add-button-text').textContent = name+" ";
-							|};
-					div.row.tile-fill
-						input.form-control(type='text', name='shop', value='', placeholder='Laden, z.B. Supermarkt an der Ecke')
-					div.row.tile-fill
-							input.form-control(type='text', name='shopped_date', placeholder='TT.MM.JJJJ')
-					div.row.tile-fill
-							input.form-control(type='text', name='shopped_time', placeholder='HH:MM')
-					div.row.tile-fill
-						button.btn.btn-success.pull-right(type='submit', value='Erstellen')
-							span.glyphicon.glyphicon-plus-sign
+							= shoppingList.shop_name
+						div.row.tile-fill
+							span.glyphicon.glyphicon-calendar
+							| &nbsp;
+							= formatDate(shoppingList.shopped)
+						div.row.tile-fill
+							span.glyphicon.glyphicon-briefcase
+							| &nbsp;
+							= formatCurrency(shoppingList.total)
+						div.row.tile-fill
+							form(method='post', action='/shopping_list/delete')
+								input(type='hidden', name='_csrf', value=_csrf)
+								input(type='hidden', name='id', value=shoppingList.id)
+								button.btn.btn-danger.pull-right(type='submit', value='Löschen')
+									span.glyphicon.glyphicon-trash
+			div.col-xs-12.col-sm-12.col-md-8
+				div.tile
+					h4 Erstellen 
+					form(method='POST', action='/shopping_list/create')
+						input(type='hidden', name='_csrf', value=_csrf)
+						input(type='hidden', name='household', value=household)
+						input#shopping-list-create-buyer(type='hidden', name='buyer')
+						div.row.tile-fill
+							button.btn.btn-default.dropdown-toggle#shopping-list-add-button(style='', type='button', data-toggle='dropdown', size='1', name='buyer', value='')
+								span#shopping-add-button-text -- Wähle Einkäufer --
+								span.caret
+							ul.dropdown-menu(role='menu', style='position: relative;')
+								each member in members
+									li
+										a(onclick='changeShoppingAddButton('+member.id+',"'+member.name+'")')= member.name
+									//option(value=member.id)= member.name
+							
+							script(type="application/javascript")
+								|function changeShoppingAddButton(value,name){
+								|	console.log("v:"+value+" n:"+name);
+								|	document.getElementById('shopping-list-create-buyer').value = value;
+								|	document.getElementById('shopping-add-button-text').textContent = name+" ";
+								|};
+						div.row.tile-fill
+							input.form-control(type='text', name='shop', value='', placeholder='Laden, z.B. Supermarkt an der Ecke')
+						div.row.tile-fill
+								input.form-control(type='text', name='shopped_date', placeholder='TT.MM.JJJJ')
+						div.row.tile-fill
+								input.form-control(type='text', name='shopped_time', placeholder='HH:MM')
+						div.row.tile-fill
+							button.btn.btn-success.pull-right(type='submit', value='Erstellen')
+								span.glyphicon.glyphicon-plus-sign
