@@ -92,7 +92,8 @@ exports.household = function(req, res) {
 						[form.householdId, req.session.personId]),
 					myTotal : client.query.bind(client,
 						'SELECT household_my_total($1,$2) AS value',
-						[form.householdId, req.session.personId])
+						[form.householdId, req.session.personId]),
+					person : client.query.bind(client, 'SELECT name, email, role, id FROM person WHERE id=$1', [req.session.personId])
 				}, function(err, result) {
 					done();
 					
@@ -102,6 +103,7 @@ exports.household = function(req, res) {
 					
 					res.render('household', {
 						_csrf: req.csrfToken(),
+						person: result.person.rows[0],
 						members: result.members.rows,
 						invitations: result.invitations.rows,
 						shoppingLists: result.shoppingLists.rows,

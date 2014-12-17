@@ -14,8 +14,7 @@ block content
 				input.form-control(type='text', name='name', value=householdName)
 				span.input-group-btn
 					input.btn.btn-primary(type='submit', value='Ändern')
-	
-	hr
+		hr
 	div.container-fluid
 		div.row
 			each row in mySummary
@@ -165,7 +164,7 @@ block content
 								button.btn.btn-danger.pull-right(type='submit', value='Löschen')
 									span.glyphicon.glyphicon-trash
 			div.col-xs-12.col-sm-12.col-md-8
-				div.tile
+				div.tile(ng-app='datepicker', ng-controller='DatepickerCtrl as datepicker')
 					h4 Erstellen 
 					form(method='POST', action='/shopping_list/create')
 						input(type='hidden', name='_csrf', value=_csrf)
@@ -190,9 +189,19 @@ block content
 						div.row.tile-fill
 							input.form-control(type='text', name='shop', value='', placeholder='Laden, z.B. Supermarkt an der Ecke')
 						div.row.tile-fill
-								input.form-control(type='text', name='shopped_date', placeholder='TT.MM.JJJJ')
+									div.input-group
+										input.form-control(name='shopped_date', type='text', datepicker-popup='{{format}}', ng-model='dt', is-open='opened', min-date='minDate', max-date='maxDate',  datepicker-options='dateOptions', date-disabled='disabled(date, mode)', ng-required='true', close-text='Schließen')
+										span.input-group-btn
+											button.btn.btn-default(type='button', ng-click='open($event)')
+												i.glyphicon.glyphicon-calendar
 						div.row.tile-fill
-								input.form-control(type='text', name='shopped_time', placeholder='HH:MM')
+								input.form-control(type='text', name='shopped_time', placeholder='HH:MM', value="{{dt | date : 'HH:mm'}}")
 						div.row.tile-fill
 							button.btn.btn-success.pull-right(type='submit', value='Erstellen')
 								span.glyphicon.glyphicon-plus-sign
+	script(type="application/javascript")
+		| changeShoppingAddButton(
+		=person.id
+		| ,"
+		=person.name
+		| ");

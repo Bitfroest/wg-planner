@@ -18,7 +18,7 @@ exports.dashboard = function(req, res) {
 			}
 			
 			async.series({
-				person : client.query.bind(client, 'SELECT name, email, role FROM person WHERE id=$1', [req.session.personId]),
+				person : client.query.bind(client, 'SELECT name, email, role, id FROM person WHERE id=$1', [req.session.personId]),
 				households : client.query.bind(client, 'SELECT h.id AS id, household_my_total(id,$1) AS total, h.name AS name, m.role AS role, ' +
 					'(SELECT string_agg(p.name, $2) FROM household_member all_m ' +
 						'JOIN person p ON (all_m.person_id=p.id) WHERE all_m.household_id= h.id) AS members ' +
