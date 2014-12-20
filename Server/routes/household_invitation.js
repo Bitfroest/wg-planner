@@ -56,7 +56,9 @@ exports.householdInvitationCreate = function(req, res) {
 						}
 					
 						if(result.rows.length !== 1) {
-							return console.error('Could not find person by email');
+							console.error('Could not find person by email');
+							res.redirect('/dashboard?error=email_not_found');
+							return;
 						}
 						
 						form.toPersonId = parseInt(result.rows[0].id);
