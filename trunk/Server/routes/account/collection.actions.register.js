@@ -1,7 +1,12 @@
 
+var path = require('path');
+var fs = require('fs');
+var jade = require('jade');
 var validators = require('./validators.js');
 var errors = require('../api-errors');
 var passwordHelper = require('../password.js');
+var mail = require('../../utils/send_mail.js');
+var config = require('../../config.js');
 
 /*
  * Router for registering a new person.
@@ -50,6 +55,27 @@ module.exports = function(req, res, opt) {
 			if(err) {
 				errors.query(res, err);
 				return;
+			}
+			
+			if(config.sendRegistrationMail) {
+				fs.readFile(path.resolve(__dirname, 'registration.jade'), 'utf-8', function(err, jadeSource) {
+					var html = jade.render(jadeSource, {
+						pretty: true,
+						person: person
+					});
+				
+					mail.sendMail({
+						to: person.email,
+						subject: 'Congratulations: Your new account has been created!',
+						html: html
+					}, function(error, info) {
+						if(error) {
+							console.log(error);
+						} else {
+							console.log('Message sent: ' + info.response);
+						}
+					});
+				});
 			}
 			
 			res.json({

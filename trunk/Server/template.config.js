@@ -34,6 +34,26 @@ config.useCDN = false;
 // - for Windows this must be configured to something like 'C:\\Program Files\\PostgreSQL\\9.3\\bin\\'
 config.postgresBin = '';
 
+// Set to true if you want send emails when a new user
+// registers on your wg planner.
+config.sendRegistrationMail = false;
+
+// e-email address that will be set as the 'from' when sending a mail
+config.mailFrom = '';
+
+// you should put all your email transportation
+// options here.
+// more info: https://github.com/andris9/nodemailer-smtp-transport#usage
+config.mailTransportOptions = {
+	service: '', // put a wellknown service here (e.g. gmail, 1und1)
+	host: '', // or put a host name and a port
+	port: 25,
+	auth: {
+		user: '', // user name
+		pass: ''  // password
+	}
+};
+
 // **************************************************
 // END CONFIG
 // **************************************************
