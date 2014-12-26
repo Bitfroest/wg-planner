@@ -7,6 +7,7 @@ var errors = require('../api-errors');
 var passwordHelper = require('../password.js');
 var mail = require('../../utils/send_mail.js');
 var config = require('../../config.js');
+var logger = require('../../utils/log.js');
 
 /*
  * Router for registering a new person.
@@ -70,9 +71,9 @@ module.exports = function(req, res, opt) {
 						html: html
 					}, function(error, info) {
 						if(error) {
-							console.log(error);
+							logger.error(error);
 						} else {
-							console.log('Message sent: ' + info.response);
+							logger.info('Message sent: ' + info.response);
 						}
 					});
 				});

@@ -1,4 +1,4 @@
-
+var logger = require('../utils/log.js');
 var errors = require('./api-errors');
 
 var _forEach = Array.prototype.forEach.call.bind(Array.prototype.forEach);
@@ -41,12 +41,12 @@ module.exports = function(routingTable, options) {
 							return;
 						}
 						
-						console.info('create client for ' + route + ':' + method);
+						logger.info('create client for ' + route + ':' + method);
 						
 						// overwrite res.end() for auto done()
 						var _end = res.end;
 						res.end = function() {
-							console.info('done client for '+ route + ':' + method);
+							logger.info('done client for '+ route + ':' + method);
 						
 							done(); // call done
 							_end.apply(res, arguments); // call original function
