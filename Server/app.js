@@ -18,6 +18,7 @@ var routes = require('./routes');
 var pg = require('pg.js');
 var PostgresStore = require('./database/pg-session.js')(session);
 var logger = require('./utils/log.js');
+var _ = require('underscore');
 
 // Load configuration, show info message on failure
 var config;
@@ -37,6 +38,23 @@ require('./database/init.js').init(pg, config.databaseURL, function(err, dbinfo)
 if(err) {
 	logger.error(err);
 	return;
+}
+
+//check dbinfo
+if(! _.isObject(dbinfo)) {
+	logger.error('dbinfo is not initialized');
+}
+
+if(! _.isString(dbinfo.cookieSecret)) {
+	logger.error('dbinfo.cookieSecret is not initialized');
+} else if(dbinfo.cookieSecret === '') {
+	logger.error('dbinfo.cookieSecret is empty');
+}
+
+if(! _.isString(dbinfo.sessionSecret)) {
+	logger.error('dbinfo.sessionSecret is not initialized');
+} else if(dbinfo.sessionSecret === '') {
+	logger.error('dbinfo.sessionSecret is empty');
 }
 
 //Create a new app
@@ -64,7 +82,7 @@ if(app.get('env') === 'development') {
 
 // Request logging with winston using morgan
 var winstonStream = {
-    write: function(message, encoding) {
+    write: function(message /*, encoding*/) {
     	//strip line ending
     	message = message.slice(0, -1);
         logger.info(message);
