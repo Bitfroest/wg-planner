@@ -1,6 +1,7 @@
 var crypto = require('crypto');
 var fs = require('fs');
 var async = require('async');
+var logger = require('../utils/log.js');
 
 // Current schema version
 var CURRENT_VERSION = 6;
@@ -65,10 +66,10 @@ function checkVersion(pg, url, callback) {
 			}
 			
 			if(version === CURRENT_VERSION) {
-				console.info('database schema is up to date');
+				logger.info('database schema is up to date');
 				successCallback();
 			} else {
-				console.info('database schema must be upgraded from ' + version + ' to ' + CURRENT_VERSION);
+				logger.info('database schema must be upgraded from ' + version + ' to ' + CURRENT_VERSION);
 				upgradeTables(version, pg, url, function(err) {
 					if(err) {
 						callback(err);
@@ -91,7 +92,7 @@ function upgradeTables(version, pg, url, callback) {
 
 	// read SQL upgrade files
 	async.map(upgradeFiles, function(path, callback) {
-		console.info('Load file ' + path);
+		logger.info('Load file ' + path);
 		fs.readFile(path, 'utf-8', callback);
 	}, function(err, results) {
 		if(err) {
@@ -168,7 +169,7 @@ function createTables(pg, url, callback) {
 					return;
 				}
 				
-				console.info('created database schema');
+				logger.info('created database schema');
 				
 				//Generate some secret keys used by cookieParser and session
 				var cookieSecret = crypto.randomBytes(16).toString('hex');
