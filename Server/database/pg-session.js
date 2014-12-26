@@ -1,3 +1,5 @@
+var logger = require('../utils/log.js');
+
 module.exports = function(session) {
 	
 	function PostgresStore(pg, url) {
@@ -10,7 +12,7 @@ module.exports = function(session) {
 	PostgresStore.prototype.get = function(sid, callback) {
 		this.pg.connect(this.url, function(err, client, done) {
 			if(err) {
-				console.error('Failed to connect in pg-session.get', err);
+				logger.error('Failed to connect in pg-session.get', err);
 				callback(err);
 				return;
 			}
@@ -19,7 +21,7 @@ module.exports = function(session) {
 				done();
 				
 				if(err) {
-					console.error('Failed to get session', err);
+					logger.error('Failed to get session', err);
 					callback(err);
 					return;
 				}
@@ -27,7 +29,7 @@ module.exports = function(session) {
 				if(result.rows.length === 1) {
 					callback(null, JSON.parse(result.rows[0].data));
 				} else {
-					console.error('Session not found');
+					logger.warn('Session not found');
 					callback();
 				}
 			});
@@ -37,7 +39,7 @@ module.exports = function(session) {
 	PostgresStore.prototype.set = function(sid, session, callback) {
 		this.pg.connect(this.url, function(err, client, done) {
 			if(err) {
-				console.error('Failed to connect in pg-session.set', err);
+				logger.error('Failed to connect in pg-session.set', err);
 				callback(err);
 				return;
 			}
@@ -47,7 +49,7 @@ module.exports = function(session) {
 				[JSON.stringify(session), sid], function(err, result){
 				
 				if(err) {
-					console.error('Failed to update session', err);
+					logger.error('Failed to update session', err);
 					callback(err);
 					return;
 				}
@@ -61,7 +63,7 @@ module.exports = function(session) {
 						done();
 					
 						if(err) {
-							console.error('Failed to insert session', err);
+							logger.error('Failed to insert session', err);
 							callback(err);
 							return;
 						}
@@ -80,7 +82,7 @@ module.exports = function(session) {
 	PostgresStore.prototype.destroy = function(sid, callback) {
 		this.pg.connect(this.url, function(err, client, done) {
 			if(err) {
-				console.error('Failed to connect in pg-session.destroy', err);
+				logger.error('Failed to connect in pg-session.destroy', err);
 				callback(err);
 				return;
 			}
@@ -89,7 +91,7 @@ module.exports = function(session) {
 				done();
 				
 				if(err) {
-					console.error('Failed to delete session', err);
+					logger.error('Failed to delete session', err);
 					callback(err);
 					return;
 				}

@@ -1,3 +1,5 @@
+var logger = require('../utils/log.js');
+
 // if req.session.loggedIn is not true
 exports.loggedIn = function(res) {
 	res.status(403);
@@ -8,6 +10,7 @@ exports.loggedIn = function(res) {
 
 // if req.getDb callbacks an error
 exports.db = function(res, err) {
+	logger.error('req.getDb failed', err);
 	res.status(403);
 	res.json({
 		'error' : 'databaseError',
@@ -16,6 +19,7 @@ exports.db = function(res, err) {
 };
 
 exports.query = function(res, err) {
+	logger.error('client.query failed', err);
 	res.status(403);
 	res.json({
 		'error' : 'queryError',

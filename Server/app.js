@@ -17,6 +17,7 @@ var slashes = require("connect-slashes");
 var routes = require('./routes');
 var pg = require('pg.js');
 var PostgresStore = require('./database/pg-session.js')(session);
+var logger = require('./utils/log.js');
 
 // Load configuration, show info message on failure
 var config;
@@ -24,9 +25,9 @@ try {
 	config = require('./config.js');
 } catch(err) {
 	if(err.code === 'MODULE_NOT_FOUND') {
-		console.warn('Could not find the configuration file config.js');
-		console.warn('Please follow the instructions in template.config.js');
-		return;
+		logger.error('Could not find the configuration file config.js');
+		logger.error('Please follow the instructions in template.config.js');
+		process.exit(1);
 	}
 }
 
@@ -34,7 +35,7 @@ require('./database/init.js').init(pg, config.databaseURL, function(err, dbinfo)
 
 // check errors in database initialization
 if(err) {
-	console.error(err);
+	logger.error(err);
 	return;
 }
 
@@ -61,10 +62,22 @@ if(app.get('env') === 'development') {
 	app.locals.pretty = true;
 }
 
-//Request logger (see console), only for development
-//if(app.get('env') == 'development') {
-	app.use(morgan('dev'));
-//}
+// Request logging with winston using morgan
+var winstonStream = {
+    write: function(message, encoding) {
+    	//strip line ending
+    	message = message.slice(0, -1);
+        logger.info(message);
+    }
+};
+
+var morganFormat = ':remote-addr :method :url HTTP/:http-version :status - :response-time ms';
+
+if(app.get('env') === 'development') {
+	morganFormat = 'dev';
+}
+
+app.use(morgan(morganFormat, {stream: winstonStream}));
 
 //Compress (gzip) replies if the browser supports that
 //TODO does not work as expected
@@ -115,9 +128,10 @@ app.use(function(req, res) {
 //Error handler
 app.use(function(err, req, res, next){
 	if(err.message === 'invalid csrf token') {
+		logger.warn('someone used invalid csrf token');
 		res.send(403, 'Invalid CSRF Token');
 	} else {
-		console.error(err.stack);
+		logger.error("express error handler", err.stack);
 		res.status(500).render('error-500', {
 			title: 'Interner Fehler',
 			err : app.get('env') === 'development' ? err : undefined // show details only in development mode
@@ -130,7 +144,10 @@ app.use(function(err, req, res, next){
 
 //Start listening on a specific port
 var server = app.listen(config.httpPort || 8080, function() {
-	console.log('Listening on port %d in %s mode', server.address().port, app.get('env'));
+	logger.info('Listening on port %d in %s mode', server.address().port, app.get('env'));
+	if(app.get('env') === 'development') {
+		logger.info('Visit http://localhost:%d/ now', server.address().port);
+	}
 });
 
 });
