@@ -4,6 +4,7 @@ module.exports = function() {
 	// API collections to load
 	var collections = [
 		//'sample',
+		'general',
 		'notification',
 		'account'
 	];
