@@ -4,7 +4,7 @@ angular.module('datepicker', ['ui.bootstrap'])
   $scope.selected = undefined;
   
    $scope.getShops = function(val) {
-    return $http.get('/api/shopping_list', {
+    return $http.get('/api/shopping_list/actions/shop_search', {
         params: {
 			search: val
 		}

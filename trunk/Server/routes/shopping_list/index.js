@@ -1,7 +1,7 @@
 module.exports = function() {
 	return require('../api-helper')({
-		'/' : {
-			get : require('./collection.get.js')
+		'/actions/shop_search' : {
+			get : require('./collection.action.shopsearch.js')
 		} 
 	}, {autoDb : true});
 };
