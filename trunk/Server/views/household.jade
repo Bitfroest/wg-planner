@@ -187,7 +187,7 @@ block content
 								|	document.getElementById('shopping-add-button-text').textContent = name+" ";
 								|};
 						div.row.tile-fill
-							input.form-control(type='text', ng-model='selected', typeahead='market for market in markets | filter:$viewValue:startsWith | limitTo:8', name='shop', value='', placeholder='Laden, z.B. Supermarkt an der Ecke')
+							input.form-control(type='text', ng-model='selected', typeahead='market for market in getShops($viewValue) | limitTo:8', name='shop', value='', placeholder='Laden, z.B. Supermarkt an der Ecke', ng-model-options='{debounce: 1000}')
 						div.row.tile-fill
 									div.input-group
 										input.form-control(name='shopped_date', type='text', datepicker-popup='{{format}}', ng-model='dt', is-open='opened', min-date='"2000-01-01"', max-date='maxDate',  datepicker-options='dateOptions', date-disabled='disabled(date, mode)', ng-required='true', close-text='Schließen')
