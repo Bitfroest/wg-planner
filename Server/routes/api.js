@@ -7,7 +7,8 @@ module.exports = function() {
 		'general',
 		'notification',
 		'account',
-		'shopping_list'
+		'shopping_list',
+		'shopping_item'
 	];
 
 	// show API options

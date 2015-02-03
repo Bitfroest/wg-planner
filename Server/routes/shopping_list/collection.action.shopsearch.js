@@ -30,8 +30,7 @@ module.exports = function(req, res, opt) {
 				return;
 			}
 			res.json({
-				result : result.rows,
-				search : req.query.search
+				result : result.rows
 			});
 		});	
 };
