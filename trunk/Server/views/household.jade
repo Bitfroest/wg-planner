@@ -187,10 +187,10 @@ block content
 								|	document.getElementById('shopping-add-button-text').textContent = name+" ";
 								|};
 						div.row.tile-fill
-							input.form-control(type='text', name='shop', value='', placeholder='Laden, z.B. Supermarkt an der Ecke')
+							input.form-control(type='text', ng-model='selected', typeahead='market for market in markets | filter:$viewValue:startsWith | limitTo:8', name='shop', value='', placeholder='Laden, z.B. Supermarkt an der Ecke')
 						div.row.tile-fill
 									div.input-group
-										input.form-control(name='shopped_date', type='text', datepicker-popup='{{format}}', ng-model='dt', is-open='opened', min-date='minDate', max-date='maxDate',  datepicker-options='dateOptions', date-disabled='disabled(date, mode)', ng-required='true', close-text='Schließen')
+										input.form-control(name='shopped_date', type='text', datepicker-popup='{{format}}', ng-model='dt', is-open='opened', min-date='"2000-01-01"', max-date='maxDate',  datepicker-options='dateOptions', date-disabled='disabled(date, mode)', ng-required='true', close-text='Schließen')
 										span.input-group-btn
 											button.btn.btn-default(type='button', ng-click='open($event)')
 												i.glyphicon.glyphicon-calendar
@@ -199,6 +199,12 @@ block content
 						div.row.tile-fill
 							button.btn.btn-success.pull-right(type='submit', value='Erstellen')
 								span.glyphicon.glyphicon-plus-sign
+			div.col-xs-12.col-sm-6.col-md-4.hidden
+				div.tile(style='text-align:center;')
+					a.btn
+						h1.glyphicon.glyphicon-open
+						br
+						span Einkaufszettel Upload
 	script(type="application/javascript")
 		| changeShoppingAddButton(
 		=person.id
