@@ -16,6 +16,32 @@ angular.module('shopping_list', [])
 		});
 	}
 	
+	$scope.delete = function(id) {
+		$http.delete('/api/shopping_item/'+ id, {
+			headers: {
+				'X-CSRF-Token' : $('#_csrf').val()
+			}
+		}).success(function(data) {
+			refresh();
+		});
+	};
+	
+	$scope.insert = function() {
+		$http.post('/api/shopping_item', {
+			name : $scope.name,
+			shopping_list : $('#shoppingListId').val(),
+			price : $scope.price,
+			owner : $('#select-owner').val()
+		}, {
+			headers: {
+				'X-CSRF-Token' : $('#_csrf').val()
+			}
+		}).success(function(data) {
+			refresh();
+		});
+		
+	};
+	
 	refresh();
 }])
 .filter('formatCurrency', function(){

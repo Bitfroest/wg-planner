@@ -76,6 +76,7 @@ block content
 	h2.sub-header Items
 	
 	input.hidden(value=shoppingList.id id="shoppingListId")
+	input.hidden(id='_csrf', value=_csrf)
 	div(ng-app='shopping_list', ng-controller='ShoppingListController as slc')
 		table.table.table-striped
 			tr(ng-repeat='item in shopping_items')
@@ -86,25 +87,20 @@ block content
 				td {{item.owner_name}}
 				td {{item.price | formatCurrency}}
 				td
-					form(method='post', action='/shopping_item/delete')
-						input(type='hidden', name='_csrf', value=_csrf)
-						input(type='hidden', name='id', value='{{item.id}}')
-						button.pull-right.btn.btn-danger(type='submit')
-							span.glyphicon.glyphicon-trash(aria-hidden='true')
-							span.sr-only Verlassen
-
+					button.pull-right.btn.btn-danger(ng-click='delete(item.id)')
+						span.glyphicon.glyphicon-trash			
 			tr							
-				form(method='post', action='/shopping_item/create')
+				form(method='post')
 					input(type='hidden', name='_csrf', value=_csrf)
 					input(type='hidden', name='shopping_list', value=shoppingList.id)
 					input#select-owner(type='hidden', name='owner')
 					div.input-group
 						td
 							div.input-group
-								button.btn.btn-success(type='submit', value='Erstellen')
+								button.btn.btn-success(value='Erstellen' ng-click='insert()')
 									span.glyphicon.glyphicon-plus-sign
 						td
-							input.form-control(type='text', name='name', placeholder='Produktname')
+							input.form-control(type='text', name='name', placeholder='Produktname', ng-model='name')
 						td
 							div.input-group
 								button.btn.btn-default.dropdown-toggle#owner-button(type='button', data-toggle='dropdown', size='1')
@@ -118,7 +114,7 @@ block content
 												input(type='checkbox' data-id=member.id value=member.id data-name=member.name)
 												=member.name
 						td
-							input.form-control(type='text', name='price', placeholder='Preis in €, z.B. 12.30')
+							input.form-control(type='text', name='price', placeholder='Preis in €, z.B. 12.30', ng-model='price')
 						td
 						script(type="application/javascript")
 							|$('#dropdown-owner input[type=checkbox]').on('click', function(e) {
