@@ -6,3 +6,9 @@ Server/utils/debug.log
 Server/utils/exceptions.log
 Server/dist/*
 Server/node_modules/*
+Server/start_forever.sh
+Server/config.js
+Server/err.log
+Server/err.log.1
+Server/out.log
+
