@@ -1,0 +1,8 @@
+.svn/
+npm-debug.log
+Server/database/backups/*
+Server/start.bat
+Server/utils/debug.log
+Server/utils/exceptions.log
+Server/dist/*
+Server/node_modules/*

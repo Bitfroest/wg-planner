@@ -135,34 +135,15 @@ block content
 	
 	div.container-fluid
 		div.row
-			each shoppingList in shoppingLists
-				div.col-xs-12.col-sm-6.col-md-4
-					div.tile
-						div.row.tile-fill
-							h4
-								span.glyphicon.glyphicon-user
-								| &nbsp;
-								= shoppingList.person_name
-								a.pull-right(href='/shopping_list/' + shoppingList.id) 
-									i.glyphicon.glyphicon-pencil
-						div.row.tile-fill
-							span.glyphicon.glyphicon-shopping-cart
-							| &nbsp;
-							= shoppingList.shop_name
-						div.row.tile-fill
-							span.glyphicon.glyphicon-calendar
-							| &nbsp;
-							= formatDate(shoppingList.shopped)
-						div.row.tile-fill
-							span.glyphicon.glyphicon-briefcase
-							| &nbsp;
-							= formatCurrency(shoppingList.total)
-						div.row.tile-fill
-							form(method='post', action='/shopping_list/delete')
-								input(type='hidden', name='_csrf', value=_csrf)
-								input(type='hidden', name='id', value=shoppingList.id)
-								button.btn.btn-danger.pull-right(type='submit', value='Löschen')
-									span.glyphicon.glyphicon-trash
+			div.col-xs-12.col-sm-6.col-md-4
+				div.tile(style='text-align:center;')
+					a.btn
+						h1.glyphicon.glyphicon-open
+						br
+						span Einkaufszettel Upload
+					a.btn
+						span
+							input(type='file' , accept='image/*;capture=camera')
 			div.col-xs-12.col-sm-12.col-md-8
 				div.tile(ng-app='datepicker', ng-controller='DatepickerCtrl as datepicker')
 					h4 Erstellen 
@@ -199,12 +180,34 @@ block content
 						div.row.tile-fill
 							button.btn.btn-success.pull-right(type='submit', value='Erstellen')
 								span.glyphicon.glyphicon-plus-sign
-			div.col-xs-12.col-sm-6.col-md-4.hidden
-				div.tile(style='text-align:center;')
-					a.btn
-						h1.glyphicon.glyphicon-open
-						br
-						span Einkaufszettel Upload
+			each shoppingList in shoppingLists
+				div.col-xs-12.col-sm-6.col-md-4
+					div.tile
+						div.row.tile-fill
+							h4
+								span.glyphicon.glyphicon-user
+								| &nbsp;
+								= shoppingList.person_name
+								a.pull-right(href='/shopping_list/' + shoppingList.id) 
+									i.glyphicon.glyphicon-pencil
+						div.row.tile-fill
+							span.glyphicon.glyphicon-shopping-cart
+							| &nbsp;
+							= shoppingList.shop_name
+						div.row.tile-fill
+							span.glyphicon.glyphicon-calendar
+							| &nbsp;
+							= formatDate(shoppingList.shopped)
+						div.row.tile-fill
+							span.glyphicon.glyphicon-briefcase
+							| &nbsp;
+							= formatCurrency(shoppingList.total)
+						div.row.tile-fill.hidden
+							form(method='post', action='/shopping_list/delete')
+								input(type='hidden', name='_csrf', value=_csrf)
+								input(type='hidden', name='id', value=shoppingList.id)
+								button.btn.btn-danger.pull-right(type='submit', value='Löschen')
+									span.glyphicon.glyphicon-trash
 	script(type="application/javascript")
 		| changeShoppingAddButton(
 		=person.id
