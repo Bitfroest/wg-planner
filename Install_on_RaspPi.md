@@ -1,0 +1,134 @@
+# Install wg-planner on Raspberry Pi #
+
+  * Install Raspbian on your Pi
+  * Update your system
+
+```
+sudo apt-get update && sudo apt-get upgrade
+```
+
+## Install NodeJS ##
+
+```
+cd /opt
+sudo wget http://nodejs.org/dist/v0.10.26/node-v0.10.26-linux-arm-pi.tar.gz
+sudo tar xfvz node-v0.10.26-linux-arm-pi.tar.gz
+sudo rm node-v0.10.26-linux-arm-pi.tar.gz
+sudo mv node-v0.10.26-linux-arm-pi/ node/
+```
+
+Now edit ~/.profile
+```
+nano ~/.profile
+```
+
+and insert the following at the end:
+```
+export PATH=$PATH:/opt/node/bin
+```
+
+Now reload the .profile file
+```
+source ~/.profile
+```
+
+## Install PostgreSQL ##
+
+```
+sudo apt-get install postgresql
+```
+
+Edit PostgreSQL config file
+```
+sudo nano /etc/postgresql/9.1/main/postgresql.conf
+```
+
+And change #password\_encryption = on to
+```
+password_encryption = on
+```
+
+Now create a new user
+```
+sudo -u postgres createuser
+> Enter name of role to add: wg
+> Shall the new role be a superuser? (y/n) n
+> Shall the new role be allowed to create databases? (y/n) n
+> Shall the new role be allowed to create more new roles? (y/n) n
+> CREATE ROLE
+```
+
+Now create a new database
+```
+sudo -u postgres createdb wgplanner
+> CREATE DATABASE
+```
+
+Grant access to the user
+```
+sudo -u postgres psql
+postgres=# alter user wg with encrypted password 'your password';
+> ALTER ROLE
+postgres=# grant all privileges on database wgplanner to wg;
+> GRANT
+```
+
+How to start, stop and restart the database service:
+```
+/etc/init.d/postgresql start
+/etc/init.d/postgresql stop
+/etc/init.d/postgresql restart
+```
+
+## Install WG-Planner ##
+
+First you need subversion
+```
+sudo apt-get install subversion
+```
+
+Then we will checkout the current version
+```
+cd ~/
+svn checkout http://wg-planner.googlecode.com/svn/trunk/ wgplanner
+```
+
+After the checkout, it's time to install all needed nodejs packages
+```
+cd wgplanner/Server
+npm install
+```
+
+Now you have to configure your wg-planner installation.
+```
+cp template.config.js config.js
+nano config.js
+```
+
+Edit all necessary settings, especially 'databaseURL'
+
+## Install Forever ##
+
+Forever is a nodeJS module that automatically restarts your server process if it crashes.
+
+```
+sudo npm install forever -g
+```
+
+Now you can start the server with
+
+```
+export NODE_ENV=production
+forever start app.js
+```
+
+If you want to stop the server later, type
+
+```
+forever stop app.js
+```
+
+## For further reading ##
+  * http://jankarres.de/2013/07/raspberry-pi-node-js-installieren/
+  * http://linuxpoison.blogspot.de/2012/01/how-to-install-configure-postgresql.html
+  * https://github.com/nodejitsu/forever
