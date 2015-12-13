@@ -29,18 +29,16 @@ html(lang='de')
 							input(type='hidden', name='_csrf', value=_csrf)
 							div.form-group
 								input.btn.btn-primary(type='submit', value='Logout')
-						a.btn.btn-default.navbar-btn.navbar-right(href='/notifications', title='Benachrichtungen')
-							span.glyphicon.glyphicon-bell
-								
+						div.btn-group.navbar-right(role='group')
+							a.btn.btn-default.navbar-btn(href='/notifications', title='Benachrichtungen')
+								span.glyphicon.glyphicon-bell
+							a.btn.btn-default.navbar-btn(href='/invitation' , title='Einladungen')
+								span.glyphicon.glyphicon-heart
+							a.btn.btn-default.navbar-btn(href='/settings' , title='Einstellungen')
+								span.glyphicon.glyphicon-wrench
 			p= personName
 		div.container-fluid
 			div.row
-				div.col-sm-3.col-md-2.sidebar
-					ul.nav.nav-sidebar
-						li
-							a(href='/invitation') Einladungen
-						li
-							a(href='/settings') Einstellungen
-				div.col-sm-9.col-sm-offset-3.col-md-10.col-md-offset-2.main
+				div.col-sm-12.col-md-12.main
 					block content
 		include inc/foot
