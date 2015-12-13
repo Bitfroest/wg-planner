@@ -117,6 +117,21 @@
 		<tr><td>location</td><td>geo coordinates</td></tr>
 	</table>
 	
+	<table id="reciept" class="table">
+		<tr><th colspan="2">(reciept)</th></tr>
+		<tr><td>id</td><td>identifier</td></tr>
+		<tr><td>shopping_list_id</td><td>foreign identifier to <a href="#shopping_list">shopping_list</a></td></tr>
+		<tr><td>image</td><td>image of a reciept</td></tr>
+	</table>
+	
+	<table id="items_on_reciept" class="table">
+		<tr><th colspan="2">(items_on_reciept)</th></tr>
+		<tr><td>id</td><td>identifier</td></tr>
+		<tr><td>shopping_item_id</td><td>foreign identifier to <a href="#shopping_item">shopping_item</a></td></tr>
+		<tr><td>reciept_id</td><td>foreign identifier to <a href="#reciept">reciept</a></td></tr>
+		<tr><td>location</td><td>x and y coordinates on reciept</td></tr>
+	</table>
+	
 	<table id="notification" class="table">
 		<tr><th colspan="2">notification</th></tr>
 		<tr><td>id</td><td>identifier</td></tr>
