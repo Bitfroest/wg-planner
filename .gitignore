@@ -11,4 +11,6 @@ Server/config.js
 Server/err.log
 Server/err.log.1
 Server/out.log
+Server/npm-debug.log
+Server/public/img/*
 

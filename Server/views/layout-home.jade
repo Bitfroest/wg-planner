@@ -2,6 +2,8 @@ doctype html
 html(lang='de')
 	head
 		include inc/head
+		style
+			|body, html, header {height: 100%;}
 	body
 		input(type='hidden', value=_csrf, id='_csrf')
 		
@@ -37,7 +39,12 @@ html(lang='de')
 									div.form-group
 										input(class='form-control', type='hidden', name='persistent', ng-model='login.persistent', value='1')
 									div.form-group
-										input(class='form-control', class='btn btn-success' type='submit', ng-click='doLogin()', ng-disabled='loginForm.$invalid', value='Anmelden')
+										input(class='form-control', class='btn btn-primary' type='submit', ng-click='doLogin()', ng-disabled='loginForm.$invalid', value='Anmelden')
+			div.fill(style="background-image:url('/img/home.jpg');")
+				div.home-caption
+					h1 Behalte den Überblick.
+					p 
+						|Melden Sie sich noch heute kostenlos an und genießen Sie die Vorteile einer gemeinsamen Onlineplanung.
 		div.container
 			div.fail-popups#fail-popups
 				div.alert.alert-danger.centered(role='alert')
@@ -47,15 +54,17 @@ html(lang='de')
 			noscript
 				div#noscript-warning
 					|Diese Seite funktioniert am Besten mit JavaScript
+		div.container
 			block content
-		div.footer
-			div.container
-				p.text-muted.centered Copyright (c) 2014 Bitfröst Studios 
-					a(href='imprint') Impressum
-					| 
-					a(href='privacy') Datenschutzerklärung
-					| 
-					a(href='policies') Nutzungsbedingungen
+			hr
+			div.row
+				div.footer
+					p.text-muted.centered Copyright (c) 2016 Bitfröst Studios 
+						a(href='imprint') Impressum
+						| 
+						a(href='privacy') Datenschutzerklärung
+						| 
+						a(href='policies') Nutzungsbedingungen
 		script(type="application/javascript")
 			|function fpDisplay(visibility) {
 			|	document.getElementById('fail-popups').style.display= visibility;
