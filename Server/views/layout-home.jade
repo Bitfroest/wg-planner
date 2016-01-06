@@ -41,10 +41,10 @@ html(lang='de')
 									div.form-group
 										input(class='form-control', class='btn btn-primary' type='submit', ng-click='doLogin()', ng-disabled='loginForm.$invalid', value='Anmelden')
 			div.fill(style="background-image:url('/img/home.jpg');")
-				div.home-caption
+				div.home-caption.caption-left
 					h1 Behalte den Überblick.
 					p 
-						|Melden Sie sich noch heute kostenlos an und genießen Sie die Vorteile einer gemeinsamen Onlineplanung.
+						|Melden Sie sich noch heute kostenlos an und genießen Sie die Vorteile einer gemeinschaftlichen Onlineplanung.
 		div.container
 			div.fail-popups#fail-popups
 				div.alert.alert-danger.centered(role='alert')
@@ -54,8 +54,8 @@ html(lang='de')
 			noscript
 				div#noscript-warning
 					|Diese Seite funktioniert am Besten mit JavaScript
+		block content
 		div.container
-			block content
 			hr
 			div.row
 				div.footer

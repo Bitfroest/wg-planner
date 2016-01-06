@@ -3,36 +3,52 @@ extends layout-home
 block head
 
 block content
-	div.row
-		br
-	div.row
-		div.col-md-8
+	div.container
+		div.row
+			br
+		div.row
+			div.col-md-8
+				hr
+				h1 Der WG-Planner
+				h4 
+					|Sie tätigen öfters Gruppeneinkäufe für die Firma, Freunde oder Familie. 
+					|Wollen einen Überblick über die Einkäufe Ihrer Gruppe behalten. 
+					|Planen die Kosten Ihrer Wohngemeinschaft.
+		div.row
+				div.col-md-4
+					hr
+					span.fa-stack.fa-lg.fa-4x
+						i.fa.fa-circle.fa-stack-2x
+						i.fa.fa-lightbulb-o.fa-stack-1x.fa-inverse
+					h2 Schnell und Einfach
+					p
+						|Sparen Sie sich lästiges Kopfrechnen. 
+						|Ihre Einkäufe werden sofort mit der Gruppe geteilt 
+						|und schon nach jeder Eingabe berechnet. 
+						|Behalten Sie den Überblick durch unsere übersichtliche Gestaltung.
+				div.col-md-4
+					hr
+					span.fa-stack.fa-lg.fa-4x
+						i.fa.fa-circle.fa-stack-2x
+						i.fa.fa-history.fa-stack-1x.fa-inverse
+					h2 Dashboard
+					p
+						|Durch eine speziell entworfene Übersicht behalten Sie immer den 
+						|Überblick über Ihre Einkaufslisten.
+				div.col-md-4
+					hr
+					span.fa-stack.fa-lg.fa-4x
+						i.fa.fa-circle.fa-stack-2x
+						i.fa.fa-shopping-bag.fa-stack-1x.fa-inverse
+					h2 Jetzt neu
+					p
+						|Kassenzettel einscannen und Zeit sparen.
+						|Dank Texterkennung brauchen Sie nicht jeden einzelnen
+						|Artikel eintragen sondern nur ein Foto Ihres Kassenzettels
+						|hochladen.
 			hr
-			h1 Der WG-Planner
-			h4 
-				|Sie tätigen öfters Gruppeneinkäufe für die Firma, Freunde oder Familie. 
-				|Wollen einen Überblick über die Einkäufe Ihrer Gruppe behalten. 
-				|Planen die Kosten Ihrer Wohngemeinschaft.
-	div.row
-			div.col-md-4
-				hr
-				h2 Schnell und Einfach
-				p
-					|Sparen Sie sich lästiges Kopfrechnen. 
-					|Ihre Einkäufe werden sofort mit der Gruppe geteilt 
-					|und schon nach jeder Eingabe berechnet. 
-					|Behalten Sie den Überblick durch unsere übersichtliche Gestaltung.
-			div.col-md-4
-				hr
-				h2 Dashboard
-				p
-					|Durch eine speziell entworfene Übersicht behalten Sie immer den 
-					|Überblick über Ihre Einkaufslisten.
-			div.col-md-4
-				hr
-				h2 Jetzt neu
-				p
-					|Kassenzettel einscannen und Zeit sparen.
-					|Dank Texterkennung brauchen Sie nicht jeden einzelnen
-					|Artikel eintragen sondern nur ein Foto Ihres Kassenzettels
-					|hochladen.
+	div.fill(style="background-image:url('/img/bill.jpg');")
+		div.home-caption.caption-right
+					h1 Digital in sekunden
+					p 
+						|Durch effiziente algorithmen wird jede Zeile eines Kassenzettels erkannt und für Sie gespeichert.
