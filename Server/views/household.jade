@@ -135,15 +135,6 @@ block content
 	
 	div.container-fluid
 		div.row
-			div.col-xs-12.col-sm-6.col-md-4
-				div.tile(style='text-align:center;')
-					a.btn
-						h1.glyphicon.glyphicon-open
-						br
-						span Einkaufszettel Upload
-					a.btn
-						span
-							input(type='file' , accept='image/*;capture=camera')
 			div.col-xs-12.col-sm-12.col-md-8
 				div.tile(ng-app='datepicker', ng-controller='DatepickerCtrl as datepicker')
 					h4 Erstellen 
@@ -177,6 +168,12 @@ block content
 												i.glyphicon.glyphicon-calendar
 						div.row.tile-fill
 								input.form-control(type='text', name='shopped_time', placeholder='HH:MM', value="{{dt | date : 'HH:mm'}}")
+						div.row.tile-fill
+							span 
+								b Kassenzettel:
+							a.btn
+								span
+									input(type='file', name='reciept' , accept='image/*;capture=camera')
 						div.row.tile-fill
 							button.btn.btn-success.pull-right(type='submit', value='Erstellen')
 								span.glyphicon.glyphicon-plus-sign

@@ -54,6 +54,7 @@ block content
 				td Erstellt
 				td= 'von ' + shoppingList.creator_name + ' am ' + formatDate(shoppingList.created)
 		input.btn.btn-primary(type='submit', value='Ändern')
+
 	
 	div
 		form(method='post', action='/shopping_list/delete')
@@ -61,6 +62,15 @@ block content
 			input(type='hidden', name='id', value=shoppingList.id)
 			input.btn.btn-danger(type='submit', value='Löschen')
 	
+	h2.sub-header Kassenzettel
+	
+	form(method='post', action='/shopping_list/reciept')
+		input(type='hidden', name='_csrf', value=_csrf)
+		input(type='hidden', name='id', value=shoppingList.id)
+		a.btn
+			span
+				input(type='file', name='reciept' , accept='image/*;capture=camera')
+		input.btn.btn-primary(type='submit', value='Hochladen')
 	
 	h2.sub-header Anteile
 	
