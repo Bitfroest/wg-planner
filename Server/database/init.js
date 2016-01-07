@@ -4,7 +4,7 @@ var async = require('async');
 var logger = require('../utils/log.js');
 
 // Current schema version
-var CURRENT_VERSION = 6;
+var CURRENT_VERSION = 7;
 
 // intitalize the database for wg planner
 // make sure that:
@@ -14,13 +14,13 @@ exports.init = function(pg, url, callback) {
 	async.waterfall([
 		// connect to database the first time
 		pg.connect.bind(pg, url),
-		
+
 		// check if table 'dbinfo' exists
 		function testDbinfo(client, done, callback) {
 			logger.info('check dbinfo table');
-		
+
 			client.query('SELECT EXISTS( SELECT 1 ' +
-				'FROM information_schema.tables ' + 
+				'FROM information_schema.tables ' +
 				'WHERE table_name = $1 LIMIT 1) as check',
 				['dbinfo'],
 				function(err, result) {
@@ -34,16 +34,16 @@ exports.init = function(pg, url, callback) {
 			callback(err);
 			return;
 		}
-		
+
 		done();
-		
+
 		if(result.rows.length !== 1) {
 			callback('dbinfo must have exactly one row');
 			return;
 		}
-		
+
 		var tableExists = result.rows[0].check;
-		
+
 		if(tableExists) { // if table exists ...
 			checkVersion(pg, url, callback);
 		} else {
@@ -61,24 +61,24 @@ function checkVersion(pg, url, callback) {
 			callback(err);
 			return;
 		}
-		
+
 		client.query('SELECT version, sessionsecret, cookiesecret FROM dbinfo', function(err, result) {
 			done();
-		
+
 			if(err) {
 				callback(err);
 				return;
 			}
-			
+
 			var version = result.rows[0].version;
-			
+
 			function successCallback() {
 				callback(null, {
 					cookieSecret : result.rows[0].cookiesecret,
 					sessionSecret : result.rows[0].sessionsecret
 				});
 			}
-			
+
 			if(version === CURRENT_VERSION) {
 				logger.info('database schema is up to date');
 				successCallback();
@@ -100,7 +100,7 @@ function checkVersion(pg, url, callback) {
 // execute them in order
 function upgradeTables(version, pg, url, callback) {
 	var upgradeFiles = [];
-	
+
 	// create list of upgrade files to apply
 	for(var ver = version; ver < CURRENT_VERSION; ver++) {
 		upgradeFiles.push('./database/upgrade/upgrade_' +
@@ -116,34 +116,34 @@ function upgradeTables(version, pg, url, callback) {
 			callback(err);
 			return;
 		}
-		
+
 		// reduce list of SQL file data to one long SQL thingy
 		var sql = results.join('\n');
-		
+
 		// get client
 		pg.connect(url, function(err, client, done) {
 			if(err) {
 				callback(err);
 				return;
 			}
-			
+
 			async.waterfall([
 				// start transaction
 				function(callback) {
 					client.query('BEGIN', callback);
 				},
-				
+
 				// execute SQL update script
 				function(result, callback) {
 					client.query(sql, callback);
 				},
-				
+
 				// upgrade version info in dbinfo table
 				function(result, callback) {
 					client.query('UPDATE dbinfo SET version = $1',
 						[CURRENT_VERSION], callback);
 				},
-				
+
 				// commit transaction
 				function(result, callback) {
 					client.query('COMMIT', callback);
@@ -164,37 +164,37 @@ function createTables(pg, url, callback) {
 			callback(err);
 			return;
 		}
-		
+
 		logger.info('Load file %s', './database/init.sql');
-		
+
 		async.waterfall([
 			// Read the initial SQL script
 			fs.readFile.bind(fs, './database/init.sql', 'utf-8'),
-			
+
 			// Create all the tables
 			// (implicit file content as SQL parameter)
 			client.query.bind(client),
-			
+
 			// generate secrets
 			function(result, callback) {
 				logger.info('created database schema');
-				
+
 				//Generate some secret keys used by cookieParser and session
 				async.parallel({
-					cookieSecret : crypto.randomBytes.bind(crypto, 16),					
+					cookieSecret : crypto.randomBytes.bind(crypto, 16),
 					sessionSecret : crypto.randomBytes.bind(crypto, 16)
 				}, function(err, results) {
 					if(err) {
 						callback(err);
 					}
-				
+
 					results.cookieSecret = results.cookieSecret.toString('hex');
 					results.sessionSecret = results.sessionSecret.toString('hex');
-				
+
 					callback(undefined, results);
 				});
 			},
-			
+
 			// insert current schema version into table dbinfo
 			function(dbinfo, callback) {
 				client.query('INSERT INTO dbinfo ' +
@@ -213,7 +213,7 @@ function createTables(pg, url, callback) {
 				callback(err);
 				return;
 			}
-			
+
 			callback(null, dbinfo);
 		});
 	});

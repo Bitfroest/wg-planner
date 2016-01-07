@@ -104,7 +104,7 @@ RETURNS TABLE(owner INTEGER, buyer INTEGER, total BIGINT) AS $$
 	actualmatrix AS (
 		SELECT owner_person_id AS owner, buyer_person_id AS buyer, sum(price) AS total
 		FROM shopping_list l
-		JOIN shopping_item i ON (i.shopping_list_id = l.id) 
+		JOIN shopping_item i ON (i.shopping_list_id = l.id)
 		WHERE l.household_id = $1
 		GROUP BY i.owner_person_id, l.buyer_person_id
 	)
@@ -168,7 +168,7 @@ RETURNS TABLE(id INTEGER, name TEXT, diff BIGINT) AS $$
 	WITH combined_items AS (
 		SELECT owner_person_id AS owner, buyer_person_id AS buyer, sum(price) AS total
 		FROM shopping_list l
-		JOIN shopping_item i ON (i.shopping_list_id = l.id) 
+		JOIN shopping_item i ON (i.shopping_list_id = l.id)
 		WHERE l.household_id = $1 AND owner_person_id != buyer_person_id AND (owner_person_id = $2 OR buyer_person_id = $2)
 		GROUP BY i.owner_person_id, l.buyer_person_id
 	),
@@ -315,3 +315,11 @@ LANGUAGE plpgsql;
 CREATE TRIGGER trigger_new_shopping_list
 AFTER INSERT ON shopping_list
 FOR EACH ROW EXECUTE PROCEDURE notification_new_shopping_list();
+
+CREATE TABLE shopping_list_receipt (
+	shopping_list_id INTEGER REFERENCES shopping_list(id) NOT NULL,
+  file TEXT NOT NULL,
+	created TIMESTAMPTZ NOT NULL,
+  status INTEGER NOT NULL
+);
+CREATE INDEX ON shopping_list_receipt(shopping_list_id);

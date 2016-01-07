@@ -138,7 +138,7 @@ block content
 			div.col-xs-12.col-sm-12.col-md-8
 				div.tile(ng-app='datepicker', ng-controller='DatepickerCtrl as datepicker')
 					h4 Erstellen 
-					form(method='POST', action='/shopping_list/create')
+					form(method='POST', action='/shopping_list/create', enctype='multipart/form-data')
 						input(type='hidden', name='_csrf', value=_csrf)
 						input(type='hidden', name='household', value=household)
 						input#shopping-list-create-buyer(type='hidden', name='buyer')
@@ -173,7 +173,7 @@ block content
 								b Kassenzettel:
 							a.btn
 								span
-									input(type='file', name='reciept' , accept='image/*;capture=camera')
+									input(type='file', name='receipt' , accept='image/*;capture=camera')
 						div.row.tile-fill
 							button.btn.btn-success.pull-right(type='submit', value='Erstellen')
 								span.glyphicon.glyphicon-plus-sign

@@ -19,6 +19,8 @@ var pg = require('pg.js');
 var PostgresStore = require('./database/pg-session.js')(session);
 var logger = require('./utils/log.js');
 var _ = require('underscore');
+var multer = require('multer');
+var upload = multer({ dest: 'public/receipts/' });
 
 // Load configuration, show info message on failure
 var config;
@@ -110,6 +112,9 @@ app.use(slashes(false));
 //Parse body (urlencoded/json) from HTML forms and XHR requests
 app.use(bodyParser());
 
+// Parse other bodies
+app.use(upload.single('receipt'));
+
 //Form validator
 app.use(expressValidator());
 
@@ -155,7 +160,7 @@ app.use(function(err, req, res, next){
 			err : app.get('env') === 'development' ? err : undefined // show details only in development mode
 		});
 	}
-	
+
 	// call next error handler
 	//next(err);
 });
