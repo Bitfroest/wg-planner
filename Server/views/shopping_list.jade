@@ -67,9 +67,8 @@ block content
 	form(method='post', action='/shopping_list/receipt')
 		input(type='hidden', name='_csrf', value=_csrf)
 		input(type='hidden', name='id', value=shoppingList.id)
-		a.btn
-			span
-				input(type='file', name='receipt' , accept='image/*;capture=camera')
+		span
+			input(type='file', name='receipt' , accept='image/*;capture=camera')
 		input.btn.btn-primary(type='submit', value='Hochladen')
 	
 	h2.sub-header Anteile
