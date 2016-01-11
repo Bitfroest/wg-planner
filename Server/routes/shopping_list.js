@@ -1,4 +1,7 @@
 var async = require('async');
+var ocr = require('./ocr');
+var pg = require('pg.js');
+var config = require('../config');
 
 var formatEuro = require('../utils/currency_formatter.js').formatEuro;
 var formatDate = require('../utils/date_formatter.js').formatDate;
@@ -96,6 +99,7 @@ exports.shoppingListCreate = function(req, res) {
 							if(err) {
 								return console.error('Failed to insert new shopping_list_receipt', err);
 							} else {
+								ocr.processReceipt(req.file.path, ocrReceiptCallback.bind(null, req.session.personId, listId));
 								res.redirect('/shopping_list/' + listId);
 							}
 						});
@@ -111,6 +115,31 @@ exports.shoppingListCreate = function(req, res) {
 		res.redirect('/sid_wrong');
 	}
 };
+
+function ocrReceiptCallback(personId, listId, err, result) {
+	pg.connect(config.databaseURL, function(err, client, done) {
+		if(err) {
+			console.log(err);
+		} else {
+			var queries = [];
+
+			result.items.forEach(function(item) {
+				queries.push(client.query.bind(client,
+					'INSERT INTO shopping_item (name, shopping_list_id, owner_person_id, price) VALUES ($1,$2,$3,$4)',
+					[item.name, listId, personId, item.price]
+				));
+			});
+
+			async.series(queries, function(err) {
+				done();
+
+				if(err) {
+					console.log(err);
+				}
+			});
+		}
+	});
+}
 
 /*
  * Router for displaying a single shopping list.

@@ -19,7 +19,7 @@ config.databaseDatabase = 'postgres';
 // Database connection URL, for PostgreSQL: postgres://username:password@localhost/database
 // DOT NOT CHANGE: this will be created for you out of database* configurations
 config.databaseURL = 'postgres://' + (config.databaseUser ? encodeURIComponent(config.databaseUser) +
-	(config.databasePassword ? ':' + encodeURIComponent(config.databasePassword) : '') + '@' : '') + 
+	(config.databasePassword ? ':' + encodeURIComponent(config.databasePassword) : '') + '@' : '') +
 	config.databaseHost + (config.databasePort ? ':' + config.databasePort : '') +
 	'/' + encodeURIComponent(config.databaseDatabase);
 
@@ -53,6 +53,9 @@ config.mailTransportOptions = {
 		pass: ''  // password
 	}
 };
+
+// Absolute path to Tesseract
+config.tesseractPath = '/usr/bin/tesseract';
 
 // **************************************************
 // END CONFIG
