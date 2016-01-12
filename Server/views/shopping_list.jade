@@ -6,6 +6,11 @@ block content
 	h1.page-header= title
 	
 	h2.sub-header Infos
+		div.pull-right
+			form(method='post', action='/shopping_list/delete')
+				input(type='hidden', name='_csrf', value=_csrf)
+				input(type='hidden', name='id', value=shoppingList.id)
+				input.btn.btn-danger(type='submit', value='Löschen')
 	
 	form(method='post', action='/shopping_list/update')
 		input(type='hidden', name='_csrf', value=_csrf)
@@ -53,23 +58,32 @@ block content
 			tr
 				td Erstellt
 				td= 'von ' + shoppingList.creator_name + ' am ' + formatDate(shoppingList.created)
-		input.btn.btn-primary(type='submit', value='Ändern')
+				td
+					input.btn.btn-primary(type='submit', value='Ändern')
 
 	
+	h2#receipt.sub-header Kassenzettel
+	
 	div
-		form(method='post', action='/shopping_list/delete')
-			input(type='hidden', name='_csrf', value=_csrf)
-			input(type='hidden', name='id', value=shoppingList.id)
-			input.btn.btn-danger(type='submit', value='Löschen')
-	
-	h2.sub-header Kassenzettel
-	
-	form(method='post', action='/shopping_list/receipt')
-		input(type='hidden', name='_csrf', value=_csrf)
-		input(type='hidden', name='id', value=shoppingList.id)
-		span
-			input(type='file', name='receipt' , accept='image/*;capture=camera')
-		input.btn.btn-primary(type='submit', value='Hochladen')
+		div(ng-app='receipt', ng-controller='receiptCtrl')
+			table.table.table-striped
+				div(ng-repeat='i in result')
+					div
+						a#pop(href="#", data-toggle='modal', data-target='#receiptModal', onclick='changeReceiptSrc()')
+							img.img-thumbnail.img-receipt#receiptSrc(src='../{{i.file}}')
+		
+	div#receiptModal.modal.fade(tabindex='-1', role='dialog', aria-labelledby='myModalLabel', aria-hidden='true')
+		div.modal-dialog.modal-lg
+			div.modal-content
+				div.modal-header
+					button.close(type='button', data-dismiss='modal')
+						span(aria-hidden='true') &times
+						span.sr-only Close
+					h4.modal-title#myModalLabel Kassenzettel
+				div.modal-body
+					img#receiptPreview(src='', style='width: 100%; height: 100%;')
+				div.modal-footer
+					button.btn.btn-primary(type='button', data-dismiss='modal') Close
 	
 	h2.sub-header Anteile
 	
@@ -86,7 +100,7 @@ block content
 	
 	input.hidden(value=shoppingList.id id="shoppingListId")
 	input.hidden(id='_csrf', value=_csrf)
-	div(ng-app='shopping_list', ng-controller='ShoppingListController as slc')
+	div(ng-app='shopping_list', ng-controller='ShoppingListController as slc', id='slc')
 		table.table.table-striped
 			tr(ng-repeat='item in shopping_items')
 				td
@@ -136,3 +150,20 @@ block content
 							|	});
 							|	$('#select-owner').val(ids.join("|"));
 							|};
+	script
+		|var receipt = angular.module('receipt', []);
+		|receipt.controller('receiptCtrl', ['$scope', '$http', function($scope, $http) {
+		|	$http.get('/api/shopping_list/actions/receipt_status?shoppingListId='+
+		= shoppingList.id
+		|	).then(function(response){
+		|			$scope.result = response.data.result;
+		|			//{"result":[{"id":26,"file":"public\\receipts\\0a4f3ab49c5a8373781d352db7ae1265","status":0}]}
+		|		});
+		|}]);
+		|angular.bootstrap(document.getElementById('slc'),['shopping_list']);
+	script
+		| // Modal
+		|function changeReceiptSrc() {
+		|	$('#receiptPreview').attr('src', $('#receiptSrc').attr('src'));
+		|	//$('#receiptModal').modal('show'); 
+		|};
