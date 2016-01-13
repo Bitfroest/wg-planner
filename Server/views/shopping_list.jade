@@ -5,113 +5,130 @@ block head
 block content
 	h1.page-header= title
 	
-	h2.sub-header Infos
-		div.pull-right
-			form(method='post', action='/shopping_list/delete')
-				input(type='hidden', name='_csrf', value=_csrf)
-				input(type='hidden', name='id', value=shoppingList.id)
-				input.btn.btn-danger(type='submit', value='Löschen')
-	
-	form(method='post', action='/shopping_list/update')
-		input(type='hidden', name='_csrf', value=_csrf)
-		input(type='hidden', name='id', value=shoppingList.id)
-		table.table.table-striped
-			tr
-				td Laden
-				td
-					input.form-control(type='text', name='shop', value=shoppingList.shop_name)
-				td= shoppingList.shop_name
-			tr
-				td Einkäufer
-				td
-					script(type="application/javascript")
-						|function changeBuyerButton(value,name){
-						|	console.log("v:"+value+" n:"+name);
-						|	document.getElementById('change-buyer').value = value;
-						|	document.getElementById('buyer-button-text').textContent = name+" ";
-						|};	
-					input#change-buyer(type='hidden', name='buyer')
-					div.input-group
-						div.input-group-btn
-							button.btn.btn-default.dropdown-toggle#buyer-button(type='button', data-toggle='dropdown', size='1')
-								span#buyer-button-text -- Wähle Käufer --
-								span.caret
-							ul.dropdown-menu(role='menu')
-								each member in members
-									li
-										a(onclick='changeBuyerButton('+member.id+',"'+member.name+'")' value=member.id)= member.name
-									if shoppingList.buyer_id == member.id
+	div.container
+		div.row
+			div.col-xs-12.col-sm-6.col-md-6
+				div.row
+					div.col-xs-12.col-sm-12.col-md-12
+						h2.sub-header Infos
+							div.pull-right
+								form(method='post', action='/shopping_list/delete')
+									input(type='hidden', name='_csrf', value=_csrf)
+									input(type='hidden', name='id', value=shoppingList.id)
+									input.btn.btn-danger(type='submit', value='Löschen')
+						form(method='post', action='/shopping_list/update')
+							input(type='hidden', name='_csrf', value=_csrf)
+							input(type='hidden', name='id', value=shoppingList.id)
+							table.table.table-striped
+								tr
+									td
+										input.form-control(type='text', name='shop', value=shoppingList.shop_name)
+								tr
+									td
 										script(type="application/javascript")
-											|changeBuyerButton(
-											= member.id
-											|,"
-											= member.name
-											|");
-				td= shoppingList.buyer_name
-			tr
-				td Wann?
-				td
-					span.input-group.input-flex
-						input.form-control(type='text', name='shopped_date', value=formatDate(shoppingList.shopped, 'date'))
-						input.form-control(type='text', name='shopped_time', value=formatDate(shoppingList.shopped, 'time'))
-				td= formatDate(shoppingList.shopped)
-			tr
-				td Erstellt
-				td= 'von ' + shoppingList.creator_name + ' am ' + formatDate(shoppingList.created)
-				td
-					input.btn.btn-primary(type='submit', value='Ändern')
-
-	
-	h2#receipt.sub-header Kassenzettel
-	
-	div
-		div(ng-app='receipt', ng-controller='receiptCtrl')
-			table.table.table-striped
-				div(ng-repeat='i in result')
-					div
-						a#pop(href="#", data-toggle='modal', data-target='#receiptModal', onclick='changeReceiptSrc()')
-							img.img-thumbnail.img-receipt#receiptSrc(src='../{{i.file}}')
+											|function changeBuyerButton(value,name){
+											|	console.log("v:"+value+" n:"+name);
+											|	document.getElementById('change-buyer').value = value;
+											|	document.getElementById('buyer-button-text').textContent = name+" ";
+											|};	
+										input#change-buyer(type='hidden', name='buyer')
+										div.input-group
+											div.input-group-btn
+												button.btn.btn-default.dropdown-toggle#buyer-button(type='button', data-toggle='dropdown', size='1')
+													span#buyer-button-text -- Wähle Käufer --
+													span.caret
+												ul.dropdown-menu(role='menu')
+													each member in members
+														li
+															a(onclick='changeBuyerButton('+member.id+',"'+member.name+'")' value=member.id)= member.name
+														if shoppingList.buyer_id == member.id
+															script(type="application/javascript")
+																|changeBuyerButton(
+																= member.id
+																|,"
+																= member.name
+																|");
+								tr
+									td
+										span.input-group.input-flex
+											input.form-control(type='text', name='shopped_date', value=formatDate(shoppingList.shopped, 'date'))
+											input.form-control(type='text', name='shopped_time', value=formatDate(shoppingList.shopped, 'time'))
+								tr
+									td= 'Erstellt von ' + shoppingList.creator_name + ' am ' + formatDate(shoppingList.created)
+								tr
+									td
+										input.btn.btn-primary(type='submit', value='Ändern')
+				div.row
+					div.col-xs-12.col-sm-12.col-md-12
+						h2.sub-header Anteile
+						
+						table.table.table-striped
+							each person in stats
+								tr
+									td= person.name
+									td= formatCurrency(person.total)
+							tr
+								th Gesamt
+								th= formatCurrency(shoppingList.total_price)
+			div.col-xs-12.col-sm-6.col-md-6
 		
-	div#receiptModal.modal.fade(tabindex='-1', role='dialog', aria-labelledby='myModalLabel', aria-hidden='true')
-		div.modal-dialog.modal-lg
-			div.modal-content
-				div.modal-header
-					button.close(type='button', data-dismiss='modal')
-						span(aria-hidden='true') &times
-						span.sr-only Close
-					h4.modal-title#myModalLabel Kassenzettel
-				div.modal-body
-					img#receiptPreview(src='', style='width: 100%; height: 100%;')
-				div.modal-footer
-					button.btn.btn-primary(type='button', data-dismiss='modal') Close
-	
-	h2.sub-header Anteile
-	
-	table.table.table-striped
-		each person in stats
-			tr
-				td= person.name
-				td= formatCurrency(person.total)
-		tr
-			th Gesamt
-			th= formatCurrency(shoppingList.total_price)
-	
+				h2#receipt.sub-header Kassenzettel
+				
+				div
+					div(ng-app='receipt', ng-controller='receiptCtrl')
+						table.table.table-striped
+							div(ng-repeat='i in result')
+								div
+									a#pop(href="#", data-toggle='modal', data-target='#receiptModal', onclick='changeReceiptSrc()')
+										img.img-thumbnail.img-receipt#receiptSrc(src='../{{i.file}}')
+			
+				div#receiptModal.modal.fade(tabindex='-1', role='dialog', aria-labelledby='myModalLabel', aria-hidden='true')
+					div.modal-dialog.modal-lg
+						div.modal-content
+							div.modal-header
+								button.close(type='button', data-dismiss='modal')
+									span(aria-hidden='true') &times
+									span.sr-only Close
+								h4.modal-title#myModalLabel Kassenzettel
+							div.modal-body
+								img#receiptPreview(src='', style='width: 100%; height: 100%;')
+							div.modal-footer
+								button.btn.btn-primary(type='button', data-dismiss='modal') Close
+		
 	h2.sub-header Items
 	
 	input.hidden(value=shoppingList.id id="shoppingListId")
 	input.hidden(id='_csrf', value=_csrf)
 	div(ng-app='shopping_list', ng-controller='ShoppingListController as slc', id='slc')
-		table.table.table-striped
+		table.table.table-striped.table-condensed
+			tr(style='font-weight: bold')
+						td(style='width:15%') Edit
+						td(style='width:40%') Name
+						td(style='width:25%') Besitzer
+						td(style='width:20%') Preis
 			tr(ng-repeat='item in shopping_items')
 				td
-					a.btn.btn-primary(href='/shopping_item/{{item.id}}')
+					a.btn.btn-primary.hidden(href='/shopping_item/{{item.id}}')
 						i.glyphicon.glyphicon-pencil
-				td {{item.name}}
-				td {{item.owner_name}}
-				td {{item.price | formatCurrency}}
+					form.form-buttons.form-inline(editable-form, name='rowform', onbeforesave='', ng-show='rowform.$visible', shown='inserted == item')
+						button.btn.btn-primary(type='submit', ng-disabled='rowform.$waiting')
+							span.glyphicon.glyphicon-ok
+						button.btn.btn-default(type='button', ng-disabled='rowform.$waiting', ng-click='rowform.$cancel()')
+							span.glyphicon.glyphicon-remove
+					div.buttons(ng-show='!rowform.$visible')
+						button.btn.btn-primary(ng-click='rowform.$show()')
+							i.glyphicon.glyphicon-pencil
+						button.btn.btn-danger(ng-click='delete(item.id)')
+							span.glyphicon.glyphicon-trash
+				td 
+					span(editable-text='item.name', e-name='name', e-form='rowform', onbeforesave='', e-require)
+						{{item.name}}
+				td 
+					span(editable-text='item.owner_name', e-name='owner_name', e-form='rowform', onbeforesave='', e-require)
+						{{item.owner_name}}
 				td
-					button.pull-right.btn.btn-danger(ng-click='delete(item.id)')
-						span.glyphicon.glyphicon-trash			
+					span(editable-text='item.price', e-name='price', e-form='rowform', onbeforesave='', e-require)
+						{{item.price | formatCurrency}}			
 			tr							
 				form(method='post')
 					input(type='hidden', name='_csrf', value=_csrf)
@@ -131,7 +148,7 @@ block content
 										button.btn.btn-default(id='ownerButton.'+member.id type='button', onclick='updateActiveOwner('+member.id+')', data-id=member.id) 
 											=member.name
 										input(type='hidden' data-id=member.id value=member.id data-name=member.name)
-						td(colspan="2")
+						td
 							input.form-control(type='text', name='price', placeholder='Preis in €, z.B. 12.30', ng-model='price')
 						script(type="application/javascript")
 							|$('[id^="ownerButton"').on('click', function(e) {

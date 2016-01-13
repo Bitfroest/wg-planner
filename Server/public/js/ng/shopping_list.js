@@ -1,4 +1,4 @@
-angular.module('shopping_list', [])
+angular.module('shopping_list', ["xeditable"])
 .controller('ShoppingListController', ['$scope', '$http', function($scope, $http) {
 	$scope.shopping_items = [];
 	
@@ -61,4 +61,6 @@ angular.module('shopping_list', [])
 
 		return '€ ' + intPart + decimalSeparator + decPart;
 	};
+}).run(function(editableOptions) {
+  editableOptions.theme = 'bs3';
 });
