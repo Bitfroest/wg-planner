@@ -1,5 +1,5 @@
 var errors = require('../api-errors');
-
+var path = require('path');
 
 module.exports = function (req, res, opt) {
 	if(!req.session.loggedIn) {
@@ -18,10 +18,10 @@ module.exports = function (req, res, opt) {
 				return;
 			}
 			for(var a in result.rows){
-				result.rows[a].file = result.rows[a].file.replace(/(p+u+b+l+i+c+\\+)/, '').replace(/\\/g, '\/');
+				result.rows[a].file = result.rows[a].file.split(path.sep).slice(1).join("/");
 			}
 			res.json({
 				result : result.rows
 			});
-	});	
+	});
 };
